@@ -1,0 +1,29 @@
+{
+  "extends": "@tsconfig/node18/tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "lib": ["DOM", "ES2022"],
+    "module": "ES2022",
+    "target": "ES2022",
+    "resolveJsonModule": true,
+    "types": ["@dcloudio/types", "node"]
+  },
+  "include": [
+    "**/.*.js",
+    "**/.*.cjs",
+    "**/.*.mjs",
+    "**/.*.ts",
+    "**/.*.cts",
+    "**/.*.mts",
+    "**/*.js",
+    "**/*.cjs",
+    "**/*.mjs",
+    "**/*.ts",
+    "**/*.cts",
+    "**/*.mts",
+    "**/*.jsx",
+    "**/*.tsx",
+    "**/*.vue"
+  ],
+  "exclude": ["**/node_modules", "**/dist"]
+}

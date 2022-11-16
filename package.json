@@ -1,0 +1,93 @@
+{
+  "name": "@uni-helper/uni-use",
+  "version": "0.8.0",
+  "description": "uni-app (vue3) 组合式工具集",
+  "keywords": [
+    "uni-app",
+    "uniapp",
+    "uni",
+    "use",
+    "composition",
+    "composable"
+  ],
+  "homepage": "https://github.com/uni-helper/uni-use#readme",
+  "bugs": {
+    "url": "https://github.com/uni-helper/uni-use/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uni-helper/uni-use.git"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "ModyQyW",
+    "email": "wurui-dev@foxmail.com",
+    "url": "https://modyqyw.github.io"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./*": "./dist/*"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "check:types": "tsc --noEmit",
+    "dev": "tsup --watch src",
+    "lint": "run-p lint:eslint lint:markdownlint check:types",
+    "lint:eslint": "eslint . --fix --ext=.js,.cjs,.mjs,.jsx,.ts,.cts,.mts,.tsx,.vue --ignore-path=.gitignore --cache",
+    "lint:markdownlint": "markdownlint . --fix --ignore-path=.gitignore",
+    "release": "release-it",
+    "prepare": "is-ci || husky install"
+  },
+  "dependencies": {
+    "@dcloudio/types": "^3.0.19",
+    "@dcloudio/uni-app": "^3.0.0-alpha-3060920221114001",
+    "@vueuse/core": "^9.5.0",
+    "immer": "^9.0.16"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.20.2",
+    "@babel/eslint-parser": "^7.19.1",
+    "@commitlint/cli": "^17.2.0",
+    "@commitlint/config-conventional": "^17.2.0",
+    "@commitlint/prompt": "^17.2.0",
+    "@modyqyw/fabric": "^5.11.0",
+    "@tsconfig/node18": "^1.0.1",
+    "@types/node": "^18.11.9",
+    "@typescript-eslint/eslint-plugin": "^5.43.0",
+    "@typescript-eslint/parser": "^5.43.0",
+    "commitizen": "^4.2.5",
+    "eslint": "^8.27.0",
+    "husky": "^8.0.2",
+    "is-ci": "^3.0.1",
+    "lint-staged": "^13.0.3",
+    "markdownlint-cli": "^0.32.2",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^2.7.1",
+    "release-it": "^15.5.0",
+    "ts-node": "^10.9.1",
+    "tsup": "^6.5.0",
+    "tsx": "^3.12.1",
+    "typescript": "^4.9.3",
+    "vue": "^3.2.45"
+  },
+  "peerDependencies": {
+    "vue": "^3.2.0"
+  },
+  "engines": {
+    "node": ">=14.16"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
+}
