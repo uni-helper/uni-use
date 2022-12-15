@@ -49,42 +49,42 @@
     "prepare": "is-ci || husky install"
   },
   "dependencies": {
-    "@dcloudio/types": "^3.0.19",
-    "@dcloudio/uni-app": "^3.0.0-alpha-3060920221114001",
-    "@vueuse/core": "^9.5.0",
+    "@dcloudio/types": "^3.2.3",
+    "@dcloudio/uni-app": "^3.0.0-alpha-3061220221207002",
+    "@vueuse/core": "^9.6.0",
     "immer": "^9.0.16"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.2",
+    "@babel/core": "^7.20.5",
     "@babel/eslint-parser": "^7.19.1",
-    "@commitlint/cli": "^17.2.0",
-    "@commitlint/config-conventional": "^17.2.0",
-    "@commitlint/prompt": "^17.2.0",
-    "@modyqyw/fabric": "^5.11.0",
+    "@commitlint/cli": "^17.3.0",
+    "@commitlint/config-conventional": "^17.3.0",
+    "@commitlint/prompt": "^17.3.0",
+    "@modyqyw/fabric": "^5.14.0",
     "@tsconfig/node18": "^1.0.1",
-    "@types/node": "^18.11.9",
-    "@typescript-eslint/eslint-plugin": "^5.43.0",
-    "@typescript-eslint/parser": "^5.43.0",
-    "commitizen": "^4.2.5",
-    "eslint": "^8.27.0",
+    "@types/node": "^18.11.15",
+    "@typescript-eslint/eslint-plugin": "^5.46.1",
+    "@typescript-eslint/parser": "^5.46.1",
+    "commitizen": "^4.2.6",
+    "eslint": "^8.29.0",
     "husky": "^8.0.2",
     "is-ci": "^3.0.1",
-    "lint-staged": "^13.0.3",
+    "lint-staged": "^13.1.0",
     "markdownlint-cli": "^0.32.2",
     "npm-run-all": "^4.1.5",
-    "prettier": "^2.7.1",
-    "release-it": "^15.5.0",
+    "prettier": "^2.8.1",
+    "release-it": "^15.5.1",
     "ts-node": "^10.9.1",
     "tsup": "^6.5.0",
     "tsx": "^3.12.1",
-    "typescript": "^4.9.3",
+    "typescript": "^4.9.4",
     "vue": "^3.2.45"
   },
   "peerDependencies": {
     "vue": "^3.2.0"
   },
   "engines": {
-    "node": ">=14.16"
+    "node": ">=14.18"
   },
   "publishConfig": {
     "access": "public",
