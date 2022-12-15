@@ -16,8 +16,6 @@ export function usePreferredDark() {
   uni.onThemeChange(callback);
 
   const stop = () => {
-    // TODO: remove in @dcloudio/types v3.2
-    // @ts-expect-error
     uni.offThemeChange(callback);
   };
 

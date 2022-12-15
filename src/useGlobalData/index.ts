@@ -8,7 +8,7 @@ export function useGlobalData() {
 
   const globalData = computed(() => app.value.globalData);
 
-  function setGlobalData(nextGlobalData: MaybeComputedRef<AnyObject | undefined>): void;
+  function setGlobalData(nextGlobalData: MaybeComputedRef<Record<string, any> | undefined>): void;
   function setGlobalData(key: string, value: any): void;
   function setGlobalData(...args: any[]) {
     if (typeof args[0] === 'string') {
