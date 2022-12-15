@@ -6,7 +6,7 @@ specifiers:
   '@commitlint/cli': ^17.3.0
   '@commitlint/config-conventional': ^17.3.0
   '@commitlint/prompt': ^17.3.0
-  '@dcloudio/types': ^3.2.3
+  '@dcloudio/types': 3.0.20
   '@dcloudio/uni-app': ^3.0.0-alpha-3061220221207002
   '@modyqyw/fabric': ^5.14.0
   '@tsconfig/node18': ^1.0.1
@@ -31,8 +31,8 @@ specifiers:
   vue: ^3.2.45
 
 dependencies:
-  '@dcloudio/types': 3.2.3
-  '@dcloudio/uni-app': 3.0.0-alpha-3061220221207002_sew4ipmkrm56op6cn5l674wsnm
+  '@dcloudio/types': 3.0.20
+  '@dcloudio/uni-app': 3.0.0-alpha-3061220221207002_2wyngp3b7cgzmzutcs2bhijhvy
   '@vueuse/core': 9.6.0_vue@3.2.45
   immer: 9.0.16
 
@@ -475,16 +475,16 @@ packages:
     dependencies:
       '@jridgewell/trace-mapping': 0.3.9
 
-  /@dcloudio/types/3.2.3:
-    resolution: {integrity: sha512-XnccbGXE0Lk9N3Vnaqs0Ugmra1dA+B9+7kN4ftgAF48xQMPrk7LdFdNuAHjHn/geh8VloPx8cUMGb/zqnQ0Ejg==}
+  /@dcloudio/types/3.0.20:
+    resolution: {integrity: sha512-rZ4okvj3LCN77rzZWtQg/uQLL4DPl72XjNdmRxTXgboGpBYuyjJ9V9do87RkHNM0bA0l0RIUoy3nh7P6Exb3hA==}
     dev: false
 
-  /@dcloudio/uni-app/3.0.0-alpha-3061220221207002_sew4ipmkrm56op6cn5l674wsnm:
+  /@dcloudio/uni-app/3.0.0-alpha-3061220221207002_2wyngp3b7cgzmzutcs2bhijhvy:
     resolution: {integrity: sha512-Ji3G710IquQeJuX+d8/AYcTWbupF4Z2MCVgBhrhF38Kxsvb/qbd8yvSnUqLjxoWRmvU8b0NNgliWYw6jhEKGeg==}
     peerDependencies:
       '@dcloudio/types': ^3.0.20
     dependencies:
-      '@dcloudio/types': 3.2.3
+      '@dcloudio/types': 3.0.20
       '@dcloudio/uni-cloud': 3.0.0-alpha-3061220221207002_ts-node@10.9.1+vue@3.2.45
       '@dcloudio/uni-components': 3.0.0-alpha-3061220221207002
       '@dcloudio/uni-i18n': 3.0.0-alpha-3061220221207002
