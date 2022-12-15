@@ -5,9 +5,7 @@ import { useInterceptor } from '../useInterceptor';
 export interface UniSetClipboardDataOptions extends UniApp.SetClipboardDataOptions {}
 export type SetUniClipboardDataOptions = MaybeComputedRef<UniSetClipboardDataOptions>;
 
-/**
- * Get and set clipboard data
- */
+/** Get and set clipboard data */
 export function useClipboardData(onError = (e: unknown) => console.error(e)) {
   const clipboardData = ref<string>();
   let data = '';

@@ -5,9 +5,7 @@ import { useInterceptor } from '../useInterceptor';
 export interface UniSetScreenBrightnessOptions extends UniApp.SetScreenBrightnessOptions {}
 export type SetScreenBrightnessOptions = MaybeComputedRef<UniSetScreenBrightnessOptions>;
 
-/**
- * Get and set screen brightness
- */
+/** Get and set screen brightness */
 export function useScreenBrightness(onError = (e: unknown) => console.error(e)) {
   const screenBrightness = ref<number>();
   let value = screenBrightness.value;

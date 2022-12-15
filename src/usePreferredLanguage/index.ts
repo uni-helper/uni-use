@@ -1,9 +1,7 @@
 import { tryOnScopeDispose } from '@vueuse/core';
 import { ref, readonly, defineComponent, reactive } from 'vue';
 
-/**
- * Reactive current Language
- */
+/** Reactive current Language */
 export function usePreferredLanguage() {
   const locale = ref(uni.getLocale());
 

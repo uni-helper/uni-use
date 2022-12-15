@@ -4,74 +4,49 @@ import { isString, until } from '@vueuse/core';
 export interface UseUploadFileReturn<T> {
   task: ShallowRef<UniApp.UploadTask | undefined>;
 
-  /**
-   * uni.uploadFile response
-   */
+  /** Response for uni.uploadFile */
   response: ShallowRef<UniApp.UploadFileSuccessCallbackResult | undefined>;
 
-  /**
-   * uni.uploadFile response data
-   */
+  /** Response data for uni.uploadFile */
   data: Ref<T | undefined>;
 
-  /**
-   * Indicates if the upload has finished
-   */
+  /** Indicates if the upload has finished */
   isFinished: Ref<boolean>;
 
-  /**
-   * Indicates if the upload is currently loading
-   */
+  /** Indicates if the upload is currently loading */
   isLoading: Ref<boolean>;
 
-  /**
-   * Indicates if the upload was aborted
-   */
+  /** Indicates if the upload was aborted */
   isAborted: Ref<boolean>;
 
-  /**
-   * Any errors that may have occurred
-   */
+  /** Any errors that may have occurred */
   error: ShallowRef<UniApp.GeneralCallbackResult | undefined>;
 
-  /**
-   * Aborts the current upload
-   */
+  /** Aborts the current upload */
   abort: (message?: string | undefined) => void;
 
-  /**
-   * abort alias
-   */
+  /** Alias for abort */
   cancel: (message?: string | undefined) => void;
 
-  /**
-   * isAborted alias
-   */
+  /** Alias for isAborted */
   isCanceled: Ref<boolean>;
 }
 export interface StrictUseUploadFileReturn<T> extends UseUploadFileReturn<T> {
-  /**
-   * Manually call the uni.uploadFile
-   */
+  /** Manually call the uni.uploadFile */
   execute: (
     url?: string | UniApp.UploadFileOption,
     config?: UniApp.UploadFileOption,
   ) => PromiseLike<StrictUseUploadFileReturn<T>>;
 }
 export interface EasyUseUploadFileReturn<T> extends UseUploadFileReturn<T> {
-  /**
-   * Manually call the uni.uploadFile
-   */
+  /** Manually call the uni.uploadFile */
   execute: (
     url: string,
     config?: UniApp.UploadFileOption,
   ) => PromiseLike<EasyUseUploadFileReturn<T>>;
 }
 export interface UseUploadFileOptions {
-  /**
-   * Will automatically run uni.uploadFile when `useUploadFile` is used
-   *
-   */
+  /** Will automatically run uni.uploadFile when `useUploadFile` is used */
   immediate?: boolean;
   /**
    * Use shallowRef.
@@ -91,9 +66,7 @@ export function useUploadFile<T = any>(
   config?: UniApp.UploadFileOption,
 ): EasyUseUploadFileReturn<T> & PromiseLike<EasyUseUploadFileReturn<T>>;
 
-/**
- * Wrapper for uni.uploadFile.
- */
+/** Wrapper for uni.uploadFile. */
 export function useUploadFile<T = any>(
   ...args: any[]
 ): OverallUseUploadFileReturn<T> & PromiseLike<OverallUseUploadFileReturn<T>> {

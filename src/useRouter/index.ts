@@ -22,9 +22,7 @@ export type NavigateToMiniProgramOptions = MaybeComputedRef<UniNavigateToMiniPro
 export interface UniNavigateBackMiniProgramOptions extends UniApp.NavigateBackMiniProgramOptions {}
 export type NavigateBackMiniProgramOptions = MaybeComputedRef<UniNavigateBackMiniProgramOptions>;
 
-/**
- * Get router info
- */
+/** Get router info */
 export function useRouter() {
   const pages = ref(getCurrentPages());
   const pagesLength = computed(() => pages.value.length);

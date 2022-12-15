@@ -8,9 +8,7 @@ export interface UniVibrateOptions {
 }
 export type VibrateOptions = MaybeComputedRef<UniVibrateOptions>;
 
-/**
- * Get vibrate methods
- */
+/** Get vibrate methods */
 export function useVibrate() {
   // @ts-expect-error
   const vibrate = (options?: VibrateOptions) => uni.vibrate(reactive({ ...resolveUnref(options) }));

@@ -1,9 +1,7 @@
 import { ref, readonly, defineComponent, reactive } from 'vue';
 import { tryOnScopeDispose } from '@vueuse/core';
 
-/**
- * Reactive dark theme preference.
- */
+/** Reactive dark theme preference. */
 export function usePreferredDark() {
   const prefersDark = ref(uni.getSystemInfoSync().osTheme === 'dark');
 
@@ -18,7 +16,6 @@ export function usePreferredDark() {
   uni.onThemeChange(callback);
 
   const stop = () => {
-    // @ts-expect-error
     uni.offThemeChange(callback);
   };
 

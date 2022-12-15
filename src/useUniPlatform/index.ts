@@ -1,8 +1,6 @@
 import { ref, defineComponent, reactive } from 'vue';
 
-/**
- * Get UNI_PLATFORM
- */
+/** Get UNI_PLATFORM */
 export function useUniPlatform() {
   const uniPlatform = ref<string>(
     // @ts-expect-error

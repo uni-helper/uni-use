@@ -13,9 +13,7 @@ export type RemoveStorageOptions = MaybeComputedRef<UniRemoveStorageOptions>;
 export interface UniGetStorageInfoOptions extends UniApp.GetStorageInfoOptions {}
 export type GetStorageInfoOptions = MaybeComputedRef<UniGetStorageInfoOptions>;
 
-/**
- * Get storage info
- */
+/** Get storage info */
 export function useStorage() {
   const getStorage = (options?: GetStorageOptions) =>
     uni.getStorage(reactive({ key: '', ...resolveUnref(options) }));

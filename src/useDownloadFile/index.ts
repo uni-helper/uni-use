@@ -4,74 +4,49 @@ import { isString, until } from '@vueuse/core';
 export interface UseDownloadFileReturn<T> {
   task: ShallowRef<UniApp.DownloadTask | undefined>;
 
-  /**
-   * uni.downloadFile response
-   */
+  /** Response for uni.downloadFile */
   response: ShallowRef<UniApp.DownloadSuccessData | undefined>;
 
-  /**
-   * uni.downloadFile response data
-   */
+  /** Response data for uni.downloadFile */
   data: Ref<T | undefined>;
 
-  /**
-   * Indicates if the download has finished
-   */
+  /** Indicates if the download has finished */
   isFinished: Ref<boolean>;
 
-  /**
-   * Indicates if the download is currently loading
-   */
+  /** Indicates if the download is currently loading */
   isLoading: Ref<boolean>;
 
-  /**
-   * Indicates if the download was aborted
-   */
+  /** Indicates if the download was aborted */
   isAborted: Ref<boolean>;
 
-  /**
-   * Any errors that may have occurred
-   */
+  /** Any errors that may have occurred */
   error: ShallowRef<UniApp.GeneralCallbackResult | undefined>;
 
-  /**
-   * Aborts the current download
-   */
+  /** Aborts the current download */
   abort: (message?: string | undefined) => void;
 
-  /**
-   * abort alias
-   */
+  /** Alias for abort */
   cancel: (message?: string | undefined) => void;
 
-  /**
-   * isAborted alias
-   */
+  /** Alias for isAborted */
   isCanceled: Ref<boolean>;
 }
 export interface StrictUseDownloadFileReturn<T> extends UseDownloadFileReturn<T> {
-  /**
-   * Manually call the uni.downloadFile
-   */
+  /** Manually call the uni.downloadFile */
   execute: (
     url?: string | UniApp.DownloadFileOption,
     config?: UniApp.DownloadFileOption,
   ) => PromiseLike<StrictUseDownloadFileReturn<T>>;
 }
 export interface EasyUseDownloadFileReturn<T> extends UseDownloadFileReturn<T> {
-  /**
-   * Manually call the uni.downloadFile
-   */
+  /** Manually call the uni.downloadFile */
   execute: (
     url: string,
     config?: UniApp.DownloadFileOption,
   ) => PromiseLike<EasyUseDownloadFileReturn<T>>;
 }
 export interface UseDownloadFileOptions {
-  /**
-   * Will automatically run uni.downloadFile when `useDownloadFile` is used
-   *
-   */
+  /** Will automatically run uni.downloadFile when `useDownloadFile` is used */
   immediate?: boolean;
   /**
    * Use shallowRef.
@@ -93,9 +68,7 @@ export function useDownloadFile<T = any>(
   config?: UniApp.DownloadFileOption,
 ): EasyUseDownloadFileReturn<T> & PromiseLike<EasyUseDownloadFileReturn<T>>;
 
-/**
- * Wrapper for uni.downloadFile.
- */
+/** Wrapper for uni.downloadFile. */
 export function useDownloadFile<T = any>(
   ...args: any[]
 ): OverallUseDownloadFileReturn<T> & PromiseLike<OverallUseDownloadFileReturn<T>> {

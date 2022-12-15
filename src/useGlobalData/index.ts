@@ -2,9 +2,7 @@ import { computed, reactive, defineComponent } from 'vue';
 import { MaybeComputedRef, resolveUnref } from '@vueuse/core';
 import { useApp } from '../useApp';
 
-/**
- * Get and set the globalData of the current application instance
- */
+/** Get and set the globalData of the current application instance */
 export function useGlobalData() {
   const app = useApp();
 

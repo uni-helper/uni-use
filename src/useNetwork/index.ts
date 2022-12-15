@@ -3,9 +3,7 @@ import { tryOnScopeDispose } from '@vueuse/core';
 
 export type NetworkType = 'ethernet' | 'none' | 'wifi' | 'unknown' | '2g' | '3g' | '4g' | '5g';
 
-/**
- * Get network info
- */
+/** Get network info */
 export function useNetwork(onError = (e: unknown) => console.error(e)) {
   const onlineTypes = ['2g', '3g', '4g', '5g', 'ethernet', 'unknown'];
 

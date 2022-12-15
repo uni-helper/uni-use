@@ -4,70 +4,46 @@ import { isString, until } from '@vueuse/core';
 export interface UseRequestReturn<T> {
   task: ShallowRef<UniApp.RequestTask | undefined>;
 
-  /**
-   * uni.request response
-   */
+  /** Response for uni.request */
   response: ShallowRef<UniApp.RequestSuccessCallbackResult | undefined>;
 
-  /**
-   * uni.request response data
-   */
+  /** Response data for Uni.request */
   data: Ref<T | undefined>;
 
-  /**
-   * Indicates if the request has finished
-   */
+  /** Indicates if the request has finished */
   isFinished: Ref<boolean>;
 
-  /**
-   * Indicates if the request is currently loading
-   */
+  /** Indicates if the request is currently loading */
   isLoading: Ref<boolean>;
 
-  /**
-   * Indicates if the request was aborted
-   */
+  /** Indicates if the request was aborted */
   isAborted: Ref<boolean>;
 
-  /**
-   * Any errors that may have occurred
-   */
+  /** Any errors that may have occurred */
   error: ShallowRef<UniApp.GeneralCallbackResult | undefined>;
 
-  /**
-   * Aborts the current request
-   */
+  /** Aborts the current request */
   abort: (message?: string | undefined) => void;
 
-  /**
-   * abort alias
-   */
+  /** Alias for abort */
   cancel: (message?: string | undefined) => void;
 
-  /**
-   * isAborted alias
-   */
+  /** Alias for isAborted */
   isCanceled: Ref<boolean>;
 }
 export interface StrictUseRequestReturn<T> extends UseRequestReturn<T> {
-  /**
-   * Manually call the uni.request
-   */
+  /** Manually call the uni.request */
   execute: (
     url?: string | UniApp.RequestOptions,
     config?: UniApp.RequestOptions,
   ) => PromiseLike<StrictUseRequestReturn<T>>;
 }
 export interface EasyUseRequestReturn<T> extends UseRequestReturn<T> {
-  /**
-   * Manually call the uni.request
-   */
+  /** Manually call the uni.request */
   execute: (url: string, config?: UniApp.RequestOptions) => PromiseLike<EasyUseRequestReturn<T>>;
 }
 export interface UseRequestOptions {
-  /**
-   * Will automatically run uni.request when `useRequest` is used
-   */
+  /** Will automatically run uni.request when `useRequest` is used */
   immediate?: boolean;
   /**
    * Use shallowRef.
@@ -87,9 +63,7 @@ export function useRequest<T = any>(
   config?: UniApp.RequestOptions,
 ): EasyUseRequestReturn<T> & PromiseLike<EasyUseRequestReturn<T>>;
 
-/**
- * Wrapper for uni.request.
- */
+/** Wrapper for uni.request. */
 export function useRequest<T = any>(
   ...args: any[]
 ): OverallUseRequestReturn<T> & PromiseLike<OverallUseRequestReturn<T>> {
