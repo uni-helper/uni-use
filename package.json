@@ -30,7 +30,8 @@
       "import": "./dist/index.js",
       "require": "./dist/index.cjs",
       "types": "./dist/index.d.ts"
-    }
+    },
+    "./*": "./dist/*"
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -50,8 +51,8 @@
   },
   "dependencies": {
     "@dcloudio/types": "^3.2.3",
-    "@dcloudio/uni-app": "^3.0.0-alpha-3061220221207002",
-    "@vueuse/core": "^9.6.0",
+    "@dcloudio/uni-app": "^3.0.0-alpha-3061420221219001",
+    "@vueuse/core": "^9.7.0",
     "immer": "^9.0.16"
   },
   "devDependencies": {
@@ -62,11 +63,11 @@
     "@commitlint/prompt": "^17.3.0",
     "@modyqyw/fabric": "^5.14.0",
     "@tsconfig/node18": "^1.0.1",
-    "@types/node": "^18.11.15",
-    "@typescript-eslint/eslint-plugin": "^5.46.1",
-    "@typescript-eslint/parser": "^5.46.1",
+    "@types/node": "^18.11.17",
+    "@typescript-eslint/eslint-plugin": "^5.47.0",
+    "@typescript-eslint/parser": "^5.47.0",
     "commitizen": "^4.2.6",
-    "eslint": "^8.29.0",
+    "eslint": "^8.30.0",
     "husky": "^8.0.2",
     "is-ci": "^3.0.1",
     "lint-staged": "^13.1.0",
