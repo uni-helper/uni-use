@@ -50,13 +50,13 @@
     "prepare": "is-ci || husky install"
   },
   "dependencies": {
-    "@dcloudio/types": "^3.2.3",
+    "@dcloudio/types": "^3.2.5",
     "@dcloudio/uni-app": "^3.0.0-alpha-3061420221219001",
-    "@vueuse/core": "^9.7.0",
+    "@vueuse/core": "^9.8.2",
     "immer": "^9.0.16"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.5",
+    "@babel/core": "^7.20.7",
     "@babel/eslint-parser": "^7.19.1",
     "@commitlint/cli": "^17.3.0",
     "@commitlint/config-conventional": "^17.3.0",
@@ -82,7 +82,13 @@
     "vue": "^3.2.45"
   },
   "peerDependencies": {
+    "typescript": "^4.5.0",
     "vue": "^3.2.0"
+  },
+  "peerDependenciesMeta": {
+    "typescript": {
+      "optional": true
+    }
   },
   "engines": {
     "node": ">=14.18"
