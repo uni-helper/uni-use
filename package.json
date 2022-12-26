@@ -50,9 +50,9 @@
     "prepare": "is-ci || husky install"
   },
   "dependencies": {
-    "@dcloudio/types": "^3.2.5",
-    "@dcloudio/uni-app": "^3.0.0-alpha-3061420221219001",
-    "@vueuse/core": "^9.8.2",
+    "@dcloudio/types": "^3.2.6",
+    "@dcloudio/uni-app": "^3.0.0-alpha-3061520221220001",
+    "@vueuse/core": "^9.9.0",
     "immer": "^9.0.16"
   },
   "devDependencies": {
