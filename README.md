@@ -20,17 +20,7 @@ npm install @uni-helper/uni-use
 yarn install @uni-helper/uni-use
 ```
 
-使用 `pnpm`：
-
-```shell
-pnpm install @uni-helper/uni-use
-```
-
-使用 `cnpm`：
-
-```shell
-cnpm install @uni-helper/uni-use
-```
+`uni-app` 和 `pnpm` 结合使用存在问题，不建议使用 `pnpm` 安装依赖。
 
 目前只考虑小程序和移动应用环境。不考虑支持 `uni_modules`。
 
