@@ -50,7 +50,7 @@
     "prepare": "is-ci || husky install"
   },
   "dependencies": {
-    "@dcloudio/types": "^3.2.6",
+    "@dcloudio/types": "^3.2.7",
     "@dcloudio/uni-app": "^3.0.0-alpha-3061520221220001",
     "@vueuse/core": "^9.9.0",
     "immer": "^9.0.16"
@@ -63,9 +63,9 @@
     "@commitlint/prompt": "^17.3.0",
     "@modyqyw/fabric": "^5.14.0",
     "@tsconfig/node18": "^1.0.1",
-    "@types/node": "^18.11.17",
-    "@typescript-eslint/eslint-plugin": "^5.47.0",
-    "@typescript-eslint/parser": "^5.47.0",
+    "@types/node": "^18.11.18",
+    "@typescript-eslint/eslint-plugin": "^5.47.1",
+    "@typescript-eslint/parser": "^5.47.1",
     "commitizen": "^4.2.6",
     "eslint": "^8.30.0",
     "husky": "^8.0.2",
@@ -74,7 +74,7 @@
     "markdownlint-cli": "^0.32.2",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.8.1",
-    "release-it": "^15.5.1",
+    "release-it": "^15.6.0",
     "ts-node": "^10.9.1",
     "tsup": "^6.5.0",
     "tsx": "^3.12.1",
