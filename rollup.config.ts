@@ -2,7 +2,7 @@ import { defineConfig } from 'rollup';
 import { rollupIndexConfig, rollupIndexTypesConfig } from '@modyqyw/utils';
 
 export default defineConfig([
-  rollupIndexConfig(undefined, {
+  rollupIndexConfig({
     esbuild: {
       target: 'es2020',
       define: {
