@@ -27,23 +27,22 @@
   "type": "module",
   "exports": {
     ".": {
-      "import": "./dist/index.js",
+      "import": "./dist/index.mjs",
       "require": "./dist/index.cjs",
       "types": "./dist/index.d.ts"
-    },
-    "./package.json": "./package.json",
-    "./*": "./dist/*"
+    }
   },
   "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
+  "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsup",
+    "build": "rollup -c rollup.config.ts --configPlugin esbuild",
     "check:types": "tsc --noEmit",
-    "dev": "tsup --watch src",
+    "commit": "git-cz",
+    "dev": "pnpm run build --watch",
     "lint": "run-p lint:eslint lint:markdownlint check:types",
     "lint:eslint": "eslint . --fix --ext=.js,.cjs,.mjs,.jsx,.ts,.cts,.mts,.tsx,.vue --ignore-path=.gitignore --cache",
     "lint:markdownlint": "markdownlint . --fix --ignore-path=.gitignore",
@@ -52,9 +51,9 @@
   },
   "dependencies": {
     "@dcloudio/types": "^3.2.7",
-    "@dcloudio/uni-app": "^3.0.0-alpha-3061520221220001",
-    "@vueuse/core": "^9.9.0",
-    "immer": "^9.0.16"
+    "@dcloudio/uni-app": "^3.0.0-alpha-3061620221230002",
+    "@vueuse/core": "^9.10.0",
+    "immer": "^9.0.17"
   },
   "devDependencies": {
     "@babel/core": "^7.20.7",
@@ -63,13 +62,15 @@
     "@commitlint/config-conventional": "^17.3.0",
     "@commitlint/prompt": "^17.3.0",
     "@modyqyw/fabric": "^5.14.0",
+    "@modyqyw/utils": "^3.0.9",
+    "@rollup/plugin-replace": "^5.0.2",
     "@tsconfig/node18": "^1.0.1",
     "@types/node": "^18.11.18",
-    "@typescript-eslint/eslint-plugin": "^5.47.1",
-    "@typescript-eslint/parser": "^5.47.1",
+    "@typescript-eslint/eslint-plugin": "^5.48.0",
+    "@typescript-eslint/parser": "^5.48.0",
     "commitizen": "^4.2.6",
-    "eslint": "^8.30.0",
-    "husky": "^8.0.2",
+    "eslint": "^8.31.0",
+    "husky": "^8.0.3",
     "is-ci": "^3.0.1",
     "lint-staged": "^13.1.0",
     "markdownlint-cli": "^0.32.2",
