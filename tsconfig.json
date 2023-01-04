@@ -2,9 +2,9 @@
   "extends": "@tsconfig/node18/tsconfig.json",
   "compilerOptions": {
     "baseUrl": ".",
-    "lib": ["DOM", "ES2022"],
-    "module": "ES2022",
-    "target": "ES2022",
+    "lib": ["DOM", "ESNext"],
+    "module": "ESNext",
+    "target": "ESNext",
     "resolveJsonModule": true,
     "types": ["@dcloudio/types", "node"]
   },
