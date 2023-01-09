@@ -27,9 +27,9 @@
   "type": "module",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs",
-      "types": "./dist/index.d.ts"
+      "require": "./dist/index.cjs"
     }
   },
   "main": "./dist/index.cjs",
@@ -40,11 +40,12 @@
   ],
   "scripts": {
     "build": "rollup -c rollup.config.ts --configPlugin esbuild",
+    "check:deps": "ncu --dep dev,optional,prod,packageManager",
     "check:types": "tsc --noEmit",
     "commit": "git-cz",
     "dev": "pnpm run build --watch",
     "lint": "run-p lint:eslint lint:markdownlint check:types",
-    "lint:eslint": "eslint . --fix --ext=.js,.cjs,.mjs,.jsx,.ts,.cts,.mts,.tsx,.vue --ignore-path=.gitignore --cache",
+    "lint:eslint": "eslint ./src --ext=.js,.cjs,.mjs,.ts,.cts,.mts --fix --cache --no-error-on-unmatched-pattern --ignore-path=.gitignore",
     "lint:markdownlint": "markdownlint . --fix --ignore-path=.gitignore",
     "release": "release-it",
     "prepare": "is-ci || husky install"
@@ -56,13 +57,13 @@
     "immer": "^9.0.17"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.7",
+    "@babel/core": "^7.20.12",
     "@babel/eslint-parser": "^7.19.1",
     "@commitlint/cli": "^17.4.0",
     "@commitlint/config-conventional": "^17.4.0",
     "@commitlint/prompt": "^17.4.0",
-    "@modyqyw/fabric": "^5.14.0",
-    "@modyqyw/utils": "^3.0.10",
+    "@modyqyw/fabric": "^5.16.0",
+    "@modyqyw/utils": "^3.1.0",
     "@rollup/plugin-replace": "^5.0.2",
     "@tsconfig/node18": "^1.0.1",
     "@types/node": "^18.11.18",
@@ -73,9 +74,9 @@
     "husky": "^8.0.3",
     "is-ci": "^3.0.1",
     "lint-staged": "^13.1.0",
-    "markdownlint-cli": "^0.32.2",
+    "markdownlint-cli": "^0.33.0",
     "npm-run-all": "^4.1.5",
-    "prettier": "^2.8.1",
+    "prettier": "^2.8.2",
     "release-it": "^15.6.0",
     "ts-node": "^10.9.1",
     "tsup": "^6.5.0",
@@ -92,7 +93,7 @@
       "optional": true
     }
   },
-  "packageManager": "pnpm@7.21.0",
+  "packageManager": "pnpm@7.23.0",
   "engines": {
     "node": ">=14.18"
   },
