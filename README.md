@@ -269,7 +269,7 @@ import { UseClipboardData } from '@uni-helper/uni-use';
 
 <template>
   <UseClipboardData v-slot="{ clipboardData }">
-    <p>{{ clipboardData }}</p>
+    <text>{{ clipboardData }}</text>
   </UseClipboardData>
 </template>
 ```
@@ -378,7 +378,7 @@ import { UseGlobalData } from '@uni-helper/uni-use';
 
 <template>
   <UseGlobalData v-slot="{ globalData, setGlobalData }">
-    <p>{{ globalData }}</p>
+    <text>{{ globalData }}</text>
   </UseGlobalData>
 </template>
 ```
@@ -607,7 +607,7 @@ import { UseNetwork } from '@uni-helper/uni-use';
 
 <template>
   <UseNetwork v-slot="{ type }">
-    <p>type: {{ type }}</p>
+    <text>type: {{ type }}</text>
   </UseNetwork>
 </template>
 ```
@@ -633,7 +633,7 @@ import { UseOnline } from '@uni-helper/uni-use';
 
 <template>
   <UseOnline v-slot="{ isOnline }">
-    <p>isOnline: {{ isOnline }}</p>
+    <text>isOnline: {{ isOnline }}</text>
   </UseOnline>
 </template>
 ```
@@ -679,7 +679,7 @@ import { UsePreferredDark } from '@uni-helper/uni-use';
 
 <template>
   <UsePreferredDark v-slot="{ prefersDark }">
-    <p>{{ prefersDark }}</p>
+    <text>{{ prefersDark }}</text>
   </UsePreferredDark>
 </template>
 ```
@@ -705,7 +705,7 @@ import { UsePreferredLanguage } from '@uni-helper/uni-use';
 
 <template>
   <UsePreferredLanguage v-slot="{ language }">
-    <p>{{ language }}</p>
+    <text>{{ language }}</text>
   </UsePreferredLanguage>
 </template>
 ```
@@ -863,7 +863,7 @@ import { UseScreenBrightness } from '@uni-helper/uni-use';
 
 <template>
   <UseScreenBrightness v-slot="{ screenBrightness }">
-    <p>{{ screenBrightness }}</p>
+    <text>{{ screenBrightness }}</text>
   </UseScreenBrightness>
 </template>
 ```
@@ -1060,7 +1060,7 @@ import { UseUniPlatform } from '@uni-helper/uni-use';
 
 <template>
   <UseUniPlatform v-slot="{ uniPlatform }">
-    <p>uniPlatform: {{ uniPlatform }}</p>
+    <text>uniPlatform: {{ uniPlatform }}</text>
   </UseUniPlatform>
 </template>
 ```
