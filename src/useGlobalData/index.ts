@@ -1,4 +1,4 @@
-import { computed, reactive, defineComponent } from 'vue';
+import { computed, reactive } from 'vue';
 import { MaybeComputedRef, resolveUnref } from '@vueuse/core';
 import { useApp } from '../useApp';
 
@@ -29,16 +29,3 @@ export function useGlobalData() {
     setGlobalData,
   };
 }
-
-export const UseGlobalData = defineComponent({
-  name: 'UseGlobalData',
-  setup(props, { slots }) {
-    const data = reactive(useGlobalData());
-
-    return () => {
-      if (slots.default) {
-        return slots.default(data);
-      }
-    };
-  },
-});

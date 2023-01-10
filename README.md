@@ -159,20 +159,6 @@ import { useAppBaseInfo } from '@uni-helper/uni-use';
 const appBaseInfo = useAppBaseInfo();
 ```
 
-### UseAppBaseInfo
-
-`useAppBaseInfo` 的组件版本。
-
-```vue
-<script setup lang="ts">
-import { UseAppBaseInfo } from '@uni-helper/uni-use';
-</script>
-
-<template>
-  <UseAppBaseInfo v-slot="{ ... }"> ... </UseAppBaseInfo>
-</template>
-```
-
 ### useArrayBufferToBase64
 
 获取 ArrayBuffer 对应的 base64。可以直接传入 `ref`。
@@ -258,22 +244,6 @@ setClipboardData({
 });
 ```
 
-### UseClipboardData
-
-`useClipboardData` 的组件版本。
-
-```vue
-<script setup lang="ts">
-import { UseClipboardData } from '@uni-helper/uni-use';
-</script>
-
-<template>
-  <UseClipboardData v-slot="{ clipboardData }">
-    <text>{{ clipboardData }}</text>
-  </UseClipboardData>
-</template>
-```
-
 ### useDeviceInfo
 
 获取设备信息。
@@ -282,20 +252,6 @@ import { UseClipboardData } from '@uni-helper/uni-use';
 import { useDeviceInfo } from '@uni-helper/uni-use';
 
 const deviceInfo = useDeviceInfo();
-```
-
-### UseDeviceInfo
-
-`useDeviceInfo` 的组件版本。
-
-```vue
-<script setup lang="ts">
-import { UseDeviceInfo } from '@uni-helper/uni-use';
-</script>
-
-<template>
-  <UseDeviceInfo v-slot="{ ... }"> ... </UseDeviceInfo>
-</template>
 ```
 
 ### useDownloadFile
@@ -365,22 +321,6 @@ setGlobalData({ a: 'a', b: 'b' });
 
 ```typescript
 setGlobalData('a', 'a');
-```
-
-### UseGlobalData
-
-`useGlobalData` 的组件版本。
-
-```vue
-<script setup lang="ts">
-import { UseGlobalData } from '@uni-helper/uni-use';
-</script>
-
-<template>
-  <UseGlobalData v-slot="{ globalData, setGlobalData }">
-    <text>{{ globalData }}</text>
-  </UseGlobalData>
-</template>
 ```
 
 ### useImage
@@ -596,22 +536,6 @@ const { type, isWifi, is2g, is3g, is4g, is5g, isEthernet, isUnknown, isOnline, i
   useNetwork();
 ```
 
-### UseNetwork
-
-`useNetwork` 的组件版本。
-
-```vue
-<script setup lang="ts">
-import { UseNetwork } from '@uni-helper/uni-use';
-</script>
-
-<template>
-  <UseNetwork v-slot="{ type }">
-    <text>type: {{ type }}</text>
-  </UseNetwork>
-</template>
-```
-
 ### useOnline
 
 获取网络信息。
@@ -620,22 +544,6 @@ import { UseNetwork } from '@uni-helper/uni-use';
 import { useOnline } from '@uni-helper/uni-use';
 
 const isOnline = useOnline();
-```
-
-### UseOnline
-
-`useOnline` 的组件版本。
-
-```vue
-<script setup lang="ts">
-import { UseOnline } from '@uni-helper/uni-use';
-</script>
-
-<template>
-  <UseOnline v-slot="{ isOnline }">
-    <text>isOnline: {{ isOnline }}</text>
-  </UseOnline>
-</template>
 ```
 
 ### usePage
@@ -668,22 +576,6 @@ import { usePreferredDark } from '@uni-helper/uni-use';
 const prefersDark = usePreferredDark();
 ```
 
-### UsePreferredDark
-
-`usePreferredDark` 的组件版本。
-
-```vue
-<script setup lang="ts">
-import { UsePreferredDark } from '@uni-helper/uni-use';
-</script>
-
-<template>
-  <UsePreferredDark v-slot="{ prefersDark }">
-    <text>{{ prefersDark }}</text>
-  </UsePreferredDark>
-</template>
-```
-
 ### usePreferredLanguage
 
 响应式的语言偏好。
@@ -692,22 +584,6 @@ import { UsePreferredDark } from '@uni-helper/uni-use';
 import { usePreferredLanguage } from '@uni-helper/uni-use';
 
 const language = usePreferredLanguage();
-```
-
-### UsePreferredLanguage
-
-`usePreferredLanguage` 的组件版本。
-
-```vue
-<script setup lang="ts">
-import { UsePreferredLanguage } from '@uni-helper/uni-use';
-</script>
-
-<template>
-  <UsePreferredLanguage v-slot="{ language }">
-    <text>{{ language }}</text>
-  </UsePreferredLanguage>
-</template>
 ```
 
 ### usePrevPage
@@ -852,22 +728,6 @@ setBrightness({
 });
 ```
 
-### UseScreenBrightness
-
-`useScreenBrightness` 的组件版本。
-
-```vue
-<script setup lang="ts">
-import { UseScreenBrightness } from '@uni-helper/uni-use';
-</script>
-
-<template>
-  <UseScreenBrightness v-slot="{ screenBrightness }">
-    <text>{{ screenBrightness }}</text>
-  </UseScreenBrightness>
-</template>
-```
-
 ### useSelectorQuery
 
 获取 `SelectorQuery` 实例。
@@ -966,20 +826,6 @@ import { useSystemInfo } from '@uni-helper/uni-use';
 const systemInfo = useSystemInfo();
 ```
 
-### UseSystemInfo
-
-`useSystemInfo` 的组件版本。
-
-```vue
-<script setup lang="ts">
-import { UseSystemInfo } from '@uni-helper/uni-use';
-</script>
-
-<template>
-  <UseSystemInfo v-slot="{ ... }"> ... </UseSystemInfo>
-</template>
-```
-
 ### useSystemSetting
 
 获取系统设置。
@@ -1047,22 +893,6 @@ showToast({
 import { useUniPlatform } from '@uni-helper/uni-use';
 
 const uniPlatform = useUniPlatform();
-```
-
-### UseUniPlatform
-
-`useUniPlatform` 的组件版本。
-
-```vue
-<script setup lang="ts">
-import { UseUniPlatform } from '@uni-helper/uni-use';
-</script>
-
-<template>
-  <UseUniPlatform v-slot="{ uniPlatform }">
-    <text>uniPlatform: {{ uniPlatform }}</text>
-  </UseUniPlatform>
-</template>
 ```
 
 ### useUpdate
@@ -1157,20 +987,6 @@ const isVisible = useVisible();
 import { useWindowInfo } from '@uni-helper/uni-use';
 
 const windowInfo = useWindowInfo();
-```
-
-### UseWindowInfo
-
-`useWindowInfo` 的组件版本。
-
-```vue
-<script setup lang="ts">
-import { UseWindowInfo } from '@uni-helper/uni-use';
-</script>
-
-<template>
-  <UseWindowInfo v-slot="{ ... }"> ... </UseWindowInfo>
-</template>
 ```
 
 ## 其它

@@ -1,5 +1,5 @@
 import { MaybeComputedRef, resolveUnref } from '@vueuse/core';
-import { ref, reactive, defineComponent } from 'vue';
+import { ref, reactive } from 'vue';
 import { useInterceptor } from '../useInterceptor';
 
 export interface UniSetClipboardDataOptions extends UniApp.SetClipboardDataOptions {}
@@ -37,16 +37,3 @@ export function useClipboardData(onError = (e: unknown) => console.error(e)) {
     setClipboardData,
   };
 }
-
-export const UseClipboardData = defineComponent({
-  name: 'UseClipboardData',
-  setup(props, { slots }) {
-    const data = reactive(useClipboardData());
-
-    return () => {
-      if (slots.default) {
-        return slots.default(data);
-      }
-    };
-  },
-});

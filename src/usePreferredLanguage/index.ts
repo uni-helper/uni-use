@@ -1,5 +1,5 @@
 import { tryOnScopeDispose } from '@vueuse/core';
-import { ref, readonly, defineComponent, reactive } from 'vue';
+import { ref, readonly } from 'vue';
 
 /** Reactive current Language */
 export function usePreferredLanguage() {
@@ -24,18 +24,3 @@ export function usePreferredLanguage() {
 
   return readonly(locale);
 }
-
-export const UsePreferredLanguage = defineComponent({
-  name: 'UsePreferredLanguage',
-  setup(props, { slots }) {
-    const data = reactive({
-      language: usePreferredLanguage(),
-    });
-
-    return () => {
-      if (slots.default) {
-        return slots.default(data);
-      }
-    };
-  },
-});

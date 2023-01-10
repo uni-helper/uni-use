@@ -1,5 +1,5 @@
 import { MaybeComputedRef, resolveUnref } from '@vueuse/core';
-import { ref, reactive, defineComponent } from 'vue';
+import { ref, reactive } from 'vue';
 import { useInterceptor } from '../useInterceptor';
 
 export interface UniSetScreenBrightnessOptions extends UniApp.SetScreenBrightnessOptions {}
@@ -39,16 +39,3 @@ export function useScreenBrightness(onError = (e: unknown) => console.error(e)) 
     setBrightness: setScreenBrightness,
   };
 }
-
-export const UseScreenBrightness = defineComponent({
-  name: 'UseScreenBrightness',
-  setup(props, { slots }) {
-    const data = reactive(useScreenBrightness());
-
-    return () => {
-      if (slots.default) {
-        return slots.default(data);
-      }
-    };
-  },
-});
