@@ -1,4 +1,3 @@
 {
-  "extends": ["config:base", ":preserveSemverRanges"],
-  "schedule": ["every 3 months on the first day of the month"]
+  "extends": ["config:base", "schedule:monthly", ":preserveSemverRanges"]
 }
