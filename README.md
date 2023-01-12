@@ -4,7 +4,7 @@
 
 [![npm](https://img.shields.io/npm/v/@uni-helper/uni-use)](https://www.npmjs.com/package/@uni-helper/uni-use)
 
-`uni-app (vue3)` 组合式工具集。要求 `node >= 14.18`。
+`uni-app (vue3)` 组合式工具集。目前只考虑小程序和移动应用环境，要求 `node >= 14.18`。
 
 ## 安装
 
@@ -22,7 +22,7 @@ yarn add @uni-helper/uni-use
 
 `uni-app` 和 `pnpm` 结合使用存在问题，不建议使用 `pnpm` 安装依赖。
 
-目前只考虑小程序和移动应用环境。不考虑支持 `uni_modules`。
+不考虑支持 `uni_modules`。
 
 ## 使用
 
