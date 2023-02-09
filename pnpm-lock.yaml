@@ -9,7 +9,7 @@ importers:
       '@commitlint/prompt': ^17.4.2
       '@dcloudio/types': ^3.2.11
       '@dcloudio/uni-app': ^3.0.0-alpha-3061620221230002
-      '@modyqyw/fabric': ^6.0.6
+      '@modyqyw/fabric': ^6.0.7
       '@modyqyw/utils': ^4.1.0
       '@tsconfig/node18': ^1.0.1
       '@types/node': ^18.13.0
@@ -40,7 +40,7 @@ importers:
       '@commitlint/cli': 17.4.2
       '@commitlint/config-conventional': 17.4.2
       '@commitlint/prompt': 17.4.2
-      '@modyqyw/fabric': 6.0.6_3hycnhbjtrlnoqpjwvod5ovvum
+      '@modyqyw/fabric': 6.0.7_3hycnhbjtrlnoqpjwvod5ovvum
       '@modyqyw/utils': 4.1.0
       '@tsconfig/node18': 1.0.1
       '@types/node': 18.13.0
@@ -370,13 +370,6 @@ packages:
 
   /@babel/runtime/7.20.13:
     resolution: {integrity: sha512-gt3PKXs0DBoL9xCvOIIZ2NEqAGZqHjAnmVbfQtB620V0uReIQutpel14KcneZuer7UioY8ALKZ7iocavvzTNFA==}
-    engines: {node: '>=6.9.0'}
-    dependencies:
-      regenerator-runtime: 0.13.11
-    dev: true
-
-  /@babel/runtime/7.20.6:
-    resolution: {integrity: sha512-Q+8MqP7TiHMWzSfwiJwXCjyf4GYA4Dgw3emg/7xmwsdLJOZUp+nMqcOwOzzYheuM1rhDu8FSj2l0aoMygEuXuA==}
     engines: {node: '>=6.9.0'}
     dependencies:
       regenerator-runtime: 0.13.11
@@ -1971,8 +1964,8 @@ packages:
       '@jridgewell/resolve-uri': 3.1.0
       '@jridgewell/sourcemap-codec': 1.4.14
 
-  /@modyqyw/fabric/6.0.6_3hycnhbjtrlnoqpjwvod5ovvum:
-    resolution: {integrity: sha512-+Kup5rDZAvCU5iIjXpTrNp8mMvnTdxRL54gK/ifbMWLld+UZJpC1GLqYBklXsa7GnOEEb6NYe5DNLvN63/qvUQ==}
+  /@modyqyw/fabric/6.0.7_3hycnhbjtrlnoqpjwvod5ovvum:
+    resolution: {integrity: sha512-M9l94+lY1w+HBsDJ7qaXwN63ox0dXPIouE+kLVhUd31qTO83786vt+5DhnXoiaymTEUhiyn2x++Fe3l23E3JCQ==}
     engines: {node: '>=14.18'}
     peerDependencies:
       eslint: ^8.0.0
@@ -4538,11 +4531,11 @@ packages:
       enhanced-resolve: 5.12.0
       eslint: 8.33.0
       eslint-plugin-import: 2.27.5_kuqv7qxblf6fgldep4hddd7xwa
-      get-tsconfig: 4.2.0
+      get-tsconfig: 4.4.0
       globby: 13.1.3
       is-core-module: 2.11.0
       is-glob: 4.0.3
-      synckit: 0.8.4
+      synckit: 0.8.5
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -4729,7 +4722,7 @@ packages:
     peerDependencies:
       eslint: ^3 || ^4 || ^5 || ^6 || ^7 || ^8
     dependencies:
-      '@babel/runtime': 7.20.6
+      '@babel/runtime': 7.20.13
       ast-types-flow: 0.0.7
       eslint: 8.33.0
       jsx-ast-utils: 3.3.3
@@ -5409,10 +5402,6 @@ packages:
     dependencies:
       call-bind: 1.0.2
       get-intrinsic: 1.1.3
-    dev: true
-
-  /get-tsconfig/4.2.0:
-    resolution: {integrity: sha512-X8u8fREiYOE6S8hLbq99PeykTDoLVnxvF4DjWKJmz9xy2nNRdUcV8ZN9tniJFeKyTU3qnC9lL8n4Chd6LmVKHg==}
     dev: true
 
   /get-tsconfig/4.4.0:
@@ -8996,14 +8985,6 @@ packages:
 
   /svg-tags/1.0.0:
     resolution: {integrity: sha512-ovssysQTa+luh7A5Weu3Rta6FJlFBBbInjOh722LIt6klpU2/HtdUbszju/G4devcvk8PGt7FCLv5wftu3THUA==}
-    dev: true
-
-  /synckit/0.8.4:
-    resolution: {integrity: sha512-Dn2ZkzMdSX827QbowGbU/4yjWuvNaCoScLLoMo/yKbu+P4GBR6cRGKZH27k6a9bRzdqcyd1DE96pQtQ6uNkmyw==}
-    engines: {node: ^14.18.0 || >=16.0.0}
-    dependencies:
-      '@pkgr/utils': 2.3.1
-      tslib: 2.4.1
     dev: true
 
   /synckit/0.8.5:
