@@ -47,6 +47,7 @@
     "lint": "run-p lint:eslint lint:markdownlint check:types",
     "lint:eslint": "eslint ./src --ext=.js,.cjs,.mjs,.ts,.cts,.mts --fix --cache --no-error-on-unmatched-pattern --ignore-path=.gitignore",
     "lint:markdownlint": "markdownlint . --fix --ignore-path=.gitignore",
+    "prepublishOnly": "pnpm run build",
     "release": "release-it",
     "prepare": "is-ci || husky install"
   },
