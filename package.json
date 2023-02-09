@@ -39,11 +39,11 @@
     "dist"
   ],
   "scripts": {
-    "build": "rollup -c rollup.config.ts --configPlugin esbuild",
+    "build": "unbuild",
     "check:deps": "ncu --dep dev,optional,prod,packageManager",
     "check:types": "tsc --noEmit",
     "commit": "git-cz",
-    "dev": "pnpm run build --watch",
+    "dev": "unbuild --stub",
     "lint": "run-p lint:eslint lint:markdownlint check:types",
     "lint:eslint": "eslint ./src --ext=.js,.cjs,.mjs,.ts,.cts,.mts --fix --cache --no-error-on-unmatched-pattern --ignore-path=.gitignore",
     "lint:markdownlint": "markdownlint . --fix --ignore-path=.gitignore",
@@ -52,46 +52,35 @@
     "prepare": "is-ci || husky install"
   },
   "dependencies": {
-    "@dcloudio/types": "^3.2.7",
+    "@dcloudio/types": "^3.2.11",
     "@dcloudio/uni-app": "^3.0.0-alpha-3061620221230002",
-    "@vueuse/core": "^9.10.0",
-    "immer": "^9.0.17"
+    "@vueuse/core": "^9.12.0",
+    "immer": "^9.0.19"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.12",
-    "@babel/eslint-parser": "^7.19.1",
-    "@commitlint/cli": "^17.4.1",
-    "@commitlint/config-conventional": "^17.4.0",
-    "@commitlint/prompt": "^17.4.1",
-    "@modyqyw/fabric": "^5.16.0",
-    "@modyqyw/utils": "^3.2.0",
-    "@rollup/plugin-commonjs": "^24.0.0",
-    "@rollup/plugin-json": "^6.0.0",
-    "@rollup/plugin-node-resolve": "^15.0.1",
-    "@rollup/plugin-terser": "^0.3.0",
+    "@commitlint/cli": "^17.4.2",
+    "@commitlint/config-conventional": "^17.4.2",
+    "@commitlint/prompt": "^17.4.2",
+    "@modyqyw/fabric": "^6.0.6",
+    "@modyqyw/utils": "^4.1.0",
     "@tsconfig/node18": "^1.0.1",
-    "@types/node": "^18.11.18",
-    "@typescript-eslint/eslint-plugin": "^5.48.1",
-    "@typescript-eslint/parser": "^5.48.1",
-    "commitizen": "^4.2.6",
-    "eslint": "^8.31.0",
+    "@types/node": "^18.13.0",
+    "@typescript-eslint/eslint-plugin": "^5.51.0",
+    "@typescript-eslint/parser": "^5.51.0",
+    "commitizen": "^4.3.0",
+    "eslint": "^8.33.0",
     "husky": "^8.0.3",
     "is-ci": "^3.0.1",
-    "lint-staged": "^13.1.0",
+    "lint-staged": "^13.1.1",
     "markdownlint-cli": "^0.33.0",
     "npm-run-all": "^4.1.5",
-    "prettier": "^2.8.2",
+    "prettier": "^2.8.4",
     "release-it": "^15.6.0",
-    "rollup": "^3.9.1",
-    "rollup-plugin-bundle-size": "^1.0.3",
-    "rollup-plugin-delete": "^2.0.0",
-    "rollup-plugin-dts": "^5.1.1",
-    "rollup-plugin-esbuild": "^5.0.0",
     "ts-node": "^10.9.1",
-    "tsup": "^6.5.0",
-    "tsx": "^3.12.2",
-    "typescript": "^4.9.4",
-    "vue": "^3.2.45"
+    "tsx": "^3.12.3",
+    "typescript": "^4.9.5",
+    "unbuild": "^1.1.1",
+    "vue": "^3.2.47"
   },
   "peerDependencies": {
     "typescript": "^4.5.0",
@@ -102,7 +91,7 @@
       "optional": true
     }
   },
-  "packageManager": "pnpm@7.24.3",
+  "packageManager": "pnpm@7.27.0",
   "engines": {
     "node": ">=14.18"
   },
