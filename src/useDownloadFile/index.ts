@@ -45,6 +45,10 @@ export interface EasyUseDownloadFileReturn<T> extends UseDownloadFileReturn<T> {
     config?: UniApp.DownloadFileOption,
   ) => PromiseLike<EasyUseDownloadFileReturn<T>>;
 }
+export type OverallUseDownloadFileReturn<T> =
+  | StrictUseDownloadFileReturn<T>
+  | EasyUseDownloadFileReturn<T>;
+
 export interface UseDownloadFileOptions {
   /** 是否自动开始下载 */
   immediate?: boolean;
@@ -55,9 +59,6 @@ export interface UseDownloadFileOptions {
    */
   shallow?: boolean;
 }
-type OverallUseDownloadFileReturn<T> =
-  | StrictUseDownloadFileReturn<T>
-  | EasyUseDownloadFileReturn<T>;
 
 export function useDownloadFile<T = any>(
   url: string,

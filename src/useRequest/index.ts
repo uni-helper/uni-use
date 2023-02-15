@@ -42,6 +42,8 @@ export interface EasyUseRequestReturn<T> extends UseRequestReturn<T> {
   /** 手动开始下载 */
   execute: (url: string, config?: UniApp.RequestOptions) => PromiseLike<EasyUseRequestReturn<T>>;
 }
+export type OverallUseRequestReturn<T> = StrictUseRequestReturn<T> | EasyUseRequestReturn<T>;
+
 export interface UseRequestOptions {
   /** 是否自动开始请求 */
   immediate?: boolean;
@@ -52,7 +54,6 @@ export interface UseRequestOptions {
    */
   shallow?: boolean;
 }
-type OverallUseRequestReturn<T> = StrictUseRequestReturn<T> | EasyUseRequestReturn<T>;
 
 export function useRequest<T = any>(
   url: string,

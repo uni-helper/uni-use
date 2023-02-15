@@ -45,6 +45,10 @@ export interface EasyUseUploadFileReturn<T> extends UseUploadFileReturn<T> {
     config?: UniApp.UploadFileOption,
   ) => PromiseLike<EasyUseUploadFileReturn<T>>;
 }
+export type OverallUseUploadFileReturn<T> =
+  | StrictUseUploadFileReturn<T>
+  | EasyUseUploadFileReturn<T>;
+
 export interface UseUploadFileOptions {
   /** 是否自动开始上传 */
   immediate?: boolean;
@@ -55,7 +59,6 @@ export interface UseUploadFileOptions {
    */
   shallow?: boolean;
 }
-type OverallUseUploadFileReturn<T> = StrictUseUploadFileReturn<T> | EasyUseUploadFileReturn<T>;
 
 export function useUploadFile<T = any>(
   url: string,
