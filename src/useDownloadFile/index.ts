@@ -4,52 +4,52 @@ import { isString, until } from '@vueuse/core';
 export interface UseDownloadFileReturn<T> {
   task: ShallowRef<UniApp.DownloadTask | undefined>;
 
-  /** Response for uni.downloadFile */
+  /** uni.downloadFile 响应 */
   response: ShallowRef<UniApp.DownloadSuccessData | undefined>;
 
-  /** Response data for uni.downloadFile */
+  /** uni.downloadFile 响应内的数据 */
   data: Ref<T | undefined>;
 
-  /** Indicates if the download has finished */
+  /** 下载是否完成 */
   isFinished: Ref<boolean>;
 
-  /** Indicates if the download is currently loading */
+  /** 下载是否进行中 */
   isLoading: Ref<boolean>;
 
-  /** Indicates if the download was aborted */
+  /** 下载是否中止 */
   isAborted: Ref<boolean>;
 
-  /** Any errors that may have occurred */
+  /** 下载间发生的错误 */
   error: ShallowRef<UniApp.GeneralCallbackResult | undefined>;
 
-  /** Aborts the current download */
+  /** 中止当前下载 */
   abort: (message?: string | undefined) => void;
 
-  /** Alias for abort */
+  /** abort 别名 */
   cancel: (message?: string | undefined) => void;
 
-  /** Alias for isAborted */
+  /** isAborted 别名 */
   isCanceled: Ref<boolean>;
 }
 export interface StrictUseDownloadFileReturn<T> extends UseDownloadFileReturn<T> {
-  /** Manually call the uni.downloadFile */
+  /** 手动开始下载 */
   execute: (
     url?: string | UniApp.DownloadFileOption,
     config?: UniApp.DownloadFileOption,
   ) => PromiseLike<StrictUseDownloadFileReturn<T>>;
 }
 export interface EasyUseDownloadFileReturn<T> extends UseDownloadFileReturn<T> {
-  /** Manually call the uni.downloadFile */
+  /** 手动开始下载 */
   execute: (
     url: string,
     config?: UniApp.DownloadFileOption,
   ) => PromiseLike<EasyUseDownloadFileReturn<T>>;
 }
 export interface UseDownloadFileOptions {
-  /** Will automatically run uni.downloadFile when `useDownloadFile` is used */
+  /** 是否自动开始下载 */
   immediate?: boolean;
   /**
-   * Use shallowRef.
+   * 是否使用 shallowRef
    *
    * @default true
    */
@@ -68,7 +68,7 @@ export function useDownloadFile<T = any>(
   config?: UniApp.DownloadFileOption,
 ): EasyUseDownloadFileReturn<T> & PromiseLike<EasyUseDownloadFileReturn<T>>;
 
-/** Wrapper for uni.downloadFile. */
+/** uni.downloadFile 的封装 */
 export function useDownloadFile<T = any>(
   ...args: any[]
 ): OverallUseDownloadFileReturn<T> & PromiseLike<OverallUseDownloadFileReturn<T>> {
@@ -131,7 +131,7 @@ export function useDownloadFile<T = any>(
       success: (r) => {
         response.value = r;
         data.value =
-          // @ts-expect-error
+          // @ts-expect-error no types
           r?.data ??
           ({
             tempFilePath: r?.tempFilePath,

@@ -4,49 +4,49 @@ import { isString, until } from '@vueuse/core';
 export interface UseRequestReturn<T> {
   task: ShallowRef<UniApp.RequestTask | undefined>;
 
-  /** Response for uni.request */
+  /** uni.request 响应 */
   response: ShallowRef<UniApp.RequestSuccessCallbackResult | undefined>;
 
-  /** Response data for Uni.request */
+  /** uni.request 响应内的数据 */
   data: Ref<T | undefined>;
 
-  /** Indicates if the request has finished */
+  /** 请求是否完成 */
   isFinished: Ref<boolean>;
 
-  /** Indicates if the request is currently loading */
+  /** 请求是否进行中 */
   isLoading: Ref<boolean>;
 
-  /** Indicates if the request was aborted */
+  /** 请求是否中止 */
   isAborted: Ref<boolean>;
 
-  /** Any errors that may have occurred */
+  /** 请求间发生的错误 */
   error: ShallowRef<UniApp.GeneralCallbackResult | undefined>;
 
-  /** Aborts the current request */
+  /** 中止当前请求 */
   abort: (message?: string | undefined) => void;
 
-  /** Alias for abort */
+  /** abort 别名 */
   cancel: (message?: string | undefined) => void;
 
-  /** Alias for isAborted */
+  /** isAborted 别名 */
   isCanceled: Ref<boolean>;
 }
 export interface StrictUseRequestReturn<T> extends UseRequestReturn<T> {
-  /** Manually call the uni.request */
+  /** 手动开始请求 */
   execute: (
     url?: string | UniApp.RequestOptions,
     config?: UniApp.RequestOptions,
   ) => PromiseLike<StrictUseRequestReturn<T>>;
 }
 export interface EasyUseRequestReturn<T> extends UseRequestReturn<T> {
-  /** Manually call the uni.request */
+  /** 手动开始下载 */
   execute: (url: string, config?: UniApp.RequestOptions) => PromiseLike<EasyUseRequestReturn<T>>;
 }
 export interface UseRequestOptions {
-  /** Will automatically run uni.request when `useRequest` is used */
+  /** 是否自动开始请求 */
   immediate?: boolean;
   /**
-   * Use shallowRef.
+   * 是否使用 shallowRef
    *
    * @default true
    */
@@ -63,7 +63,7 @@ export function useRequest<T = any>(
   config?: UniApp.RequestOptions,
 ): EasyUseRequestReturn<T> & PromiseLike<EasyUseRequestReturn<T>>;
 
-/** Wrapper for uni.request. */
+/** uni.request 的封装 */
 export function useRequest<T = any>(
   ...args: any[]
 ): OverallUseRequestReturn<T> & PromiseLike<OverallUseRequestReturn<T>> {

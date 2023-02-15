@@ -4,52 +4,52 @@ import { isString, until } from '@vueuse/core';
 export interface UseUploadFileReturn<T> {
   task: ShallowRef<UniApp.UploadTask | undefined>;
 
-  /** Response for uni.uploadFile */
+  /** uni.uploadFile 响应 */
   response: ShallowRef<UniApp.UploadFileSuccessCallbackResult | undefined>;
 
-  /** Response data for uni.uploadFile */
+  /** uni.uploadFile 响应内的数据 */
   data: Ref<T | undefined>;
 
-  /** Indicates if the upload has finished */
+  /** 上传是否完成 */
   isFinished: Ref<boolean>;
 
-  /** Indicates if the upload is currently loading */
+  /** 上传是否进行中 */
   isLoading: Ref<boolean>;
 
-  /** Indicates if the upload was aborted */
+  /** 上传是否中止 */
   isAborted: Ref<boolean>;
 
-  /** Any errors that may have occurred */
+  /** 上传间发生的错误 */
   error: ShallowRef<UniApp.GeneralCallbackResult | undefined>;
 
-  /** Aborts the current upload */
+  /** 中止当前上传 */
   abort: (message?: string | undefined) => void;
 
-  /** Alias for abort */
+  /** abort 别名 */
   cancel: (message?: string | undefined) => void;
 
-  /** Alias for isAborted */
+  /** isAborted 别名 */
   isCanceled: Ref<boolean>;
 }
 export interface StrictUseUploadFileReturn<T> extends UseUploadFileReturn<T> {
-  /** Manually call the uni.uploadFile */
+  /** 手动开始下载 */
   execute: (
     url?: string | UniApp.UploadFileOption,
     config?: UniApp.UploadFileOption,
   ) => PromiseLike<StrictUseUploadFileReturn<T>>;
 }
 export interface EasyUseUploadFileReturn<T> extends UseUploadFileReturn<T> {
-  /** Manually call the uni.uploadFile */
+  /** 手动开始下载 */
   execute: (
     url: string,
     config?: UniApp.UploadFileOption,
   ) => PromiseLike<EasyUseUploadFileReturn<T>>;
 }
 export interface UseUploadFileOptions {
-  /** Will automatically run uni.uploadFile when `useUploadFile` is used */
+  /** 是否自动开始上传 */
   immediate?: boolean;
   /**
-   * Use shallowRef.
+   * 是否使用 shallowRef
    *
    * @default true
    */
@@ -66,7 +66,7 @@ export function useUploadFile<T = any>(
   config?: UniApp.UploadFileOption,
 ): EasyUseUploadFileReturn<T> & PromiseLike<EasyUseUploadFileReturn<T>>;
 
-/** Wrapper for uni.uploadFile. */
+/** uni.uploadFile 的封装 */
 export function useUploadFile<T = any>(
   ...args: any[]
 ): OverallUseUploadFileReturn<T> & PromiseLike<OverallUseUploadFileReturn<T>> {

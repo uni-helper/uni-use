@@ -1,6 +1,6 @@
 import { useRouter } from '../useRouter';
 
-/** Get current shown page info */
+/** 获取当前页信息 */
 export function usePage() {
   const { page } = useRouter();
   return page;

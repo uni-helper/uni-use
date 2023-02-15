@@ -1,6 +1,6 @@
 import { useRouter } from '../useRouter';
 
-/** Get current pages stack info */
+/** 获取当前页面栈信息 */
 export function usePages() {
   const { pages } = useRouter();
   return pages;
