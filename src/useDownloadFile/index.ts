@@ -96,8 +96,8 @@ export function useDownloadFile<T = any>(
   const abort = (message?: string) => {
     if (isFinished.value || !isLoading.value) return;
 
-    // @ts-expect-error
-    task?.abort(message);
+    // @ts-expect-error no types
+    task.value?.abort(message);
     isAborted.value = true;
     isLoading.value = false;
     isFinished.value = false;
