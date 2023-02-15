@@ -3,11 +3,13 @@ import { tryOnScopeDispose } from '@vueuse/core';
 
 export type NetworkType = 'ethernet' | 'none' | 'wifi' | 'unknown' | '2g' | '3g' | '4g' | '5g';
 
-/** Get network info */
-export function useNetwork(onError = (e: unknown) => console.error(e)) {
-  const onlineTypes = ['2g', '3g', '4g', '5g', 'ethernet', 'unknown'];
-
-  const type = ref<NetworkType>('unknown');
+/**
+ * 获取网络信息
+ *
+ * https://uniapp.dcloud.net.cn/api/system/network.html
+ */
+export function useNetwork() {
+  const type = ref<NetworkType>('none');
   const isWifi = computed(() => type.value === 'wifi');
   const is2g = computed(() => type.value === '2g');
   const is3g = computed(() => type.value === '3g');
@@ -16,8 +18,8 @@ export function useNetwork(onError = (e: unknown) => console.error(e)) {
   const isEthernet = computed(() => type.value === 'ethernet');
   const isUnknown = computed(() => type.value === 'unknown');
 
-  const isOnline = computed(() => onlineTypes.includes(type.value));
-  const isOffline = computed(() => !isOnline.value);
+  const isOffline = computed(() => type.value === 'none');
+  const isOnline = computed(() => !isOffline.value);
 
   const updateNetwork = (
     result: UniApp.GetNetworkTypeSuccess | UniApp.OnNetworkStatusChangeSuccess,
@@ -26,24 +28,12 @@ export function useNetwork(onError = (e: unknown) => console.error(e)) {
   };
 
   uni.getNetworkType({
-    success: (result) => {
-      updateNetwork(result);
-    },
-    fail: (e) => {
-      onError?.(e);
-    },
+    success: (result) => updateNetwork(result),
   });
 
-  const callback = (result: UniApp.OnNetworkStatusChangeSuccess) => {
-    updateNetwork(result);
-  };
-
+  const callback = (result: UniApp.OnNetworkStatusChangeSuccess) => updateNetwork(result);
   uni.onNetworkStatusChange(callback);
-
-  const stop = () => {
-    uni.offNetworkStatusChange(callback);
-  };
-
+  const stop = () => uni.offNetworkStatusChange(callback);
   tryOnScopeDispose(stop);
 
   return {
