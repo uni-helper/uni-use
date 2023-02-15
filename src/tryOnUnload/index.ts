@@ -2,13 +2,15 @@ import { nextTick, getCurrentInstance } from 'vue';
 import { Fn } from '@vueuse/core';
 import { onUnload } from '@dcloudio/uni-app';
 
+export type OnUnloadFn = Fn;
+
 /**
- * Call onUnload() if it's inside a component lifecycle, if not, just call the function
+ * 如果在组件生命周期内，在 onUnload 中调用方法，否则直接调用方法
  *
- * @param fn
- * @param sync If set to false, it will run in the nextTick() of Vue
+ * @param fn 需要调用的方法
+ * @param sync 默认为 true，如果设置为 false，在 nextTick 中调用方法
  */
-export function tryOnUnload(fn: Fn, sync = true) {
+export function tryOnUnload(fn: OnUnloadFn, sync = true) {
   if (getCurrentInstance()) {
     onUnload(fn);
   } else if (sync) {
