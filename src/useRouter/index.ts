@@ -1,74 +1,34 @@
-import { MaybeComputedRef, resolveUnref } from '@vueuse/core';
-import { reactive, ref, computed } from 'vue';
+import { ref, computed } from 'vue';
 
-export interface UniReLaunchOptions extends UniApp.ReLaunchOptions {}
-export type ReLaunchOptions = MaybeComputedRef<UniReLaunchOptions>;
-
-export interface UniSwitchTabOptions extends UniApp.SwitchTabOptions {}
-export type SwitchTabOptions = MaybeComputedRef<UniSwitchTabOptions>;
-
-export interface UniRedirectToOptions extends UniApp.RedirectToOptions {}
-export type RedirectToOptions = MaybeComputedRef<UniRedirectToOptions>;
-
-export interface UniNavigateToOptions extends UniApp.NavigateToOptions {}
-export type NavigateToOptions = MaybeComputedRef<UniNavigateToOptions>;
-
-export interface UniNavigateBackOptions extends UniApp.NavigateBackOptions {}
-export type NavigateBackOptions = MaybeComputedRef<UniNavigateBackOptions>;
-
-export interface UniNavigateToMiniProgramOptions extends UniApp.NavigateToMiniProgramOptions {}
-export type NavigateToMiniProgramOptions = MaybeComputedRef<UniNavigateToMiniProgramOptions>;
-
-export interface UniNavigateBackMiniProgramOptions extends UniApp.NavigateBackMiniProgramOptions {}
-export type NavigateBackMiniProgramOptions = MaybeComputedRef<UniNavigateBackMiniProgramOptions>;
-
-/** Get router info */
+/** 获取路由信息 */
 export function useRouter() {
+  /** 获取当前页面栈信息 */
   const pages = ref(getCurrentPages());
   const pagesLength = computed(() => pages.value.length);
 
+  /** 获取当前页信息 */
   // at is not supported
   const page = computed(() => pages.value[pagesLength.value - 1]);
+  /** 获取前一页信息 */
   const prevPage = computed(() =>
     pagesLength.value > 1 ? pages.value[pagesLength.value - 2] : undefined,
   );
 
+  /** 获取当前页路由信息 */
   const route = computed(() => page.value?.route);
+  /** 获取前一页路由信息 */
   const prevRoute = computed(() => prevPage.value?.route);
 
-  const reLaunch = (options?: ReLaunchOptions) =>
-    uni.reLaunch(reactive({ url: '', ...resolveUnref(options) }));
-
-  const switchTab = (options?: SwitchTabOptions) =>
-    uni.switchTab(reactive({ url: '', ...resolveUnref(options) }));
-
-  const redirectTo = (options?: RedirectToOptions) =>
-    uni.redirectTo(reactive({ url: '', ...resolveUnref(options) }));
-
-  const navigateTo = (options?: NavigateToOptions) =>
-    uni.navigateTo(reactive({ url: '', ...resolveUnref(options) }));
-
-  const navigateBack = (options?: NavigateBackOptions) =>
-    uni.navigateBack(reactive({ ...resolveUnref(options) }));
-
-  const navigateToMiniProgram = (options?: NavigateToMiniProgramOptions) =>
-    uni.navigateToMiniProgram(reactive({ appId: '', ...resolveUnref(options) }));
-
-  const navigateBackMiniProgram = (options?: NavigateBackMiniProgramOptions) =>
-    uni.navigateBackMiniProgram(reactive({ ...resolveUnref(options) }));
-
   return {
+    /** 获取当前页面栈信息 */
     pages,
+    /** 获取当前页信息 */
     page,
+    /** 获取前一页信息 */
     prevPage,
+    /** 获取当前页路由信息 */
     route,
+    /** 获取前一页路由信息 */
     prevRoute,
-    reLaunch,
-    switchTab,
-    redirectTo,
-    navigateTo,
-    navigateBack,
-    navigateToMiniProgram,
-    navigateBackMiniProgram,
   };
 }
