@@ -11,6 +11,11 @@ export type UseProviderOptions = GetProviderOptions;
  * https://uniapp.dcloud.net.cn/api/plugins/provider?id=getprovider
  */
 export function useProvider(options?: UseProviderOptions) {
+  /**
+   * 获取服务供应商
+   *
+   * https://uniapp.dcloud.net.cn/api/plugins/provider?id=getprovider
+   */
   return function getProvider(newOptions?: GetProviderOptions) {
     return uni.getProvider(
       reactive({

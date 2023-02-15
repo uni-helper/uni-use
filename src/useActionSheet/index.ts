@@ -14,6 +14,11 @@ export type UseActionSheetOptions = ShowActionSheetOptions;
  * https://uniapp.dcloud.net.cn/api/ui/prompt.html#showactionsheet
  */
 export function useActionSheet(options?: UseActionSheetOptions) {
+  /**
+   * 从底部向上弹出操作菜单
+   *
+   * https://uniapp.dcloud.net.cn/api/ui/prompt.html#showactionsheet
+   */
   return function showActionSheet(newOptions?: ShowActionSheetOptions) {
     return uni.showActionSheet(
       reactive({
