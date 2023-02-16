@@ -4,7 +4,7 @@
 
 [![npm](https://img.shields.io/npm/v/@uni-helper/uni-use)](https://www.npmjs.com/package/@uni-helper/uni-use)
 
-`uni-app (vue3)` 组合式工具集。目前只考虑小程序和移动应用环境，要求 `node >= 14.18`。
+`uni-app (vue3)` 组合式工具集。要求 `node >= 14.18`。
 
 ## 安装
 
@@ -98,19 +98,9 @@ tryOnUnload(() => {
 });
 ```
 
-### useAccountInfo
-
-获取当前账号信息。
-
-```typescript
-import { useAccountInfo } from '@uni-helper/uni-use';
-
-const accountInfo = useAccountInfo();
-```
-
 ### useActionSheet
 
-设置菜单列表参数，调用返回方法显示菜单列表。
+返回一个方法，调用后从底部向上弹出操作菜单。
 
 ```typescript
 import { useActionSheet } from '@uni-helper/uni-use';
@@ -118,10 +108,10 @@ import { useActionSheet } from '@uni-helper/uni-use';
 const showActionSheet = useActionSheet({
   /* 传入配置 */
 });
-showActionSheet(); // 实际显示菜单列表
+showActionSheet(); // 从底部向上弹出操作菜单
 ```
 
-可以传入一个对象来更新已有配置，这样会使用 [扩展运算符](https://es6.ruanyifeng.com/#docs/object#%E5%AF%B9%E8%B1%A1%E7%9A%84%E6%89%A9%E5%B1%95%E8%BF%90%E7%AE%97%E7%AC%A6) 来确认最终配置。
+调用方法时，可以传入一个对象来更新已有配置，这样会使用 [扩展运算符](https://es6.ruanyifeng.com/#docs/object#%E5%AF%B9%E8%B1%A1%E7%9A%84%E6%89%A9%E5%B1%95%E8%BF%90%E7%AE%97%E7%AC%A6) 来确认最终配置。
 
 ```typescript
 showActionSheet({
@@ -129,129 +119,35 @@ showActionSheet({
 });
 ```
 
-### useAddress
-
-获取地址相关。
-
-```typescript
-import { useAddress } from '@uni-helper/uni-use';
-
-const { chooseAddress, choose } = useAddress();
-```
-
-### useApp
-
-获取当前应用实例。如果想要获取 `globalData`，可以直接使用 `useGlobalData`。
-
-```typescript
-import { useApp } from '@uni-helper/uni-use';
-
-const app = useApp();
-```
-
-### useAppBaseInfo
-
-获取应用基础信息。
-
-```typescript
-import { useAppBaseInfo } from '@uni-helper/uni-use';
-
-const appBaseInfo = useAppBaseInfo();
-```
-
-### useArrayBufferToBase64
-
-获取 ArrayBuffer 对应的 base64。可以直接传入 `ref`。
-
-```typescript
-import { useArrayBufferToBase64 } from '@uni-helper/uni-use';
-
-const base64 = useArrayBufferToBase64(arrayBuffer);
-```
-
-### useAudio
-
-获取音频相关。
-
-```typescript
-import { useAudio } from '@uni-helper/uni-use';
-
-const {
-  backgroundAudioManager,
-  backgroundManager,
-  useBackgroundAudioManager,
-  useBackgroundManager,
-  createInnerAudioContext,
-  createInnerContext,
-} = useAudio();
-```
-
-### useAuthorize
-
-获取授权相关。
-
-```typescript
-import { useAuthorize } from '@uni-helper/uni-use';
-
-const { authorize, openSetting, getSetting, openAppAuthorizeSetting, getAppAuthorizeSetting } =
-  useAuthorize();
-```
-
-### useBackground
-
-获取背景设置方法。
-
-```typescript
-import { useBackground } from '@uni-helper/uni-use';
-
-const { setBackgroundColor, setColor, setBackgroundTextStyle, setTextStyle } = useBackground();
-```
-
-### useBase64ToArrayBuffer
-
-获取 base64 对应的 ArrayBuffer。可以直接传入 `ref`。
-
-```typescript
-import { useBase64ToArrayBuffer } from '@uni-helper/uni-use';
-
-const arrayBuffer = useBase64ToArrayBuffer(base64);
-```
-
-### useCamera
-
-获取相机相关。
-
-```typescript
-import { useCamera } from '@uni-helper/uni-use';
-
-const { createCameraContext, createContext } = useCamera();
-```
-
 ### useClipboardData
 
-获取和设置剪切板数据。
+获取和设置剪切板数据。你需要将默认值作为第一个参数传入。
 
 ```typescript
 import { useClipboardData } from '@uni-helper/uni-use';
 
-const { clipboardData, setClipboardData } = useClipboardData();
+const clipboardData = useClipboardData('');
 
 // 查看剪切板数据
-console.log('clipboardData', clipboardData);
-// 设置剪切板数据，设置成功后 clipboardData 自动更新
-setClipboardData({
-  ...
-});
+console.log('clipboardData', clipboardData.value);
+// 设置剪切板数据
+clipboardData.value = 'abc';
 ```
 
-### useDeviceInfo
-
-获取设备信息。
+为了在操作数据后不显示消息提示框，你可以传递第二个参数。
 
 ```typescript
-import { useDeviceInfo } from '@uni-helper/uni-use';
+import { useClipboardData } from '@uni-helper/uni-use';
 
-const deviceInfo = useDeviceInfo();
+const clipboardData = useClipboardData('', { showToast: false });
+```
+
+默认使用 `console.error` 输出错误信息，你也可以自定义错误处理。
+
+```typescript
+import { useClipboardData } from '@uni-helper/uni-use';
+
+const clipboardData = useClipboardData('', { onError: (error) => { ... } });
 ```
 
 ### useDownloadFile
@@ -260,92 +156,23 @@ const deviceInfo = useDeviceInfo();
 
 **返回值中含有 task，可自行操作。**
 
-### useEnterOptions
-
-获取启动时的参数。
-
-```typescript
-import { useEnterOptions } from '@uni-helper/uni-use';
-
-const options = useEnterOptions();
-```
-
-### useFile
-
-获取文件相关。
-
-```typescript
-import { useFile } from '@uni-helper/uni-use';
-
-const {
-  chooseFile,
-  choose,
-  chooseMessageFile,
-  chooseMessage,
-  saveFile,
-  save,
-  getSavedFileList,
-  getSavedList,
-  getSavedFileInfo,
-  getSavedInfo,
-  removeSavedFile,
-  removeSaved,
-  getFileInfo,
-  getInfo,
-  openDocument,
-  open,
-  fileSystemManager,
-  manager,
-  useFileSystemManager,
-  useManager,
-} = useFile();
-```
-
 ### useGlobalData
 
-获取和设置当前应用实例的 `globalData`。
+获取和设置当前应用实例的 `globalData`。你需要将默认值作为第一个参数传入。
 
 ```typescript
 import { useGlobalData } from '@uni-helper/uni-use';
 
-const { globalData, setGlobalData } = useGlobalData();
+const globalData = useGlobalData({});
 ```
 
-可以传入一个对象来更新已有配置，这样会使用 [扩展运算符](https://es6.ruanyifeng.com/#docs/object#%E5%AF%B9%E8%B1%A1%E7%9A%84%E6%89%A9%E5%B1%95%E8%BF%90%E7%AE%97%E7%AC%A6) 来确认最终配置。
+如果你需要使用 `shallowRef`，需要在第二个参数中指明。如果你需要设置一个很大的数据，`shallowRef` 会很有用。
 
 ```typescript
-setGlobalData({ a: 'a', b: 'b' });
+useGlobalData({}, { shallow: true });
 ```
 
-你也可以直接设置某一个键值对。
-
-```typescript
-setGlobalData('a', 'a');
-```
-
-### useImage
-
-获取图片相关。
-
-```typescript
-import { useImage } from '@uni-helper/uni-use';
-
-const {
-  chooseImage,
-  choose,
-  chooseMedia,
-  previewImage,
-  preview,
-  closePreviewImage,
-  closePreview,
-  getImageInfo,
-  getInfo,
-  saveImageToPhotosAlbum,
-  saveToPhotosAlbum,
-  compressImage,
-  compress,
-} = useImage();
-```
+我们建议直接使用 [pinia](https://pinia.vuejs.org/zh/) 作为状态管理工具。
 
 ### useImmer
 
@@ -394,37 +221,17 @@ const stop = useInterceptor(event, {
 stop(event);
 ```
 
-### useInvoice
-
-获取发票相关。
-
-```typescript
-import { useInvoice } from '@uni-helper/uni-use';
-
-const { chooseInvoice, choose, chooseInvoiceTitle, chooseTitle } = useInvoice();
-```
-
-### useLaunchOptions
-
-获取启动时的参数。返回值与 `onLaunch` 的回调参数一致。
-
-```typescript
-import { useLaunchOptions } from '@uni-helper/uni-use';
-
-const options = useLaunchOptions();
-```
-
 ### useLoading
 
-设置加载提示框参数，调用返回方法显示或隐藏加载提示框。
+返回一个方法，调用后显示加载提示框。
 
 ```typescript
 import { useLoading } from '@uni-helper/uni-use';
 
-const { showLoading, hideLoading } = useLoading({
+const showLoading = useLoading({
   /* 传入配置 */
 });
-showLoading(); // 实际显示加载提示框
+const hideLoading = showLoading(); // 显示加载提示框
 hideLoading(); // 隐藏加载提示框
 ```
 
@@ -436,58 +243,9 @@ showLoading({
 });
 ```
 
-### useLocation
-
-获取位置相关。
-
-```typescript
-import { useLocation } from '@uni-helper/uni-use';
-
-const {
-  getLocation,
-  get,
-  chooseLocation,
-  choose,
-  openLocation,
-  open,
-  onLocationChange,
-  onChange,
-  onLocationChangeError,
-  onChangeError,
-  offLocationChange,
-  offChange,
-  startLocationUpdate,
-  startUpdate,
-  startLocationBackgroundUpdate,
-  startUpdateBackground,
-  stopLocationUpdate,
-  stopUpdate,
-} = useLocation();
-```
-
-### useMap
-
-获取地图相关。
-
-```typescript
-import { useMap } from '@uni-helper/uni-use';
-
-const { createMapContext, createContext } = useMap();
-```
-
-### useMenuButtonBoundingClientRect
-
-获取胶囊按钮布局。
-
-```typescript
-import { useMenuButtonBoundingClientRect } from '@uni-helper/uni-use';
-
-const { menuButtonBoundingClientRect, rect } = useMenuButtonBoundingClientRect();
-```
-
 ### useModal
 
-设置模态框参数，调用返回方法显示模态框。
+返回一个方法，调用后显示模态弹窗。
 
 ```typescript
 import { useModal } from '@uni-helper/uni-use';
@@ -495,7 +253,7 @@ import { useModal } from '@uni-helper/uni-use';
 const showModal = useModal({
   /* 传入配置 */
 });
-showModal(); // 实际显示模态框
+showModal(); // 显示模态弹窗
 ```
 
 可以传入一个对象来更新已有配置，这样会使用 [扩展运算符](https://es6.ruanyifeng.com/#docs/object#%E5%AF%B9%E8%B1%A1%E7%9A%84%E6%89%A9%E5%B1%95%E8%BF%90%E7%AE%97%E7%AC%A6) 来确认最终配置。
@@ -504,25 +262,6 @@ showModal(); // 实际显示模态框
 showModal({
   /* 新传入配置 */
 });
-```
-
-### useNavigationBar
-
-获取导航条相关。
-
-```typescript
-import { useNavigationBar } from '@uni-helper/uni-use';
-
-const {
-  setNavigationBarTitle,
-  setTitle,
-  setNavigationBarColor,
-  setColor,
-  showNavigationBarLoading,
-  showLoading,
-  hideNavigationBarLoading,
-  hideLoading,
-} = useNavigationBar();
 ```
 
 ### useNetwork
@@ -538,7 +277,7 @@ const { type, isWifi, is2g, is3g, is4g, is5g, isEthernet, isUnknown, isOnline, i
 
 ### useOnline
 
-获取网络信息。
+获取是否在线。基于 `useNetwork`。
 
 ```typescript
 import { useOnline } from '@uni-helper/uni-use';
@@ -548,7 +287,7 @@ const isOnline = useOnline();
 
 ### usePage
 
-获取当前展示页面信息。
+获取当前页信息。
 
 ```typescript
 import { usePage } from '@uni-helper/uni-use';
@@ -588,7 +327,7 @@ const language = usePreferredLanguage();
 
 ### usePrevPage
 
-获取当前展示页面的前一页面信息。
+获取前一页信息。
 
 ```typescript
 import { usePrevPage } from '@uni-helper/uni-use';
@@ -598,7 +337,7 @@ const prevPage = usePrevPage();
 
 ### usePrevRoute
 
-获取当前展示页面的前一页面路由路径信息。
+获取前一页面路由信息。
 
 ```typescript
 import { usePrevRoute } from '@uni-helper/uni-use';
@@ -613,10 +352,10 @@ const prevRoute = usePrevRoute();
 ```typescript
 import { useProvider } from '@uni-helper/uni-use';
 
-const getProvider = getProvider({
+const getProvider = useProvider({
   /* 传入配置 */
 });
-getProvider(); // 实际请求服务供应商
+getProvider(); // 获取服务供应商
 ```
 
 可以传入一个对象来更新已有配置，这样会使用 [扩展运算符](https://es6.ruanyifeng.com/#docs/object#%E5%AF%B9%E8%B1%A1%E7%9A%84%E6%89%A9%E5%B1%95%E8%BF%90%E7%AE%97%E7%AC%A6) 来确认最终配置。
@@ -627,26 +366,6 @@ getProvider({
 });
 ```
 
-### usePullDownRefresh
-
-获取下拉刷新方法。
-
-```typescript
-import { usePullDownRefresh } from '@uni-helper/uni-use';
-
-const { startPullDownRefresh, start, stopPullDownRefresh, stop } = usePullDownRefresh();
-```
-
-### useRecorder
-
-获取录音相关。
-
-```typescript
-import { useRecorder } from '@uni-helper/uni-use';
-
-const { recorderManager, manager, useRecorderManager, useManager } = useRecorder();
-```
-
 ### useRequest
 
 `uni.request` 的封装。使用方法参见 <https://vueuse.org/integrations/useAxios/>。
@@ -655,7 +374,7 @@ const { recorderManager, manager, useRecorderManager, useManager } = useRecorder
 
 ### useRoute
 
-获取当前展示页面的路由路径信息。
+获取当前页路由信息。
 
 ```typescript
 import { useRoute } from '@uni-helper/uni-use';
@@ -670,25 +389,12 @@ const route = useRoute();
 ```typescript
 import { useRouter } from '@uni-helper/uni-use';
 
-const {
-  pages,
-  page,
-  prevPage,
-  route,
-  prevRoute,
-  reLaunch,
-  switchTab,
-  redirectTo,
-  navigateTo,
-  navigateBack,
-  navigateToMiniprogram,
-  navigateBackMiniprogram,
-} = useRouter();
+const { pages, page, prevPage, route, prevRoute } = useRouter();
 ```
 
 ### useScanCode
 
-设置扫码参数，调用返回方法调起客户端扫码界面。
+返回一个方法，调用后调起客户端扫码界面。
 
 ```typescript
 import { useScanCode } from '@uni-helper/uni-use';
@@ -696,7 +402,7 @@ import { useScanCode } from '@uni-helper/uni-use';
 const scan = useScanCode({
   /* 传入配置 */
 });
-scan(); // 实际调起扫码
+scan(); // 调起扫码
 ```
 
 可以传入一个对象来更新已有配置，这样会使用 [扩展运算符](https://es6.ruanyifeng.com/#docs/object#%E5%AF%B9%E8%B1%A1%E7%9A%84%E6%89%A9%E5%B1%95%E8%BF%90%E7%AE%97%E7%AC%A6) 来确认最终配置。
@@ -709,172 +415,49 @@ scan({
 
 ### useScreenBrightness
 
-获取和设置屏幕亮度。
+获取和设置屏幕亮度。你需要将默认值作为第一个参数传入。
 
 ```typescript
 import { useScreenBrightness } from '@uni-helper/uni-use';
 
-const { screenBrightness, brightness, setScreenBrightness, setBrightness } = useScreenBrightness();
+const screenBrightness = useScreenBrightness(1);
 
 // 查看屏幕亮度
-console.log('screenBrightness', screenBrightness);
-console.log('brightness', brightness);
-// 设置屏幕亮度，设置成功后自动更新
-setScreenBrightness({
-  ...
-});
-setBrightness({
-  ...
-});
+console.log('screenBrightness', screenBrightness.value);
+// 设置屏幕亮度
+screenBrightness.value = 0;
 ```
 
-### useSelectorQuery
-
-获取 `SelectorQuery` 实例。
+默认使用 `console.error` 输出错误信息，你也可以自定义错误处理。
 
 ```typescript
-import { useSelectorQuery } from '@uni-helper/uni-use';
+import { useScreenBrightness } from '@uni-helper/uni-use';
 
-const query = useSelectorQuery();
+const screenBrightness = useScreenBrightness('', { onError: (error) => { ... } });
 ```
 
 ### useSocket
 
-`uni-app` 提供的 `socket` 操作的封装。
+`uni-app` 关于 `socket` 的封装。使用方法参见 <https://vueuse.org/core/useWebSocket/>。
 
-```typescript
-import { useSocket } from '@uni-helper/uni-use';
+**返回值中含有 task，可自行操作。**
 
-const { task, sendMessage, close, isConnecting, isConnected, isClosed, error } = useSocket({
-  onSocketOpen,
-  onSocketError,
-  onSocketMessage,
-  onSocketClose,
-});
-```
+### useStorageAsync
 
-- `task`: <https://uniapp.dcloud.net.cn/api/request/socket-task.html>
-- `sendMessage`: <https://uniapp.dcloud.net.cn/api/request/websocket.html#sendsocketmessage>
-- `close`: <https://uniapp.dcloud.net.cn/api/request/websocket.html#closesocket>
-- `isConnecting`: `socket` 是否连接中
-- `isConnected`: `socket` 是否已经连接
-- `isClosed`: `socket` 是否已关闭
-- `error`: 使用 `socket` 期间的错误
-- `onSocketOpen`: <https://uniapp.dcloud.net.cn/api/request/websocket.html#onsocketopen>
-- `onSocketError`: <https://uniapp.dcloud.net.cn/api/request/websocket.html#onsocketerror>
-- `onSocketMessage`: <https://uniapp.dcloud.net.cn/api/request/websocket.html#onsocketmessage>
-- `onSocketClose`: <https://uniapp.dcloud.net.cn/api/request/websocket.html#onsocketclose>
-
-### useStorage
-
-获取存储方法。
-
-```typescript
-import { useStorage } from '@uni-helper/uni-use';
-
-const {
-  getStorage,
-  getStorageSync,
-  get,
-  getSync,
-  setStorage,
-  setStorageSync,
-  set,
-  setSync,
-  removeStorage,
-  removeStorageSync,
-  remove,
-  removeSync,
-  clearStorage,
-  clearStorageSync,
-  clear,
-  clearSync,
-  getStorageInfo,
-  getStorageInfoSync,
-  getInfo,
-  getInfoSync,
-} = useStorage();
-```
-
-### useSubscription
-
-获取订阅相关。
-
-```typescript
-import { useSubscription } from '@uni-helper/uni-use';
-
-const { requestSubscribeMessage } = useSubscription();
-```
-
-### useSupported
-
-获取 API 是否被支持。
-
-```typescript
-import { useSupported } from '@uni-helper/uni-use';
-
-const isSupported = useSupported();
-```
-
-### useSystemInfo
-
-获取系统信息。
-
-```typescript
-import { useSystemInfo } from '@uni-helper/uni-use';
-
-const systemInfo = useSystemInfo();
-```
-
-### useSystemSetting
-
-获取系统设置。
-
-```typescript
-import { useSystemSetting } from '@uni-helper/uni-use';
-
-const systemSetting = useSystemSetting();
-```
-
-### useTabBar
-
-获取标签栏操作。
-
-```typescript
-import { useTabBar } from '@uni-helper/uni-use';
-
-const {
-  setTabBarItem,
-  setItem,
-  setTabBarStyle,
-  setStyle,
-  showTabBar,
-  show,
-  hideTabBar,
-  hide,
-  setTabBarBadge,
-  setBadge,
-  removeTabBarBadge,
-  removeBadge,
-  showTabBarRedDot,
-  showRedDot,
-  hideTabBarRedDot,
-  hideRedDot,
-} = useTabBar();
-```
+`uni-app` 关于 `storage` 的封装，使用方法参见 <https://vueuse.org/core/useStorageAsync/>。
 
 ### useToast
 
-设置提示框参数，调用返回方法显示或隐藏提示框。
+返回一个方法，调用后显示消息提示框。
 
 ```typescript
 import { useToast } from '@uni-helper/uni-use';
 
-const { showToast, hideToast } = useToast({
+const showToast = useToast({
   /* 传入配置 */
 });
-showToast(); // 实际显示提示框
-hideToast(); // 隐藏提示框
+const hideToast = showToast(); // 显示消息提示框
+hideToast(); // 隐藏消息提示框
 ```
 
 可以传入一个对象来更新已有配置，这样会使用 [扩展运算符](https://es6.ruanyifeng.com/#docs/object#%E5%AF%B9%E8%B1%A1%E7%9A%84%E6%89%A9%E5%B1%95%E8%BF%90%E7%AE%97%E7%AC%A6) 来确认最终配置。
@@ -885,89 +468,11 @@ showToast({
 });
 ```
 
-### useUniPlatform
-
-获取运行应用时设置的 `UNI_PLATFORM` 值，默认为 `h5`。
-
-```typescript
-import { useUniPlatform } from '@uni-helper/uni-use';
-
-const uniPlatform = useUniPlatform();
-```
-
-### useUpdate
-
-获取更新相关。
-
-```typescript
-import { useUpdate } from '@uni-helper/uni-use';
-
-const { updateManager, manager, useUpdateManager, useManager } = useUpdate();
-```
-
 ### useUploadFile
 
 `uni.uploadFile` 的封装。使用方法参见 <https://vueuse.org/integrations/useAxios/>。
 
 **返回值中含有 task，可自行操作。**
-
-### useUser
-
-获取用户相关。
-
-```typescript
-import { useUser } from '@uni-helper/uni-use';
-
-const {
-  login,
-  checkSession,
-  getUserInfo,
-  getInfo,
-  getUserProfile,
-  getProfile,
-  preLogin,
-  closeAuthView,
-  getCheckBoxState,
-  univerifyManager,
-  manager,
-  useUniverifyManager,
-  useManager,
-} = useUser();
-```
-
-### useVibrate
-
-获取震动方法。
-
-```typescript
-import { useVibrate } from '@uni-helper/uni-use';
-
-const { vibrate, vibrateLong, vibrateShort } = useVibrate();
-```
-
-### useVideo
-
-获取视频相关。
-
-```typescript
-import { useVideo } from '@uni-helper/uni-use';
-
-const {
-  createVideoContext,
-  createContext,
-  chooseVideo,
-  choose,
-  chooseMedia,
-  saveVideoToPhotosAlbum,
-  saveToPhotosAlbum,
-  getVideoInfo,
-  getInfo,
-  compressVideo,
-  compress,
-  openVideoEditor,
-  openEditor,
-} = useVideo();
-```
 
 ### useVisible
 
@@ -979,16 +484,6 @@ import { useVisible } from '@uni-helper/uni-use';
 const isVisible = useVisible();
 ```
 
-### useWindowInfo
-
-获取窗口信息。
-
-```typescript
-import { useWindowInfo } from '@uni-helper/uni-use';
-
-const windowInfo = useWindowInfo();
-```
-
 ## 其它
 
 ### 限制
@@ -996,22 +491,59 @@ const windowInfo = useWindowInfo();
 在小程序和移动应用环境下有如下无法避开的限制：
 
 - 缺失某些全局变量（如 `window`、`navigator` 等）
-- 必须使用 `uni-app` 提供的 API 实现功能（如拦截器、存储等），API 不支持的也就无法支持（比如拦截同步 API）
+- 必须使用 `uni-app` 提供的 API 实现功能（如拦截器、存储等），API 不支持的也就无法支持，比如拦截同步 API、监听其它地方引起的剪切板变化等
 - 无法使用顶层 `await`
 
 在开发网页时，建议直接使用 `vue`，避免过多的环境判断代码，同时也能享受更好的生态，如 `vueuse` 的完整支持。
 
 ### 构建
 
-对于 `vue-cli`，请修改项目根目录 `vue.config.js` 如下所示。
+目前 `@uni-helper/uni-use` 会使用 `unbuild` 将 `uni` API 之外的部分转译到 `ES2017`（即 `ES8`）。`uni` API 需要在项目构建时由 `uni-app` 官方提供的插件处理。
+
+对于 `vite + vue3` 项目，请先设置 `build.target` 为 `ES6`。
 
 ```typescript
-module.exports = {
-  transpileDependencies: ['@uni-helper/uni-use'],
-};
+import { defineConfig } from 'vite';
+import uni from '@dcloudio/vite-plugin-uni';
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  build: {
+    target: 'es6',
+    cssTarget: 'chrome61', // https://cn.vitejs.dev/config/build-options.html#build-csstarget
+  },
+  optimizeDeps: {
+    exclude: ['vue-demi'],
+  },
+  plugins: [
+    ...,
+    uni(),
+    ...,
+  ],
+});
 ```
 
-对于 `vite`，你无需手动额外调整。
+然后在 `src/main.ts` 或 `src/main.js` 处自行添加 polyfill。以下是使用 [core-js](https://github.com/zloirock/core-js) 的示例（需要自行安装 `core-js`），你也可以使用 [es-shims](https://github.com/es-shims)。
+
+```typescript
+import 'core-js/actual/array/iterator';
+import 'core-js/actual/promise';
+import 'core-js/actual/object/assign';
+import 'core-js/actual/promise/finally';
+// 你可以根据需要自行添加额外的 polyfills
+// import 'core-js/actual/object/values'
+import { createSSRApp } from 'vue';
+import App from './App.vue';
+
+export function createApp() {
+  const app = createSSRApp(App);
+  return {
+    app,
+  };
+}
+```
+
+微信小程序的 JavaScript 支持度见 [wechat-miniprogram/miniprogram-compat](https://github.com/wechat-miniprogram/miniprogram-compat)。微信小程序要支持 `vue3`，需设置基础库最低版本为 2.11.2 或以上，2.11.2 对应 `chrome>=53,ios>=10`。
 
 ### EventBus
 
