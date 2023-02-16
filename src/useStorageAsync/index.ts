@@ -1,3 +1,6 @@
+import { ref, shallowRef } from 'vue';
+import type { Ref } from 'vue';
+import { resolveUnref, watchWithFilter } from '@vueuse/core';
 import type {
   Awaitable,
   ConfigurableEventFilter,
@@ -5,9 +8,6 @@ import type {
   MaybeComputedRef,
   RemovableRef,
 } from '@vueuse/core';
-import { resolveUnref, watchWithFilter } from '@vueuse/core';
-import type { Ref } from 'vue';
-import { ref, shallowRef } from 'vue';
 import { useInterceptor } from '../useInterceptor';
 
 export interface StorageLikeAsync {
@@ -114,7 +114,7 @@ export interface UseStorageAsyncOptions<T> extends ConfigurableEventFilter, Conf
    */
   deep?: boolean;
   /**
-   * 是否监听本地缓存变化
+   * 是否监听 setStorage、removeStorage 和 clearStorage 引起的本地缓存变化
    *
    * @default true
    */
