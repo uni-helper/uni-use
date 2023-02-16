@@ -127,15 +127,15 @@ export function useRequest<T = any>(
       success: (r) => {
         response.value = r;
         data.value = r.data as unknown as T;
-        _config?.success?.(r);
+        _config.success?.(r);
       },
       fail: (e) => {
         error.value = e;
-        _config?.fail?.(e);
+        _config.fail?.(e);
       },
       complete: (r) => {
         loading(false);
-        _config?.complete?.(r);
+        _config.complete?.(r);
       },
     });
     return { then };

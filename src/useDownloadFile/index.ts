@@ -137,15 +137,15 @@ export function useDownloadFile<T = any>(
           ({
             tempFilePath: r?.tempFilePath,
           } as unknown as T);
-        _config?.success?.(r);
+        _config.success?.(r);
       },
       fail: (e) => {
         error.value = e;
-        _config?.fail?.(e);
+        _config.fail?.(e);
       },
       complete: (r) => {
         loading(false);
-        _config?.complete?.(r);
+        _config.complete?.(r);
       },
     });
     return { then };
