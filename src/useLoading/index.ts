@@ -6,15 +6,15 @@ export type ShowLoadingOptions = MaybeComputedRef<UniShowLoadingOptions>;
 export type UseLoadingOptions = ShowLoadingOptions;
 
 /**
- * 返回一个方法，调用后显示 loading 提示框
+ * 返回一个方法，调用后显示加载提示框
  *
  * https://uniapp.dcloud.net.cn/api/ui/prompt.html#showloading
  */
 export function useLoading(options?: UseLoadingOptions) {
   /**
-   * 显示 loading 提示框
+   * 显示加载提示框
    *
-   * 返回一个方法，调用后隐藏 loading 提示框
+   * 返回一个方法，调用后隐藏加载提示框
    *
    * https://uniapp.dcloud.net.cn/api/ui/prompt.html#showloading
    *
@@ -28,7 +28,7 @@ export function useLoading(options?: UseLoadingOptions) {
       }),
     );
     /**
-     * 隐藏 loading 提示框
+     * 隐藏加载提示框
      *
      * https://uniapp.dcloud.net.cn/api/ui/prompt.html#hideloading
      */
