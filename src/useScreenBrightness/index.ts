@@ -2,7 +2,7 @@ import { ref } from 'vue';
 import type { Ref } from 'vue';
 import { watchWithFilter } from '@vueuse/core';
 import type { MaybeComputedRef, ConfigurableEventFilter, ConfigurableFlush } from '@vueuse/core';
-import { useInterceptor } from 'src/useInterceptor';
+import { useInterceptor } from '../useInterceptor';
 
 function getScreenBrightness() {
   return new Promise<number>((resolve, reject) => {

@@ -2,7 +2,7 @@ import { ref } from 'vue';
 import type { Ref } from 'vue';
 import { watchWithFilter } from '@vueuse/core';
 import type { ConfigurableEventFilter, ConfigurableFlush, MaybeComputedRef } from '@vueuse/core';
-import { useInterceptor } from 'src/useInterceptor';
+import { useInterceptor } from '../useInterceptor';
 
 function getClipboardData(showToast = true) {
   return new Promise<string>((resolve, reject) => {
