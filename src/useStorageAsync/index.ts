@@ -197,7 +197,7 @@ export function useStorageAsync<T extends string | number | boolean | object | n
   const {
     listenToStorageChanges = true,
     writeDefaults = true,
-    mergeDefaults,
+    mergeDefaults = false,
     shallow = false,
     onError = (error) => console.error(error),
     deep = true,
