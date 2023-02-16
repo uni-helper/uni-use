@@ -26,7 +26,7 @@ export interface SerializerAsync<T> {
   write(value: T): Awaitable<string>;
 }
 
-export const UniStorage: StorageLikeAsync = {
+const UniStorage: StorageLikeAsync = {
   getItem: (key) =>
     new Promise((resolve, reject) =>
       uni.getStorage({
@@ -54,9 +54,7 @@ export const UniStorage: StorageLikeAsync = {
     ),
 };
 
-export function guessSerializerType<T extends string | number | boolean | object | null>(
-  rawInit: T,
-) {
+function guessSerializerType<T extends string | number | boolean | object | null>(rawInit: T) {
   if (rawInit == null) return 'any';
   if (rawInit instanceof Set) return 'set';
   if (rawInit instanceof Map) return 'map';
@@ -68,7 +66,7 @@ export function guessSerializerType<T extends string | number | boolean | object
   return 'number';
 }
 
-export const StorageSerializers: Record<
+const StorageSerializers: Record<
   'boolean' | 'object' | 'number' | 'any' | 'string' | 'map' | 'set' | 'date',
   Serializer<any>
 > = {
@@ -122,7 +120,7 @@ export interface UseStorageAsyncOptions<T> extends ConfigurableEventFilter, Conf
   /**
    * 是否合并默认值和本地缓存值
    *
-   * 当设置为 true 时，它会浅合并对象
+   * 当设置为 true 时，浅合并对象
    *
    * 你也可以传一个方法来自定义合并
    *

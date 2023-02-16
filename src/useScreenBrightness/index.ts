@@ -4,7 +4,7 @@ import { watchWithFilter } from '@vueuse/core';
 import type { MaybeComputedRef, ConfigurableEventFilter, ConfigurableFlush } from '@vueuse/core';
 import { useInterceptor } from 'src/useInterceptor';
 
-export function getScreenBrightness() {
+function getScreenBrightness() {
   return new Promise<number>((resolve, reject) => {
     uni.getScreenBrightness({
       success: ({ value }) => resolve(value),
@@ -13,7 +13,7 @@ export function getScreenBrightness() {
   });
 }
 
-export function setScreenBrightness(value: number) {
+function setScreenBrightness(value: number) {
   return new Promise<void>((resolve, reject) => {
     uni.setScreenBrightness({
       value,

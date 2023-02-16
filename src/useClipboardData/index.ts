@@ -4,7 +4,7 @@ import { watchWithFilter } from '@vueuse/core';
 import type { ConfigurableEventFilter, ConfigurableFlush, MaybeComputedRef } from '@vueuse/core';
 import { useInterceptor } from 'src/useInterceptor';
 
-export function getClipboardData(showToast = true) {
+function getClipboardData(showToast = true) {
   return new Promise<string>((resolve, reject) => {
     uni.getClipboardData({
       // @ts-expect-error no types
@@ -19,7 +19,7 @@ export function getClipboardData(showToast = true) {
   });
 }
 
-export function setClipboardData(data: string, showToast = true) {
+function setClipboardData(data: string, showToast = true) {
   return new Promise<string>((resolve, reject) => {
     uni.setClipboardData({
       data,
