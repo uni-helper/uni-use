@@ -1,5 +1,5 @@
 import { reactive } from 'vue';
-import { MaybeComputedRef, resolveUnref } from '@vueuse/core';
+import { type MaybeComputedRef, resolveUnref } from '@vueuse/core';
 
 export interface UniShowModalOptions extends UniApp.ShowModalOptions {}
 export type ShowModalOptions = MaybeComputedRef<UniShowModalOptions>;

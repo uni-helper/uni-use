@@ -1,5 +1,5 @@
 import { nextTick, getCurrentInstance } from 'vue';
-import { Fn } from '@vueuse/core';
+import type { Fn } from '@vueuse/core';
 import { onInit } from '@dcloudio/uni-app';
 
 export type OnInitFn = Fn;

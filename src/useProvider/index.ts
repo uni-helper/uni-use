@@ -1,4 +1,4 @@
-import { MaybeComputedRef, resolveUnref } from '@vueuse/core';
+import { type MaybeComputedRef, resolveUnref } from '@vueuse/core';
 import { reactive } from 'vue';
 
 export interface UniGetProviderOptions extends UniApp.GetProviderOptions {}

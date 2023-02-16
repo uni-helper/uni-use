@@ -1,5 +1,5 @@
 import { reactive } from 'vue';
-import { MaybeComputedRef, resolveUnref } from '@vueuse/core';
+import { type MaybeComputedRef, resolveUnref } from '@vueuse/core';
 
 export interface UniScanCodeOptions extends UniApp.ScanCodeOptions {}
 export type ScanCodeOptions = MaybeComputedRef<UniScanCodeOptions>;

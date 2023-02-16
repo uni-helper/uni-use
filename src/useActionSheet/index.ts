@@ -1,5 +1,5 @@
 import { reactive } from 'vue';
-import { MaybeComputedRef, resolveUnref } from '@vueuse/core';
+import { type MaybeComputedRef, resolveUnref } from '@vueuse/core';
 
 export interface UniShowActionSheetOptions extends Omit<UniApp.ShowActionSheetOptions, 'itemList'> {
   /** 文字数组 */

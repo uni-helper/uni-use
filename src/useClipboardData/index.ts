@@ -1,5 +1,5 @@
 import { computed, ref } from 'vue';
-import { MaybeComputedRef, resolveUnref } from '@vueuse/core';
+import { type MaybeComputedRef, resolveUnref } from '@vueuse/core';
 
 export type UseClipboardDataOptions = MaybeComputedRef<{
   initialValue?: string;

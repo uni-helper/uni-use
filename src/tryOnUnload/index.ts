@@ -1,5 +1,5 @@
 import { nextTick, getCurrentInstance } from 'vue';
-import { Fn } from '@vueuse/core';
+import type { Fn } from '@vueuse/core';
 import { onUnload } from '@dcloudio/uni-app';
 
 export type OnUnloadFn = Fn;
