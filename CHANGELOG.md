@@ -1,5 +1,33 @@
 # 改动日志
 
+## 0.12.0 (2023-02-16)
+
+- build: 设置目标为 `es2017`
+- fix: 修复 `useDownloadFile` 没有正确中止的问题
+- fix: 修复 `useRequest` 没有正确中止的问题
+- fix: 修复 `useUploadFile` 没有正确中止的问题
+- fix: 修复 `useSocket` 内部实现
+- feat: 新增 `useStorageAsync`，和 `vue-use` 的 `useStorageAsync` 类似
+- feat!: 移除遗留的组件版本
+- feat!: 移除大量无状态逻辑方法，避免过度封装
+- feat!: 调整 `useClipboardData` 实现，现在会返回一个 `Ref`
+- feat!: 调整 `useGlobalData` 实现，现在会返回一个 `Ref`
+- feat!: 调整 `useLoading` 实现，现在会返回可调用的方法，和 `useActionSheet` 类似
+- feat!: 调整 `useNetwork` 初始默认值为 `none` 并移除传参
+- feat!: 调整 `useRouter` 实现，移除了所有方法
+- feat!: 调整 `useScreenBrightness` 实现，现在会返回一个 `Ref`
+- feat!: 调整 `useSocket` 实现，现在和 `vue-use` 的 `useWebSocket` 类似
+- feat!: 移除 `useStorage`
+- feat!: 调整 `useToast` 实现，现在会返回可调用的方法，和 `useActionSheet` 类似
+
+请先阅读 [组合式函数](https://cn.vuejs.org/guide/reusability/composables.html) 和 [组合式 API 常见问答](https://cn.vuejs.org/guide/extras/composition-api-faq.html)，以了解为什么这个版本移除了大量无状态逻辑方法。核心内容摘录如下。
+
+> 在 Vue 应用的概念中，“组合式函数”(Composables) 是一个利用 Vue 的组合式 API 来封装和复用有状态逻辑的函数。
+>
+> 当构建前端应用时，我们常常需要复用公共任务的逻辑。例如为了在不同地方格式化时间，我们可能会抽取一个可复用的日期格式化函数。这个函数封装了无状态的逻辑：它在接收一些输入后立刻返回所期望的输出。复用无状态逻辑的库有很多，比如你可能已经用过的 lodash 或是 date-fns。
+>
+> 相比之下，有状态逻辑负责管理会随时间而变化的状态。一个简单的例子是跟踪当前鼠标在页面中的位置。在实际应用中，也可能是像触摸手势或与数据库的连接状态这样的更复杂的逻辑。
+
 ## 0.11.0 (2023-01-10)
 
 - feat!: 因难以保证稳定性移除所有组件版本
