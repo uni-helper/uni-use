@@ -48,10 +48,10 @@ export function useScreenBrightness(
   options: UseScreenBrightnessOptions = {},
 ) {
   const {
-    flush = 'pre',
     listenToScreenBrightnessChanges = true,
-    eventFilter,
     onError = (error) => console.error(error),
+    flush = 'pre',
+    eventFilter,
   } = options;
 
   const data = ref(initialValue) as Ref<number>;
