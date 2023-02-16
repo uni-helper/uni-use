@@ -1,48 +1,86 @@
-import { computed, ref } from 'vue';
-import { type MaybeComputedRef, resolveUnref } from '@vueuse/core';
+import { ref } from 'vue';
+import type { Ref } from 'vue';
+import { watchWithFilter } from '@vueuse/core';
+import type { MaybeComputedRef, ConfigurableEventFilter, ConfigurableFlush } from '@vueuse/core';
+import { useInterceptor } from 'src/useInterceptor';
 
-export type UseScreenBrightnessOptions = MaybeComputedRef<{ initialValue?: number }>;
+export function getScreenBrightness() {
+  return new Promise<number>((resolve, reject) => {
+    uni.getScreenBrightness({
+      success: ({ value }) => resolve(value),
+      fail: (error) => reject(error),
+    });
+  });
+}
+
+export function setScreenBrightness(value: number) {
+  return new Promise<void>((resolve, reject) => {
+    uni.setScreenBrightness({
+      value,
+      success: () => resolve(),
+      fail: (error) => reject(error),
+    });
+  });
+}
+
+export interface UseScreenBrightnessOptions extends ConfigurableEventFilter, ConfigurableFlush {
+  /**
+   * 是否监听 setScreenBrightness 引起的屏幕亮度变化
+   *
+   * @default true
+   */
+  listenToScreenBrightnessChanges?: boolean;
+  /**
+   * 错误回调
+   *
+   * 默认用 `console.error` 打印错误
+   */
+  onError?: (error: unknown) => void;
+}
 
 /**
  * 屏幕亮度
  *
  * https://uniapp.dcloud.net.cn/api/system/brightness.html
  */
-export function useScreenBrightness(options: UseScreenBrightnessOptions = {}) {
-  const { initialValue } = resolveUnref(options);
+export function useScreenBrightness(
+  initialValue: MaybeComputedRef<number>,
+  options: UseScreenBrightnessOptions = {},
+) {
+  const {
+    flush = 'pre',
+    listenToScreenBrightnessChanges = true,
+    eventFilter,
+    onError = (error) => console.error(error),
+  } = options;
 
-  const tempScreenBrightness = ref(50);
-  function getScreenBrightness() {
-    uni.getScreenBrightness({
-      success: ({ value }) => {
-        tempScreenBrightness.value = value;
-      },
-    });
-  }
-  function setScreenBrightness(value: number) {
-    // 设置可以传入一个非法值，设置后重新获取可以确保值合法
-    uni.setScreenBrightness({
-      value,
-      success: () => getScreenBrightness(),
-    });
+  const data = ref(initialValue) as Ref<number>;
+
+  async function read() {
+    try {
+      data.value = await getScreenBrightness();
+    } catch (error) {
+      onError(error);
+    }
   }
 
-  const screenBrightness = computed({
-    get() {
-      return tempScreenBrightness.value;
+  read();
+
+  if (listenToScreenBrightnessChanges) {
+    useInterceptor('setScreenBrightness', { complete: () => setTimeout(() => read(), 0) });
+  }
+
+  watchWithFilter(
+    data,
+    async () => {
+      try {
+        await setScreenBrightness(data.value);
+      } catch (error) {
+        onError(error);
+      }
     },
-    set(value) {
-      setScreenBrightness(value);
-    },
-  });
+    { flush, eventFilter },
+  );
 
-  // 如果没有传入初始值，直接获取当前屏幕亮度
-  // 否则设置初始值并更新屏幕亮度
-  if (initialValue === undefined) {
-    getScreenBrightness();
-  } else {
-    setScreenBrightness(initialValue);
-  }
-
-  return screenBrightness;
+  return data;
 }
