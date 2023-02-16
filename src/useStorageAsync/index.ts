@@ -1,6 +1,6 @@
 import { ref, shallowRef } from 'vue';
 import type { Ref } from 'vue';
-import { resolveUnref, watchWithFilter } from '@vueuse/core';
+import { isFunction, resolveUnref, watchWithFilter } from '@vueuse/core';
 import type {
   Awaitable,
   ConfigurableEventFilter,
@@ -108,12 +108,6 @@ export const StorageSerializers: Record<
 
 export interface UseStorageAsyncOptions<T> extends ConfigurableEventFilter, ConfigurableFlush {
   /**
-   * 是否监听深层变化
-   *
-   * @default true
-   */
-  deep?: boolean;
-  /**
    * 是否监听 setStorage、removeStorage 和 clearStorage 引起的本地缓存变化
    *
    * @default true
@@ -138,17 +132,23 @@ export interface UseStorageAsyncOptions<T> extends ConfigurableEventFilter, Conf
   /** 自定义数据序列化 */
   serializer?: SerializerAsync<T>;
   /**
+   * 是否使用 shallowRef
+   *
+   * @default false
+   */
+  shallow?: boolean;
+  /**
    * 错误回调
    *
    * 默认用 `console.error` 打印错误
    */
   onError?: (error: unknown) => void;
   /**
-   * 是否使用 shallowRef
+   * 是否监听深层变化
    *
-   * @default false
+   * @default true
    */
-  shallow?: boolean;
+  deep?: boolean;
 }
 
 export function useStorageAsync(
@@ -195,13 +195,14 @@ export function useStorageAsync<T extends string | number | boolean | object | n
   options: UseStorageAsyncOptions<T> = {},
 ): RemovableRef<T> {
   const {
-    flush = 'pre',
-    deep = true,
     listenToStorageChanges = true,
     writeDefaults = true,
+    mergeDefaults,
     shallow = false,
-    eventFilter,
     onError = (error) => console.error(error),
+    deep = true,
+    flush = 'pre',
+    eventFilter,
   } = options;
 
   const rawInit: T = resolveUnref(initialValue);
@@ -215,12 +216,27 @@ export function useStorageAsync<T extends string | number | boolean | object | n
   async function read() {
     if (!storage) return;
     try {
+      // 读取本地缓存值
       const rawValue = await storage.getItem(key);
       if (rawValue == null) {
+        // 没有对应的值，直接使用默认值
         data.value = rawInit;
-        if (writeDefaults && rawInit !== null)
+        if (writeDefaults && rawInit !== null) {
+          // 需要时将默认值写入缓存
           await storage.setItem(key, await serializer.write(rawInit));
+        }
+      } else if (mergeDefaults) {
+        // 有对应的值，需要合并默认值和本地缓存值
+        const value = await serializer.read(rawValue);
+        // 如果是方法，调用
+        if (isFunction(mergeDefaults)) data.value = mergeDefaults(value, rawInit);
+        // 如果是对象，浅合并
+        else if (type === 'object' && !Array.isArray(value))
+          data.value = { ...(rawInit as any), ...value };
+        // 其它情况，直接替换
+        else data.value = value;
       } else {
+        // 有对应的值，不需要合并
         data.value = await serializer.read(rawValue);
       }
     } catch (error) {
