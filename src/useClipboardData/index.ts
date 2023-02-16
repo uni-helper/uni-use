@@ -1,51 +1,104 @@
-import { computed, ref } from 'vue';
-import { type MaybeComputedRef, resolveUnref } from '@vueuse/core';
+import { ref } from 'vue';
+import type { Ref } from 'vue';
+import { watchWithFilter } from '@vueuse/core';
+import type { ConfigurableEventFilter, ConfigurableFlush, MaybeComputedRef } from '@vueuse/core';
+import { useInterceptor } from 'src/useInterceptor';
 
-export type UseClipboardDataOptions = MaybeComputedRef<{
-  initialValue?: string;
+export function getClipboardData(showToast = true) {
+  return new Promise<string>((resolve, reject) => {
+    uni.getClipboardData({
+      // @ts-expect-error no types
+      showToast,
+      success: ({ data }) => resolve(data),
+      fail: (error) => reject(error),
+      complete: () => {
+        if (!showToast) uni.hideToast();
+      },
+    });
+    if (!showToast) uni.hideToast();
+  });
+}
+
+export function setClipboardData(data: string, showToast = true) {
+  return new Promise<string>((resolve, reject) => {
+    uni.setClipboardData({
+      data,
+      showToast,
+      success: ({ data }) => resolve(data),
+      fail: (error) => reject(error),
+      complete: () => {
+        if (!showToast) uni.hideToast();
+      },
+    });
+    if (!showToast) uni.hideToast();
+  });
+}
+
+export interface UseClipboardDataOptions extends ConfigurableEventFilter, ConfigurableFlush {
+  /**
+   * 操作剪切板数据后是否显示 toast
+   *
+   * @default true
+   */
   showToast?: boolean;
-}>;
+  /**
+   * 是否监听 setClipboardData 引起的剪切板变化
+   *
+   * @default true
+   */
+  listenToClipboardDataChanges?: boolean;
+  /**
+   * 错误回调
+   *
+   * 默认用 `console.error` 打印错误
+   */
+  onError?: (error: unknown) => void;
+}
 
 /**
  * 剪切板
  *
  * https://uniapp.dcloud.net.cn/api/system/clipboard.html
  */
-export function useClipboardData(options: UseClipboardDataOptions = {}) {
-  const { initialValue } = resolveUnref(options);
+export function useClipboardData(
+  initialValue: MaybeComputedRef<string>,
+  options: UseClipboardDataOptions = {},
+) {
+  const {
+    showToast = true,
+    listenToClipboardDataChanges = true,
+    onError = (error) => console.error(error),
+    flush = 'pre',
+    eventFilter,
+  } = options;
 
-  const tempClipboardData = ref('');
-  function getClipboardData() {
-    uni.getClipboardData({
-      success: ({ data }) => {
-        tempClipboardData.value = data;
-      },
-    });
-  }
-  function setClipboardData(value: string) {
-    uni.setClipboardData({
-      data: value,
-      // 保证与保存的内容一致
-      success: () => getClipboardData(),
-    });
+  const data = ref(initialValue) as Ref<string>;
+
+  async function read() {
+    try {
+      data.value = await getClipboardData(showToast);
+    } catch (error) {
+      onError(error);
+    }
   }
 
-  const clipboardData = computed({
-    get() {
-      return tempClipboardData.value;
+  read();
+
+  if (listenToClipboardDataChanges) {
+    useInterceptor('setClipboardData', { complete: () => setTimeout(() => read(), 0) });
+  }
+
+  watchWithFilter(
+    data,
+    async () => {
+      try {
+        await setClipboardData(data.value);
+      } catch (error) {
+        onError(error);
+      }
     },
-    set(value) {
-      setClipboardData(value);
-    },
-  });
+    { flush, eventFilter },
+  );
 
-  // 如果没有传入初始值，直接获取当前剪切板内容
-  // 否则设置初始值并更新剪切板内容
-  if (initialValue === undefined) {
-    getClipboardData();
-  } else {
-    setClipboardData(initialValue);
-  }
-
-  return clipboardData;
+  return data;
 }
