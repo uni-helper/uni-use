@@ -17,6 +17,7 @@ jobs:
           node-version: 18
           cache: pnpm
           registry-url: https://registry.npmjs.org
+      - run: corepack enable
       - run: pnpm install --no-frozen-lockfile
       - run: pnpm publish --access public --no-git-checks
         env:
