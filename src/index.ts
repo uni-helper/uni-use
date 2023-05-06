@@ -8,7 +8,6 @@ export * from './useActionSheet';
 export * from './useClipboardData';
 export * from './useDownloadFile';
 export * from './useGlobalData';
-export * from './useImmer';
 export * from './useInterceptor';
 export * from './useLoading';
 export * from './useModal';
