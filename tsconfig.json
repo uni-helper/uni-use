@@ -2,7 +2,7 @@
   "extends": "@tsconfig/node18",
   "compilerOptions": {
     "baseUrl": ".",
-    "lib": ["DOM", "ESNext"],
+    "lib": ["ESNext"],
     "module": "ESNext",
     "target": "ESNext",
     "resolveJsonModule": true,

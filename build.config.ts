@@ -6,7 +6,6 @@ export default defineBuildConfig({
   declaration: true,
   rollup: {
     emitCJS: true,
-    inlineDependencies: true,
     esbuild: {
       target: 'es2017',
     },
