@@ -14,12 +14,6 @@
 npm install @uni-helper/uni-use
 ```
 
-使用 `yarn v1`：
-
-```shell
-yarn add @uni-helper/uni-use
-```
-
 `uni-app` 和 `pnpm` 结合使用存在问题，不建议使用 `pnpm` 安装依赖。
 
 不考虑支持 `uni_modules`。
@@ -173,23 +167,6 @@ useGlobalData({}, { shallow: true });
 ```
 
 我们建议直接使用 [pinia](https://pinia.vuejs.org/zh/) 作为状态管理工具。
-
-### useImmer
-
-<https://cn.vuejs.org/guide/extras/reactivity-in-depth.html#immutable-data> 的实现。另外暴露了 `produce` 方法。
-
-```typescript
-import { useImmer } from '@uni-helper/uni-use';
-const { state, update, produce } = useImmer(baseState);
-```
-
-`update` 是 `produce` 的封装。
-
-```typescript
-const update = (updater: (draft: D) => D) => (state.value = produce(state.value, updater));
-```
-
-你也可以直接使用 `produce` 来操作数据，见 [immer 文档](https://immerjs.github.io/immer/)。
 
 ### useInterceptor
 
