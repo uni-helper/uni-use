@@ -153,7 +153,6 @@ function resolveNestedOptions<T>(options: T | true): T {
  *
  * https://uniapp.dcloud.net.cn/api/request/websocket.html
  */
-// eslint-disable-next-line sonarjs/cognitive-complexity
 export function useSocket<Data = any>(
   url: MaybeComputedRef<string | undefined>,
   options: UseSocketOptions = {},

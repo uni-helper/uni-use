@@ -7,7 +7,6 @@ import { useInterceptor } from '../useInterceptor';
 function getClipboardData(showToast = true) {
   return new Promise<string>((resolve, reject) => {
     uni.getClipboardData({
-      // @ts-expect-error no types
       showToast,
       success: ({ data }) => resolve(data),
       fail: (error) => reject(error),

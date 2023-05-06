@@ -185,7 +185,6 @@ export function useStorageAsync<T = unknown>(
  *
  * https://uniapp.dcloud.net.cn/api/storage/storage.html
  */
-// eslint-disable-next-line sonarjs/cognitive-complexity
 export function useStorageAsync<T extends string | number | boolean | object | null>(
   key: string,
   initialValue: MaybeComputedRef<T>,
