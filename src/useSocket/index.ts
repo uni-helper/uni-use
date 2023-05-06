@@ -232,6 +232,9 @@ export function useSocket<Data = any>(
       header: headers,
       method,
       protocols,
+      complete: () => {
+        // just for correct types
+      },
     });
     taskRef.value = task;
     status.value = 'CONNECTING';
