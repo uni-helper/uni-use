@@ -6,15 +6,21 @@
 
 `uni-app (vue3)` 组合式工具集。要求 `node >= 14.18`。
 
-## 安装
-
-使用 `npm`：
+## 安装依赖
 
 ```shell
-npm install @uni-helper/uni-use
+npm install @uni-helper/uni-use @vueuse/core@9
 ```
 
-`uni-app` 和 `pnpm` 结合使用存在问题，不建议使用 `pnpm` 安装依赖。
+<details>
+  <summary>yarn v2/v3</summary>
+  <p>请参考 <a href="https://yarnpkg.com/configuration/yarnrc/#nodeLinker">文档</a> 设置 <code>nodeLinker</code> 为 <code>node_modules</code>。</p>
+</details>
+
+<details>
+  <summary>pnpm</summary>
+  <p>请参考 <a href="https://pnpm.io/npmrc#shamefully-hoist">文档</a> 设置 <code>shamefully-hoist</code> 为 <code>true</code>。</p>
+</details>
 
 不考虑支持 `uni_modules`。
 
