@@ -18,7 +18,7 @@ jobs:
           cache: pnpm
           registry-url: https://registry.npmjs.org
       - run: corepack enable
-      - run: pnpm install --no-frozen-lockfile
+      - run: pnpm install
       - run: pnpm publish --access public --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
