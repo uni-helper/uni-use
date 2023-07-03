@@ -15,6 +15,9 @@ export function useSelectorQuery() {
     }
 
     const instance = getCurrentInstance();
+    if (instance == null) {
+      return;
+    }
     query.value = uni.createSelectorQuery().in(instance);
   }
 
