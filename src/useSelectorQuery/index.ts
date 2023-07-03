@@ -9,22 +9,22 @@ export function useSelectorQuery() {
   // onMounted will not work if this HOOK run after compontent mounted.
   onMounted(initQuery);
 
-  async function initQuery() {
+  function initQuery() {
     if (query.value) {
       return;
     }
 
     const instance = getCurrentInstance();
-    query.value = await Promise.resolve(uni.createSelectorQuery().in(instance));
+    query.value = uni.createSelectorQuery().in(instance);
   }
 
-  async function getQuery(): Promise<UniApp.SelectorQuery> {
-    await initQuery();
+  function getQuery(): Promise<UniApp.SelectorQuery> {
+    initQuery();
     return query.value;
   }
 
-  async function select(selector: string | UniApp.NodesRef, all = false) {
-    await initQuery();
+  function select(selector: string | UniApp.NodesRef, all = false) {
+    initQuery();
     return typeof selector === 'string'
       ? all
         ? query.value.selectAll(selector)
@@ -32,52 +32,37 @@ export function useSelectorQuery() {
       : selector;
   }
 
-  async function getBoundingClientRect(selector: string | UniApp.NodesRef, all = false) {
-    const node = await select(selector, all);
-
-    const res = await new Promise<UniApp.NodeInfo | UniApp.NodeInfo[]>((resolve) =>
-      node.boundingClientRect((res) => resolve(res)).exec(),
+  function getBoundingClientRect(selector: string | UniApp.NodesRef, all = false) {
+    return new Promise<UniApp.NodeInfo | UniApp.NodeInfo[]>((resolve) =>
+      select(selector, all)
+        .boundingClientRect((res) => resolve(res))
+        .exec(),
     );
-
-    return res;
   }
 
-  async function getFields(
-    selector: string | UniApp.NodesRef,
-    fields: UniApp.NodeField,
-    all = false,
-  ) {
-    const node = await select(selector, all);
-
-    const res = new Promise<UniApp.NodeInfo | UniApp.NodeInfo[]>((resolve) => {
-      node.fields(fields, (res) => resolve(res)).exec();
+  function getFields(selector: string | UniApp.NodesRef, fields: UniApp.NodeField, all = false) {
+    return new Promise<UniApp.NodeInfo | UniApp.NodeInfo[]>((resolve) => {
+      select(selector, all)
+        .fields(fields, (res) => resolve(res))
+        .exec();
     });
-
-    return res;
   }
 
-  async function getScrollOffset(node?: UniApp.NodesRef) {
-    await initQuery();
+  function getScrollOffset(node?: UniApp.NodesRef) {
+    return new Promise<UniApp.NodeInfo | UniApp.NodeInfo[]>((resolve) => {
+      initQuery();
 
-    node = node || query.value.selectViewport();
-
-    const res = await new Promise<UniApp.NodeInfo | UniApp.NodeInfo[]>((resolve) => {
-      initQuery().then(() => {
-        node.scrollOffset((res) => resolve(res)).exec();
-      });
+      node = node || query.value.selectViewport();
+      node.scrollOffset((res) => resolve(res)).exec();
     });
-
-    return res;
   }
 
-  async function getContext(selector: string | UniApp.NodesRef, all = false) {
-    const node = await select(selector, all);
-
-    const res = await new Promise<UniApp.NodeInfo | UniApp.NodeInfo[]>((resolve) => {
-      node.context((res) => resolve(res)).exec();
+  function getContext(selector: string | UniApp.NodesRef, all = false) {
+    return new Promise<UniApp.NodeInfo | UniApp.NodeInfo[]>((resolve) => {
+      select(selector, all)
+        .context((res) => resolve(res))
+        .exec();
     });
-
-    return res;
   }
 
   return {
