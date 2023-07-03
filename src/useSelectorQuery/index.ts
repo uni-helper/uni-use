@@ -4,7 +4,7 @@ export function useSelectorQuery() {
   const instance = getCurrentInstance();
   const query = uni.createSelectorQuery().in(instance);
 
-  function getNodeRef(selector: string | UniApp.NodesRef, all = false) {
+  function select(selector: string | UniApp.NodesRef, all = false) {
     return typeof selector === 'string'
       ? all
         ? query.selectAll(selector)
@@ -14,7 +14,7 @@ export function useSelectorQuery() {
 
   function getBoundingClientRect(selector: string | UniApp.NodesRef, all = false) {
     return new Promise<UniApp.NodeInfo | UniApp.NodeInfo[]>((resolve) => {
-      getNodeRef(selector, all)
+      select(selector, all)
         .boundingClientRect((rect) => resolve(rect))
         .exec();
     });
@@ -22,7 +22,7 @@ export function useSelectorQuery() {
 
   function getFields(selector: string | UniApp.NodesRef, fields: UniApp.NodeField, all = false) {
     return new Promise<UniApp.NodeInfo | UniApp.NodeInfo[]>((resolve) => {
-      getNodeRef(selector, all)
+      select(selector, all)
         .fields(fields, (data) => resolve(data))
         .exec();
     });
@@ -37,7 +37,7 @@ export function useSelectorQuery() {
 
   function getContext(selector: string | UniApp.NodesRef, all = false) {
     return new Promise<UniApp.NodeInfo | UniApp.NodeInfo[]>((resolve) => {
-      getNodeRef(selector, all)
+      select(selector, all)
         .context((res) => resolve(res))
         .exec();
     });
@@ -45,7 +45,7 @@ export function useSelectorQuery() {
 
   return {
     query,
-    getNodeRef,
+    select,
     getBoundingClientRect,
     getFields,
     getScrollOffset,
