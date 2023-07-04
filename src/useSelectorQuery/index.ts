@@ -21,17 +21,16 @@ export function useSelectorQuery() {
     query.value = uni.createSelectorQuery().in(instance);
   }
 
-  function getQuery(): Promise<UniApp.SelectorQuery> {
+  function getQuery(): UniApp.SelectorQuery {
     initQuery();
     return query.value;
   }
 
   function select(selector: string | UniApp.NodesRef, all = false) {
-    initQuery();
     return typeof selector === 'string'
       ? all
-        ? query.value.selectAll(selector)
-        : query.value.select(selector)
+        ? getQuery().selectAll(selector)
+        : getQuery().select(selector)
       : selector;
   }
 
@@ -53,9 +52,7 @@ export function useSelectorQuery() {
 
   function getScrollOffset(node?: UniApp.NodesRef) {
     return new Promise<UniApp.NodeInfo | UniApp.NodeInfo[]>((resolve) => {
-      initQuery();
-
-      node = node || query.value.selectViewport();
+      node = node || getQuery().selectViewport();
       node.scrollOffset((res) => resolve(res)).exec();
     });
   }
