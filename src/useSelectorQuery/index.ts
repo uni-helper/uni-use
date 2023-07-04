@@ -35,9 +35,9 @@ export function useSelectorQuery() {
   }
 
   function getBoundingClientRect<
-    TSelectType extends boolean = false,
-    R = TSelectType extends false ? UniApp.NodeInfo : UniApp.NodeInfo[],
-  >(selector: string | UniApp.NodesRef, all: TSelectType = false) {
+    T extends boolean = false,
+    R = T extends false ? UniApp.NodeInfo : UniApp.NodeInfo[],
+  >(selector: string | UniApp.NodesRef, all: T = false) {
     return new Promise<R>((resolve) =>
       select(selector, all)
         .boundingClientRect((res) => resolve(res))
@@ -46,9 +46,9 @@ export function useSelectorQuery() {
   }
 
   function getFields<
-    TSelectType extends boolean = false,
-    R = TSelectType extends false ? UniApp.NodeInfo : UniApp.NodeInfo[],
-  >(selector: string | UniApp.NodesRef, fields: UniApp.NodeField, all: TSelectType = false) {
+    T extends boolean = false,
+    R = T extends false ? UniApp.NodeInfo : UniApp.NodeInfo[],
+  >(selector: string | UniApp.NodesRef, fields: UniApp.NodeField, all: T = false) {
     return new Promise<R>((resolve) => {
       select(selector, all)
         .fields(fields, (res) => resolve(res))
@@ -57,8 +57,8 @@ export function useSelectorQuery() {
   }
 
   function getScrollOffset<
-    TSelectType extends boolean = false,
-    R = TSelectType extends false ? UniApp.NodeInfo : UniApp.NodeInfo[],
+    T extends boolean = false,
+    R = T extends false ? UniApp.NodeInfo : UniApp.NodeInfo[],
   >(node?: UniApp.NodesRef) {
     return new Promise<R>((resolve) => {
       node = node || getQuery().selectViewport();
@@ -67,9 +67,9 @@ export function useSelectorQuery() {
   }
 
   function getContext<
-    TSelectType extends boolean = false,
-    R = TSelectType extends false ? UniApp.NodeInfo : UniApp.NodeInfo[],
-  >(selector: string | UniApp.NodesRef, all: TSelectType = false) {
+    T extends boolean = false,
+    R = T extends false ? UniApp.NodeInfo : UniApp.NodeInfo[],
+  >(selector: string | UniApp.NodesRef, all: T = false) {
     return new Promise<R>((resolve) => {
       select(selector, all)
         .context((res) => resolve(res))
