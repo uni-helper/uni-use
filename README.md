@@ -474,7 +474,7 @@ const isVisible = useVisible();
 ```typescript
 import { useSelectorQuery } from '@uni-helper/uni-use';
 
-{
+const {
   select,
   getBoundingClientRect,
   getFields,
