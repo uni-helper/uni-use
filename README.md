@@ -483,7 +483,7 @@ import { useSelectorQuery } from '@uni-helper/uni-use';
 } = useSelectorQuery();
 
 // 获取 NodeRef
-const node = await select('#id');
+const node = select('#id');
 
 // 获取单个 rect
 const rect = await getBoundingClientRect('#id');
