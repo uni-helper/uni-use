@@ -34,31 +34,43 @@ export function useSelectorQuery() {
       : selector;
   }
 
-  function getBoundingClientRect(selector: string | UniApp.NodesRef, all = false) {
-    return new Promise<UniApp.NodeInfo | UniApp.NodeInfo[]>((resolve) =>
+  function getBoundingClientRect<
+    TSelectType extends boolean = false,
+    R = TSelectType extends false ? UniApp.NodeInfo : UniApp.NodeInfo[],
+  >(selector: string | UniApp.NodesRef, all: TSelectType = false) {
+    return new Promise<R>((resolve) =>
       select(selector, all)
         .boundingClientRect((res) => resolve(res))
         .exec(),
     );
   }
 
-  function getFields(selector: string | UniApp.NodesRef, fields: UniApp.NodeField, all = false) {
-    return new Promise<UniApp.NodeInfo | UniApp.NodeInfo[]>((resolve) => {
+  function getFields<
+    TSelectType extends boolean = false,
+    R = TSelectType extends false ? UniApp.NodeInfo : UniApp.NodeInfo[],
+  >(selector: string | UniApp.NodesRef, fields: UniApp.NodeField, all: TSelectType = false) {
+    return new Promise<R>((resolve) => {
       select(selector, all)
         .fields(fields, (res) => resolve(res))
         .exec();
     });
   }
 
-  function getScrollOffset(node?: UniApp.NodesRef) {
-    return new Promise<UniApp.NodeInfo | UniApp.NodeInfo[]>((resolve) => {
+  function getScrollOffset<
+    TSelectType extends boolean = false,
+    R = TSelectType extends false ? UniApp.NodeInfo : UniApp.NodeInfo[],
+  >(node?: UniApp.NodesRef) {
+    return new Promise<R>((resolve) => {
       node = node || getQuery().selectViewport();
       node.scrollOffset((res) => resolve(res)).exec();
     });
   }
 
-  function getContext(selector: string | UniApp.NodesRef, all = false) {
-    return new Promise<UniApp.NodeInfo | UniApp.NodeInfo[]>((resolve) => {
+  function getContext<
+    TSelectType extends boolean = false,
+    R = TSelectType extends false ? UniApp.NodeInfo : UniApp.NodeInfo[],
+  >(selector: string | UniApp.NodesRef, all: TSelectType = false) {
+    return new Promise<R>((resolve) => {
       select(selector, all)
         .context((res) => resolve(res))
         .exec();
