@@ -467,6 +467,34 @@ import { useVisible } from '@uni-helper/uni-use';
 const isVisible = useVisible();
 ```
 
+### useSelectorQuery
+
+`uni.createSelectorQuery` 的封装。
+
+```typescript
+import { useSelectorQuery } from '@uni-helper/uni-use';
+
+{
+  select,
+  getBoundingClientRect,
+  getFields,
+  getScrollOffset,
+  getContext,
+} = useSelectorQuery();
+
+// 获取 NodeRef
+const node = await select('#id');
+
+// 获取单个 rect
+const rect = await getBoundingClientRect('#id');
+
+// 获取所有 '.selector' 的 rect，返回值为 UniApp.NodeInfo[]
+const rects = await getBoundingClientRect('.selector', true);
+
+// getFields, getScrollOffset, getContext 使用方式和 getBoundingClientRect 一致。
+
+```
+
 ## 其它
 
 ### 限制
