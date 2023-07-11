@@ -1,5 +1,8 @@
 import { getCurrentInstance, ref, onMounted } from 'vue';
 
+export type SelectAll = boolean;
+export type QueryResult<M extends SelectAll> = M extends true ? UniApp.NodeInfo[] : UniApp.NodeInfo;
+
 export function useSelectorQuery() {
   const query = ref<UniApp.SelectorQuery>();
 
@@ -23,7 +26,11 @@ export function useSelectorQuery() {
 
   function getQuery(): UniApp.SelectorQuery {
     initQuery();
-    return query.value;
+    if (query.value == undefined) {
+      throw new Error('SelectorQuery initialization failure!');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    return query.value!;
   }
 
   function select(selector: string | UniApp.NodesRef, all = false) {
@@ -34,45 +41,45 @@ export function useSelectorQuery() {
       : selector;
   }
 
-  function getBoundingClientRect<
-    T extends boolean = false,
-    R = T extends false ? UniApp.NodeInfo : UniApp.NodeInfo[],
-  >(selector: string | UniApp.NodesRef, all: T = false) {
+  function getBoundingClientRect<T extends SelectAll = false, R = QueryResult<T>>(
+    selector: string | UniApp.NodesRef,
+    all?: T,
+  ) {
     return new Promise<R>((resolve) =>
       select(selector, all)
-        .boundingClientRect((res) => resolve(res))
+        .boundingClientRect((res) => resolve(res as R))
         .exec(),
     );
   }
 
-  function getFields<
-    T extends boolean = false,
-    R = T extends false ? UniApp.NodeInfo : UniApp.NodeInfo[],
-  >(selector: string | UniApp.NodesRef, fields: UniApp.NodeField, all: T = false) {
+  function getFields<T extends SelectAll = false, R = QueryResult<T>>(
+    selector: string | UniApp.NodesRef,
+    fields: UniApp.NodeField,
+    all?: T,
+  ) {
     return new Promise<R>((resolve) => {
       select(selector, all)
-        .fields(fields, (res) => resolve(res))
+        .fields(fields, (res) => resolve(res as R))
         .exec();
     });
   }
 
-  function getScrollOffset<
-    T extends boolean = false,
-    R = T extends false ? UniApp.NodeInfo : UniApp.NodeInfo[],
-  >(node?: UniApp.NodesRef) {
+  function getScrollOffset<T extends SelectAll = false, R = QueryResult<T>>(
+    node?: UniApp.NodesRef,
+  ) {
     return new Promise<R>((resolve) => {
       node = node || getQuery().selectViewport();
-      node.scrollOffset((res) => resolve(res)).exec();
+      node.scrollOffset((res) => resolve(res as R)).exec();
     });
   }
 
-  function getContext<
-    T extends boolean = false,
-    R = T extends false ? UniApp.NodeInfo : UniApp.NodeInfo[],
-  >(selector: string | UniApp.NodesRef, all: T = false) {
+  function getContext<T extends SelectAll = false, R = QueryResult<T>>(
+    selector: string | UniApp.NodesRef,
+    all?: T,
+  ) {
     return new Promise<R>((resolve) => {
       select(selector, all)
-        .context((res) => resolve(res))
+        .context((res) => resolve(res as R))
         .exec();
     });
   }
