@@ -88,6 +88,7 @@ export function useSelectorQuery() {
     query,
     getQuery,
     select,
+    getNode: select,
     getBoundingClientRect,
     getFields,
     getScrollOffset,
