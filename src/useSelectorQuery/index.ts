@@ -33,7 +33,7 @@ export function useSelectorQuery() {
     return query.value!;
   }
 
-  function select(selector: string | UniApp.NodesRef, all = false) {
+  function select(selector: string | UniApp.NodesRef, all?: SelectAll) {
     return typeof selector === 'string'
       ? all
         ? getQuery().selectAll(selector)
