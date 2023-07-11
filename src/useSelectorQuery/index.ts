@@ -65,10 +65,10 @@ export function useSelectorQuery() {
   }
 
   function getScrollOffset<T extends SelectAll = false, R = QueryResult<T>>(
-    node?: UniApp.NodesRef,
+    selector?: string | UniApp.NodesRef,
   ) {
     return new Promise<R>((resolve) => {
-      node = node || getQuery().selectViewport();
+      const node = selector === undefined ? getQuery().selectViewport() : select(selector);
       node.scrollOffset((res) => resolve(res as R)).exec();
     });
   }
