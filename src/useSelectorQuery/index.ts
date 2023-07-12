@@ -29,8 +29,7 @@ export function useSelectorQuery() {
     if (query.value == undefined) {
       throw new Error('SelectorQuery initialization failure!');
     }
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    return query.value!;
+    return query.value;
   }
 
   function select(selector: string | UniApp.NodesRef, all?: SelectAll) {
