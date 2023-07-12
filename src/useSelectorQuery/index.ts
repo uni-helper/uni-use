@@ -44,11 +44,11 @@ export function useSelectorQuery() {
     selector: string | UniApp.NodesRef,
     all?: T,
   ) {
-    return new Promise<R>((resolve) =>
+    return new Promise<R>((resolve) => {
       select(selector, all)
         .boundingClientRect((res) => resolve(res as R))
-        .exec(),
-    );
+        .exec();
+    });
   }
 
   function getFields<T extends SelectAll = false, R = QueryResult<T>>(
