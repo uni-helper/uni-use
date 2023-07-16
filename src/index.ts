@@ -29,3 +29,4 @@ export * from './useStorageAsync';
 export * from './useToast';
 export * from './useUploadFile';
 export * from './useVisible';
+export * from './useSelectorQuery';
