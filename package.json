@@ -1,6 +1,6 @@
 {
   "name": "@uni-helper/uni-use",
-  "version": "0.13.1",
+  "version": "0.14.0",
   "description": "uni-app (vue3) 组合式工具集",
   "keywords": [
     "uni-app",
