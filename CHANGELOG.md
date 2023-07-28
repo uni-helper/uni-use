@@ -1,5 +1,9 @@
 # 改动日志
 
+## 0.14.0 (2023-07-28)
+
+- feat: 新增 `useSelectorQuery`，感谢 [edwinhuish](https://github.com/edwinhuish) 在 [#23](https://github.com/uni-helper/uni-use/pull/23) 的贡献！
+
 ## 0.13.0 (2023-05-05)
 
 - feat!: 移除 `useImmer`
