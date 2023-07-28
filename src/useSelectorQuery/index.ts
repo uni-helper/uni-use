@@ -6,28 +6,21 @@ export type QueryResult<M extends SelectAll> = M extends true ? UniApp.NodeInfo[
 export function useSelectorQuery() {
   const query = ref<UniApp.SelectorQuery>();
 
-  // init once, in case the HOOK run after onMounted;
+  // 尝试初始化一次，覆盖该方法在 onMounted 之后调用的情况
   initQuery();
-
-  // onMounted will not work if this HOOK run after compontent mounted.
   onMounted(initQuery);
 
   function initQuery() {
-    if (query.value) {
-      return;
-    }
-
+    if (query.value) return;
     const instance = getCurrentInstance();
-    if (instance == null) {
-      return;
-    }
+    if (instance == null) return;
     query.value = uni.createSelectorQuery().in(instance);
   }
 
   function getQuery(): UniApp.SelectorQuery {
     initQuery();
     if (query.value == undefined) {
-      throw new Error('SelectorQuery initialization failure!');
+      throw new Error('SelectorQuery initialization failed');
     }
     return query.value;
   }
