@@ -4,15 +4,12 @@ import { useClipboardData } from '@uni-helper/uni-use';
 
 const title = ref('Hello');
 
-const { clipboardData, setClipboardData } = useClipboardData();
+const clipboardData = useClipboardData('');
 watchEffect(() => {
   console.log('clipboardData', clipboardData.value);
 });
 const onUpdateClipboardData = () => {
-  setClipboardData({
-    data: Math.random().toFixed(2).toString(),
-    showToast: true,
-  });
+  clipboardData.value = Math.random().toFixed(2).toString();
 };
 </script>
 
