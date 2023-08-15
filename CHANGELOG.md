@@ -1,5 +1,9 @@
 # 改动日志
 
+## 0.14.1 (2023-08-15)
+
+- fix: 修复 `useStorageAsync` 逻辑判断，关闭 [#25](https://github.com/uni-helper/uni-use/issues/25)
+
 ## 0.14.0 (2023-07-28)
 
 - feat: 新增 `useSelectorQuery`，感谢 [edwinhuish](https://github.com/edwinhuish) 在 [#23](https://github.com/uni-helper/uni-use/pull/23) 的贡献！
