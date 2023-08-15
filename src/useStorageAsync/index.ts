@@ -28,11 +28,11 @@ export interface SerializerAsync<T> {
 
 const UniStorage: StorageLikeAsync = {
   getItem: (key) =>
-    new Promise((resolve, reject) =>
+    new Promise((resolve) =>
       uni.getStorage({
         key,
         success: ({ data }) => resolve(data),
-        fail: (error) => reject(error),
+        fail: () => resolve(null), // 在这里 resolve null 匹配后续逻辑判断
       }),
     ),
   setItem: (key, value) =>
