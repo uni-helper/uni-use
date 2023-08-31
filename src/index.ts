@@ -30,3 +30,41 @@ export * from './useToast';
 export * from './useUploadFile';
 export * from './useVisible';
 export * from './useSelectorQuery';
+
+export const UniUseAutoImports: Record<string, Array<string | [string, string]>> = {
+  '@uni-helper/uni-use': [
+    'tryOnHide',
+    'tryOnInit',
+    'tryOnLoad',
+    'tryOnReady',
+    'tryOnShow',
+    'tryOnUnload',
+    'useActionSheet',
+    'useClipboardData',
+    'useDownloadFile',
+    'useGlobalData',
+    'useInterceptor',
+    'useLoading',
+    'useModal',
+    'useNetwork',
+    'useOnline',
+    'usePage',
+    'usePages',
+    'usePreferredDark',
+    'usePreferredLanguage',
+    'usePrevPage',
+    'usePrevRoute',
+    'useProvider',
+    'useRequest',
+    'useRoute',
+    'useRouter',
+    'useScanCode',
+    'useScreenBrightness',
+    'useSelectorQuery',
+    'useSocket',
+    'useStorageAsync',
+    'useToast',
+    'useUploadFile',
+    'useVisible',
+  ],
+};
