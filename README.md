@@ -419,6 +419,34 @@ import { useScreenBrightness } from '@uni-helper/uni-use';
 const screenBrightness = useScreenBrightness('', { onError: (error) => { ... } });
 ```
 
+### useSelectorQuery
+
+`uni.createSelectorQuery` 的封装。
+
+```typescript
+import { useSelectorQuery } from '@uni-helper/uni-use';
+
+const {
+  select,
+  getBoundingClientRect,
+  getFields,
+  getScrollOffset,
+  getContext,
+} = useSelectorQuery();
+
+// 获取 NodeRef
+const node = select('#id');
+
+// 获取单个 rect
+const rect = await getBoundingClientRect('#id');
+
+// 获取所有 .selector 的 rect，返回值为 UniApp.NodeInfo[]
+const rects = await getBoundingClientRect('.selector', true);
+
+// getFields，getScrollOffset，getContext 使用方式和 getBoundingClientRect 一致
+
+```
+
 ### useSocket
 
 `uni-app` 关于 `socket` 的封装。使用方法参见 <https://vueuse.org/core/useWebSocket/>。
@@ -465,34 +493,6 @@ showToast({
 import { useVisible } from '@uni-helper/uni-use';
 
 const isVisible = useVisible();
-```
-
-### useSelectorQuery
-
-`uni.createSelectorQuery` 的封装。
-
-```typescript
-import { useSelectorQuery } from '@uni-helper/uni-use';
-
-const {
-  select,
-  getBoundingClientRect,
-  getFields,
-  getScrollOffset,
-  getContext,
-} = useSelectorQuery();
-
-// 获取 NodeRef
-const node = select('#id');
-
-// 获取单个 rect
-const rect = await getBoundingClientRect('#id');
-
-// 获取所有 .selector 的 rect，返回值为 UniApp.NodeInfo[]
-const rects = await getBoundingClientRect('.selector', true);
-
-// getFields，getScrollOffset，getContext 使用方式和 getBoundingClientRect 一致
-
 ```
 
 ## 其它
@@ -555,6 +555,31 @@ export function createApp() {
 ```
 
 微信小程序的 JavaScript 支持度见 [wechat-miniprogram/miniprogram-compat](https://github.com/wechat-miniprogram/miniprogram-compat)。微信小程序要支持 `vue3`，需设置基础库最低版本为 2.11.2 或以上，2.11.2 对应 `chrome>=53,ios>=10`。
+
+### 和 `unplugin-auto-import` 结合使用
+
+```typescript
+// vite.config.ts
+import { fileURLToPath } from 'node:url';
+import { defineConfig } from 'vitest/config';
+import autoImport from 'unplugin-auto-import/vite';
+import { UniUseAutoImports } from '@uni-helper/uni-use';
+import uni from '@dcloudio/vite-plugin-uni';
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [
+    autoImport({
+      imports: [
+        '@vueuse/core',
+        UniUseAutoImports, // 放在 @vueuse/core 之后以覆盖同名方法
+      ],
+    }),
+    uni({ ... }),
+  ],
+});
+
+```
 
 ### EventBus
 

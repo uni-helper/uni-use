@@ -1,5 +1,9 @@
 # 改动日志
 
+## 0.15.0 (2023-08-31)
+
+- feat: 增加 `UniUseAutoImports`，方便和 `unplugin-auto-import` 结合使用
+
 ## 0.14.1 (2023-08-15)
 
 - fix: 修复 `useStorageAsync` 逻辑判断，关闭 [#25](https://github.com/uni-helper/uni-use/issues/25)
