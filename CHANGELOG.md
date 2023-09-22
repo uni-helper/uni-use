@@ -1,5 +1,9 @@
 # 改动日志
 
+## 0.15.1 (2023-09-22)
+
+- fix: 修复导出
+
 ## 0.15.0 (2023-08-31)
 
 - feat: 增加 `UniUseAutoImports`，方便和 `unplugin-auto-import` 结合使用
