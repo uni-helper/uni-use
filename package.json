@@ -27,7 +27,10 @@
   "type": "module",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
+      "types": {
+        "import": "./dist/index.d.mts",
+        "require": "./dist/index.d.cts"
+      },
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
     }
@@ -61,28 +64,27 @@
     "@commitlint/cli": "^17.7.1",
     "@commitlint/config-conventional": "^17.7.0",
     "@commitlint/prompt": "^17.7.1",
-    "@modyqyw/fabric": "^8.3.3",
-    "@modyqyw/utils": "^7.1.0",
-    "@tsconfig/node18": "^18.2.1",
-    "@types/node": "^18.17.12",
-    "@typescript-eslint/eslint-plugin": "^5.62.0",
-    "@typescript-eslint/parser": "^5.62.0",
+    "@modyqyw/fabric": "^9.0.6",
+    "@tsconfig/node18": "^18.2.2",
+    "@types/node": "^18.17.18",
+    "@typescript-eslint/eslint-plugin": "^6.7.2",
+    "@typescript-eslint/parser": "^6.7.2",
     "bumpp": "^9.2.0",
     "commitizen": "^4.3.0",
     "concurrently": "^8.2.1",
-    "eslint": "^8.48.0",
+    "eslint": "^8.49.0",
     "is-ci": "^3.0.1",
-    "lint-staged": "^13.3.0",
-    "markdownlint-cli": "^0.35.0",
-    "prettier": "^2.8.8",
-    "publint": "^0.1.16",
+    "lint-staged": "^14.0.1",
+    "markdownlint-cli": "^0.36.0",
+    "prettier": "^3.0.3",
+    "publint": "^0.2.2",
     "simple-git-hooks": "^2.9.0",
     "sort-package-json": "^2.5.1",
     "taze": "^0.11.2",
     "ts-node": "^10.9.1",
-    "tsx": "^3.12.7",
+    "tsx": "^3.12.10",
     "typescript": "^5.2.2",
-    "unbuild": "^1.2.1",
+    "unbuild": "^2.0.0",
     "vue": "^3.3.4"
   },
   "peerDependencies": {
@@ -95,7 +97,7 @@
       "optional": true
     }
   },
-  "packageManager": "pnpm@8.7.0",
+  "packageManager": "pnpm@8.7.6",
   "engines": {
     "node": ">=14.18"
   },
