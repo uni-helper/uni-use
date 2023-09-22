@@ -255,10 +255,8 @@ export function useStorageAsync<T extends string | number | boolean | object | n
       async () => {
         try {
           await (data.value == null
-            ? // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-              storage!.removeItem(key)
-            : // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-              storage!.setItem(key, await serializer.write(data.value)));
+            ? storage!.removeItem(key)
+            : storage!.setItem(key, await serializer.write(data.value)));
         } catch (error) {
           onError(error);
         }
