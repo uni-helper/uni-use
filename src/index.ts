@@ -12,6 +12,7 @@ export * from './useInterceptor';
 export * from './useLoading';
 export * from './useModal';
 export * from './useNetwork';
+export * from './useOnline';
 export * from './usePage';
 export * from './usePages';
 export * from './usePreferredDark';
@@ -24,12 +25,12 @@ export * from './useRoute';
 export * from './useRouter';
 export * from './useScanCode';
 export * from './useScreenBrightness';
+export * from './useSelectorQuery';
 export * from './useSocket';
 export * from './useStorageAsync';
 export * from './useToast';
 export * from './useUploadFile';
 export * from './useVisible';
-export * from './useSelectorQuery';
 
 export const UniUseAutoImports: Record<string, Array<string | [string, string]>> = {
   '@uni-helper/uni-use': [
