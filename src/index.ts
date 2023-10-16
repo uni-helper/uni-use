@@ -15,6 +15,7 @@ export * from './useNetwork';
 export * from './useOnline';
 export * from './usePage';
 export * from './usePages';
+export * from './usePageScroll';
 export * from './usePreferredDark';
 export * from './usePreferredLanguage';
 export * from './usePrevPage';
@@ -51,6 +52,7 @@ export const UniUseAutoImports: Record<string, Array<string | [string, string]>>
     'useOnline',
     'usePage',
     'usePages',
+    'usePageScroll',
     'usePreferredDark',
     'usePreferredLanguage',
     'usePrevPage',
