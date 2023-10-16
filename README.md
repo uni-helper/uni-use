@@ -288,6 +288,18 @@ import { usePages } from '@uni-helper/uni-use';
 const pages = usePages();
 ```
 
+### usePageScroll
+
+控制与监听页面滚动
+
+```typescript
+import { usePageScroll } from '@uni-helper/uni-use';
+
+const { scrollTop } = usePageScroll({
+  onPageScroll: true
+});
+```
+
 ### usePreferredDark
 
 响应式的暗黑主题偏好。
