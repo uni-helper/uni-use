@@ -56,33 +56,33 @@
     "release": "pnpm install && pnpm run lint && bumpp"
   },
   "dependencies": {
-    "@dcloudio/types": "^3.3.3",
+    "@dcloudio/types": "^3.4.0",
     "@dcloudio/uni-app": "^3.0.0-3081220230817001",
     "@vueuse/core": "^9.13.0"
   },
   "devDependencies": {
-    "@commitlint/cli": "^17.7.1",
-    "@commitlint/config-conventional": "^17.7.0",
-    "@commitlint/prompt": "^17.7.1",
+    "@commitlint/cli": "^17.8.0",
+    "@commitlint/config-conventional": "^17.8.0",
+    "@commitlint/prompt": "^17.8.0",
     "@modyqyw/fabric": "^9.0.6",
     "@tsconfig/node18": "^18.2.2",
-    "@types/node": "^18.17.18",
-    "@typescript-eslint/eslint-plugin": "^6.7.2",
-    "@typescript-eslint/parser": "^6.7.2",
+    "@types/node": "^18.18.5",
+    "@typescript-eslint/eslint-plugin": "^6.8.0",
+    "@typescript-eslint/parser": "^6.8.0",
     "bumpp": "^9.2.0",
     "commitizen": "^4.3.0",
     "concurrently": "^8.2.1",
-    "eslint": "^8.49.0",
+    "eslint": "^8.51.0",
     "is-ci": "^3.0.1",
-    "lint-staged": "^14.0.1",
-    "markdownlint-cli": "^0.36.0",
+    "lint-staged": "^15.0.1",
+    "markdownlint-cli": "^0.37.0",
     "prettier": "^3.0.3",
-    "publint": "^0.2.2",
+    "publint": "^0.2.4",
     "simple-git-hooks": "^2.9.0",
-    "sort-package-json": "^2.5.1",
-    "taze": "^0.11.2",
+    "sort-package-json": "^2.6.0",
+    "taze": "^0.11.4",
     "ts-node": "^10.9.1",
-    "tsx": "^3.12.10",
+    "tsx": "^3.13.0",
     "typescript": "^5.2.2",
     "unbuild": "^2.0.0",
     "vue": "^3.3.4"
@@ -97,7 +97,7 @@
       "optional": true
     }
   },
-  "packageManager": "pnpm@8.7.6",
+  "packageManager": "pnpm@8.9.2",
   "engines": {
     "node": ">=14.18"
   },
