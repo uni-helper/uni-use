@@ -290,13 +290,13 @@ const pages = usePages();
 
 ### usePageScroll
 
-控制与监听页面滚动
+控制与监听页面滚动。
 
 ```typescript
 import { usePageScroll } from '@uni-helper/uni-use';
 
 const { scrollTop } = usePageScroll({
-  onPageScroll: true
+  onPageScroll: true,
 });
 ```
 
@@ -438,13 +438,8 @@ const screenBrightness = useScreenBrightness('', { onError: (error) => { ... } }
 ```typescript
 import { useSelectorQuery } from '@uni-helper/uni-use';
 
-const {
-  select,
-  getBoundingClientRect,
-  getFields,
-  getScrollOffset,
-  getContext,
-} = useSelectorQuery();
+const { select, getBoundingClientRect, getFields, getScrollOffset, getContext } =
+  useSelectorQuery();
 
 // 获取 NodeRef
 const node = select('#id');
@@ -456,7 +451,6 @@ const rect = await getBoundingClientRect('#id');
 const rects = await getBoundingClientRect('.selector', true);
 
 // getFields，getScrollOffset，getContext 使用方式和 getBoundingClientRect 一致
-
 ```
 
 ### useSocket
