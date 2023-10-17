@@ -4,24 +4,23 @@ import { ref, computed, MaybeRef } from 'vue';
 
 export interface UsePageScrollOptions {
   /**
-   * 开启onPageScroll监听
+   * 是否开启 onPageScroll 监听，默认为 false
    *
    * @default false
-   * @see 因为 https://github.com/dcloudio/uni-app/issues/3099 所以默认值需要false，让页面被uniapp的正则捕获从而开启监听
+   * @see https://github.com/dcloudio/uni-app/issues/3099 让页面被正则捕获从而开启监听
    */
   onPageScroll?: boolean;
-
   /**
    * 滚动到指定选择器
    *
    * @see https://uniapp.dcloud.net.cn/api/ui/scroll?id=pagescrollto
    */
   scrollToSelector?: MaybeRef<string>;
-
   /**
    * 滚动动画时长
    *
    * @default 300
+   * @see https://uniapp.dcloud.net.cn/api/ui/scroll?id=pagescrollto
    */
   duration?: number;
 }
