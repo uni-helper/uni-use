@@ -1,5 +1,9 @@
 # 改动日志
 
+## 0.16.1 (2023-11-13)
+
+- fix: 修复 `useStorage`，关闭 [#28](https://github.com/uni-helper/uni-use/issues/28)
+
 ## 0.16.0 (2023-10-17)
 
 - feat: 增加 `usePageScroll`，感谢 [okxiaoliang4](https://github.com/okxiaoliang4) 在 [#27](https://github.com/uni-helper/uni-use/pull/27) 的贡献！
