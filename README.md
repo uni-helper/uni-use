@@ -6,6 +6,52 @@
 
 `uni-app (vue3)` 组合式工具集。要求 `node>=18`。
 
+- [@uni-helper/uni-use](#uni-helperuni-use)
+  - [安装依赖](#安装依赖)
+  - [使用](#使用)
+    - [tryOnHide](#tryonhide)
+    - [tryOnInit](#tryoninit)
+    - [tryOnLoad](#tryonload)
+    - [tryOnReady](#tryonready)
+    - [tryOnShow](#tryonshow)
+    - [tryOnUnload](#tryonunload)
+    - [useActionSheet](#useactionsheet)
+    - [useClipboardData](#useclipboarddata)
+    - [useDownloadFile](#usedownloadfile)
+    - [useGlobalData](#useglobaldata)
+    - [useInterceptor](#useinterceptor)
+    - [useLoading](#useloading)
+    - [useModal](#usemodal)
+    - [useNetwork](#usenetwork)
+    - [useOnline](#useonline)
+    - [usePage](#usepage)
+    - [usePages](#usepages)
+    - [usePageScroll](#usepagescroll)
+    - [usePreferredDark](#usepreferreddark)
+    - [usePreferredLanguage](#usepreferredlanguage)
+    - [usePrevPage](#useprevpage)
+    - [usePrevRoute](#useprevroute)
+    - [useProvider](#useprovider)
+    - [useRequest](#userequest)
+    - [useRoute](#useroute)
+    - [useRouter](#userouter)
+    - [useScanCode](#usescancode)
+    - [useScreenBrightness](#usescreenbrightness)
+    - [useSelectorQuery](#useselectorquery)
+    - [useSocket](#usesocket)
+    - [useStorageAsync](#usestorageasync)
+    - [useToast](#usetoast)
+    - [useUploadFile](#useuploadfile)
+    - [useVisible](#usevisible)
+  - [其它](#其它)
+    - [限制](#限制)
+    - [构建](#构建)
+    - [和 `unplugin-auto-import` 结合使用](#和-unplugin-auto-import-结合使用)
+    - [EventBus](#eventbus)
+    - [TypeScript](#typescript)
+  - [资源](#资源)
+  - [致谢](#致谢)
+
 ## 安装依赖
 
 ```shell
@@ -13,7 +59,7 @@ npm install @uni-helper/uni-use @vueuse/core@9
 ```
 
 <details>
-  <summary>yarn v2/v3</summary>
+  <summary>yarn v2+</summary>
   <p>请参考 <a href="https://yarnpkg.com/configuration/yarnrc/#nodeLinker">文档</a> 设置 <code>nodeLinker</code> 为 <code>node_modules</code>。</p>
 </details>
 
@@ -22,7 +68,7 @@ npm install @uni-helper/uni-use @vueuse/core@9
   <p>请参考 <a href="https://pnpm.io/npmrc#shamefully-hoist">文档</a> 设置 <code>shamefully-hoist</code> 为 <code>true</code>。</p>
 </details>
 
-不考虑支持 `uni_modules`。
+目前没有支持 `uni_modules` 的计划，但欢迎 PR 贡献。
 
 ## 使用
 
