@@ -4,7 +4,7 @@
 
 [![npm](https://img.shields.io/npm/v/@uni-helper/uni-use)](https://www.npmjs.com/package/@uni-helper/uni-use)
 
-`uni-app (vue3)` 组合式工具集。要求 `node >= 14.18`。
+`uni-app (vue3)` 组合式工具集。要求 `node>=18`。
 
 ## 安装依赖
 

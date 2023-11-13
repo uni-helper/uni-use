@@ -1,8 +1,9 @@
 # 改动日志
 
-## 0.16.1 (2023-11-13)
+## 0.17.0 (2023-11-13)
 
 - fix: 修复 `useStorage`，关闭 [#28](https://github.com/uni-helper/uni-use/issues/28)
+- feat!: 要求 `node>=18`
 
 ## 0.16.0 (2023-10-17)
 
