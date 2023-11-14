@@ -252,17 +252,15 @@ export function useStorageAsync<T extends string | number | boolean | object | n
   if (storage) {
     watchWithFilter(
       data,
-      async (value, oldValue) => {
+      async () => {
         // 值相同时，不再更新 data.value，避免导致死循环
         // 死循环：更新 data.value => 触发 watchWithFilter 写入 storage => 触发拦截器 => 触发 read => 更新 data.value => ……
         // 为什么 vueuse 没有这个问题？vueuse 使用 Window storage event，自带检查，而 uni-app 没有自带检查
-        const serialized = await serializer.write(value);
-        const oldSerialized = await serializer.write(oldValue);
+        const serialized = await serializer.write(data.value);
+        const oldSerialized = await storage!.getItem(key);
         if (serialized === oldSerialized) return;
         try {
-          await (data.value == null
-            ? storage!.removeItem(key)
-            : storage!.setItem(key, await serializer.write(data.value)));
+          await (data.value == null ? storage!.removeItem(key) : storage!.setItem(key, serialized));
         } catch (error) {
           onError(error);
         }
