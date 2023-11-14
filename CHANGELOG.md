@@ -1,5 +1,9 @@
 # 改动日志
 
+## 0.17.1 (2023-11-14)
+
+- fix: 修复 `useStorage`，关闭 [#28](https://github.com/uni-helper/uni-use/issues/28)
+
 ## 0.17.0 (2023-11-13)
 
 - fix: 修复 `useStorage`，关闭 [#28](https://github.com/uni-helper/uni-use/issues/28)
