@@ -228,7 +228,9 @@ export function useStorageAsync<T extends string | number | boolean | object | n
         // 有对应的值，需要合并默认值和本地缓存值
         const value = await serializer.read(rawValue);
         // 如果是方法，调用
-        if (isFunction(mergeDefaults)) data.value = mergeDefaults(value, rawInit);
+        if (isFunction(mergeDefaults)) {
+          data.value = mergeDefaults(value, rawInit);
+        }
         // 如果是对象，浅合并
         else if (type === 'object' && !Array.isArray(value))
           data.value = { ...(rawInit as any), ...value };
