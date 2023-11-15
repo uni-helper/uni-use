@@ -1,6 +1,6 @@
 import { ref, shallowRef } from 'vue';
 import type { Ref } from 'vue';
-import { isFunction, resolveUnref, watchWithFilter } from '@vueuse/core';
+import { resolveUnref, watchWithFilter } from '@vueuse/core';
 import type {
   Awaitable,
   ConfigurableEventFilter,
@@ -8,6 +8,8 @@ import type {
   MaybeComputedRef,
   RemovableRef,
 } from '@vueuse/core';
+import { isFunction } from '../utils';
+
 import { useInterceptor } from '../useInterceptor';
 
 export interface StorageLikeAsync {

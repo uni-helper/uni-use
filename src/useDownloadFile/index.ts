@@ -1,5 +1,6 @@
 import { Ref, ShallowRef, ref, shallowRef } from 'vue';
-import { isString, until } from '@vueuse/core';
+import { until } from '@vueuse/core';
+import { isString } from '../utils';
 
 export interface UseDownloadFileReturn<T> {
   task: ShallowRef<UniApp.DownloadTask | undefined>;
