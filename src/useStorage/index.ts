@@ -5,7 +5,7 @@ import type {
   ConfigurableFlush,
   RemovableRef,
 } from '@vueuse/core';
-import { resolveUnref, pausableWatch } from '@vueuse/core';
+import { resolveUnref, pausableWatch, tryOnMounted } from '@vueuse/core';
 import { guessSerializerType } from './guess';
 
 export type MaybeRef<T> = T | Ref<T>;
@@ -173,6 +173,11 @@ export function useStorage<T extends string | number | boolean | object | null>(
     flush,
     deep,
     eventFilter,
+  });
+
+  tryOnMounted(() => {
+    // this should be fine since we are in a mounted hook
+    if (initOnMounted) update();
   });
 
   if (!initOnMounted) update();
