@@ -6,7 +6,6 @@ import type {
   RemovableRef,
 } from '@vueuse/core';
 import { resolveUnref, pausableWatch } from '@vueuse/core';
-import { tryOnLoad } from '../tryOnLoad';
 import { guessSerializerType } from './guess';
 
 export type MaybeRef<T> = T | Ref<T>;
@@ -31,7 +30,7 @@ export interface SerializerAsync<T> {
   write(value: T): Awaitable<string>;
 }
 
-const toString = (v) => v + '';
+const toString = (v: any) => v + '';
 
 export const StorageSerializers: Record<
   'boolean' | 'object' | 'number' | 'any' | 'string' | 'map' | 'set' | 'date',
@@ -78,13 +77,6 @@ export interface UseStorageOptions<T> extends ConfigurableEventFilter, Configura
    * @default true
    */
   deep?: boolean;
-
-  /**
-   * Listen to storage changes, useful for multiple tabs application
-   *
-   * @default true
-   */
-  listenToStorageChanges?: boolean;
 
   /**
    * Write the default value to the storage when it does not exist
@@ -162,7 +154,6 @@ export function useStorage<T extends string | number | boolean | object | null>(
   const {
     flush = 'pre',
     deep = true,
-    listenToStorageChanges = true,
     writeDefaults = true,
     mergeDefaults = false,
     shallow,
@@ -183,13 +174,6 @@ export function useStorage<T extends string | number | boolean | object | null>(
     deep,
     eventFilter,
   });
-
-  if (listenToStorageChanges) {
-    tryOnLoad(() => {
-      // this should be fine since we are in a mounted hook
-      if (initOnMounted) update();
-    });
-  }
 
   if (!initOnMounted) update();
 
