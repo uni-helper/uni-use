@@ -1,4 +1,4 @@
-import { ref, shallowRef, Ref } from 'vue';
+import { ref, shallowRef, Ref, nextTick } from 'vue';
 import type {
   Awaitable,
   ConfigurableEventFilter,
@@ -70,6 +70,46 @@ export const StorageSerializers: Record<
   },
 };
 
+export interface StorageLike {
+  getItem(key: string): string | null;
+  setItem(key: string, value: string): void;
+  removeItem(key: string): void;
+}
+
+interface StorageEvent extends Event {
+  /**
+   * Returns the key of the storage item being changed.
+   *
+   * [MDN Reference](https://developer.mozilla.org/docs/Web/API/StorageEvent/key)
+   */
+  readonly key: string | null;
+  /**
+   * Returns the new value of the key of the storage item whose value is being changed.
+   *
+   * [MDN Reference](https://developer.mozilla.org/docs/Web/API/StorageEvent/newValue)
+   */
+  readonly newValue: string | null;
+  /**
+   * Returns the old value of the key of the storage item whose value is being changed.
+   *
+   * [MDN Reference](https://developer.mozilla.org/docs/Web/API/StorageEvent/oldValue)
+   */
+  readonly oldValue: string | null;
+  /**
+   * Returns the Storage object that was affected.
+   *
+   * [MDN Reference](https://developer.mozilla.org/docs/Web/API/StorageEvent/storageArea)
+   */
+  readonly storageArea: StorageLike | null;
+}
+
+export const customStorageEventName = 'vueuse-storage';
+export interface StorageEventLike {
+  storageArea: StorageLike | null;
+  key: StorageEvent['key'];
+  oldValue: StorageEvent['oldValue'];
+  newValue: StorageEvent['newValue'];
+}
 export interface UseStorageOptions<T> extends ConfigurableEventFilter, ConfigurableFlush {
   /**
    * Watch for deep changes
@@ -77,6 +117,13 @@ export interface UseStorageOptions<T> extends ConfigurableEventFilter, Configura
    * @default true
    */
   deep?: boolean;
+
+  /**
+   * Listen to storage changes, useful for multiple tabs application
+   *
+   * @default true
+   */
+  listenToStorageChanges?: boolean;
 
   /**
    * Write the default value to the storage when it does not exist
@@ -154,6 +201,7 @@ export function useStorage<T extends string | number | boolean | object | null>(
   const {
     flush = 'pre',
     deep = true,
+    listenToStorageChanges = true,
     writeDefaults = true,
     mergeDefaults = false,
     shallow,
@@ -175,10 +223,13 @@ export function useStorage<T extends string | number | boolean | object | null>(
     eventFilter,
   });
 
-  tryOnMounted(() => {
-    // this should be fine since we are in a mounted hook
-    if (initOnMounted) update();
-  });
+  if (listenToStorageChanges) {
+    tryOnMounted(() => {
+      // this should be fine since we are in a mounted hook
+      uni.$on(customStorageEventName, updateFromCustomEvent);
+      if (initOnMounted) update();
+    });
+  }
 
   if (!initOnMounted) update();
 
@@ -193,6 +244,12 @@ export function useStorage<T extends string | number | boolean | object | null>(
         const oldValue = storage.getItem(key);
         if (oldValue !== serialized) {
           storage.setItem(key, serialized);
+          uni.$emit(customStorageEventName, {
+            key,
+            oldValue,
+            newValue: serialized,
+            storageArea: storage!,
+          });
         }
       }
     } catch (error) {
@@ -200,13 +257,13 @@ export function useStorage<T extends string | number | boolean | object | null>(
     }
   }
 
-  function read() {
-    const rawValue = storage.getItem(key);
+  function read(event?: StorageEventLike) {
+    const rawValue = event ? event.newValue : storage!.getItem(key);
 
     if (rawValue == null) {
-      if (writeDefaults && rawInit !== null) storage.setItem(key, serializer.write(rawInit));
+      if (writeDefaults && rawInit != null) storage!.setItem(key, serializer.write(rawInit));
       return rawInit;
-    } else if (mergeDefaults) {
+    } else if (!event && mergeDefaults) {
       const value = serializer.read(rawValue);
       if (typeof mergeDefaults === 'function') return mergeDefaults(value, rawInit);
       else if (type === 'object' && !Array.isArray(value)) return { ...(rawInit as any), ...value };
@@ -218,17 +275,29 @@ export function useStorage<T extends string | number | boolean | object | null>(
     }
   }
 
-  function update() {
+  function updateFromCustomEvent(event: StorageEventLike) {
+    update(event);
+  }
+
+  function update(event?: StorageEventLike) {
+    if (event && event.storageArea !== storage) return;
+
+    if (event && event.key == null) {
+      data.value = rawInit;
+      return;
+    }
+
+    if (event && event.key !== key) return;
+
     pauseWatch();
     try {
-      const newValue = read();
-      if (serializer.write(data.value) !== serializer.write(newValue)) {
-        data.value = newValue;
-      }
+      if (event?.newValue !== serializer.write(data.value)) data.value = read(event);
     } catch (error) {
       onError(error);
     } finally {
-      resumeWatch();
+      // use nextTick to avoid infinite loop
+      if (event) nextTick(resumeWatch);
+      else resumeWatch();
     }
   }
 }
