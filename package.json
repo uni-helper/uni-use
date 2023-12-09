@@ -75,12 +75,12 @@
     "eslint": "^8.53.0",
     "is-ci": "^3.0.1",
     "lint-staged": "^15.1.0",
-    "markdownlint-cli": "^0.37.0",
+    "markdownlint-cli": "^0.38.0",
     "prettier": "^3.0.3",
     "publint": "^0.2.5",
     "simple-git-hooks": "^2.9.0",
     "sort-package-json": "^2.6.0",
-    "taze": "^0.12.0",
+    "taze": "^0.13.0",
     "ts-node": "^10.9.1",
     "tsx": "^4.1.1",
     "typescript": "^5.2.2",
@@ -97,7 +97,7 @@
       "optional": true
     }
   },
-  "packageManager": "pnpm@8.10.3",
+  "packageManager": "pnpm@8.12.0",
   "engines": {
     "node": ">=18"
   },
