@@ -635,7 +635,7 @@ export default defineConfig({
 
 ### EventBus
 
-如果你想使用 `EventBus`，请考虑使用 [VueUse - useEventBus](https://vueuse.org/core/useeventbus/#useeventbus)、[mitt](https://github.com/developit/mitt) 或 [tiny-emitter](https://github.com/scottcorgan/tiny-emitter)。这个库不再重复提供类似功能。
+如果你想使用 `EventBus`，请考虑使用 [VueUse - useEventBus](https://vueuse.org/core/useeventbus/#useeventbus)、[mitt](https://github.com/developit/mitt) 或 [nanoevents](https://github.com/ai/nanoevents)。这个库不再重复提供类似功能。
 
 ### TypeScript
 
