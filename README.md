@@ -257,10 +257,11 @@ stop(event);
 ```typescript
 import { useLoading } from '@uni-helper/uni-use';
 
-const showLoading = useLoading({
+const { showLoading, hideLoading } = useLoading({
   /* 传入配置 */
 });
-const hideLoading = showLoading(); // 显示加载提示框
+showLoading(); // 显示加载提示框
+
 hideLoading(); // 隐藏加载提示框
 ```
 
