@@ -5,11 +5,6 @@ export interface UniShowLoadingOptions extends UniApp.ShowLoadingOptions {}
 export type ShowLoadingOptions = MaybeComputedRef<UniShowLoadingOptions>;
 export type UseLoadingOptions = ShowLoadingOptions;
 
-/**
- * 隐藏加载提示框
- *
- * https://uniapp.dcloud.net.cn/api/ui/prompt.html#hideloading
- */
 function hideLoading() {
   return uni.hideLoading();
 }
@@ -22,11 +17,6 @@ function hideLoading() {
  * https://uniapp.dcloud.net.cn/api/ui/prompt.html#showloading
  */
 export function useLoading(options?: UseLoadingOptions) {
-  /**
-   * 显示加载提示框
-   *
-   * https://uniapp.dcloud.net.cn/api/ui/prompt.html#showloading
-   */
   function showLoading(newOptions?: ShowLoadingOptions) {
     uni.showLoading(
       reactive({
@@ -38,7 +28,18 @@ export function useLoading(options?: UseLoadingOptions) {
   }
 
   return {
+    /**
+     * 显示加载提示框
+     *
+     * https://uniapp.dcloud.net.cn/api/ui/prompt.html#showloading
+     */
     showLoading,
+
+    /**
+     * 隐藏加载提示框
+     *
+     * https://uniapp.dcloud.net.cn/api/ui/prompt.html#hideloading
+     */
     hideLoading,
   };
 }
