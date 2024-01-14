@@ -1,5 +1,10 @@
 # 改动日志
 
+## 0.18.0 (2023-01-14)
+
+- feat!: 调整 `useLoading`，现在返回是一个对象，其中包含 `showLoading` 和 `hideLoading` 两个方法
+- feat: 调整类型实现，支持 `vue` v3.2.47 和 `@vueuse/core` v10，但仍需要用户侧做部分调整，参考 [uni-app#4604](https://github.com/dcloudio/uni-app/issues/4604)
+
 ## 0.17.1 (2023-11-14)
 
 - fix: 修复 `useStorage`，关闭 [#28](https://github.com/uni-helper/uni-use/issues/28)
