@@ -27,12 +27,14 @@
   "type": "module",
   "exports": {
     ".": {
-      "types": {
-        "import": "./dist/index.d.mts",
-        "require": "./dist/index.d.cts"
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
       },
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
     }
   },
   "main": "./dist/index.cjs",
@@ -56,39 +58,39 @@
     "release": "pnpm install && pnpm run lint && bumpp"
   },
   "dependencies": {
-    "@dcloudio/types": "^3.4.3",
-    "@dcloudio/uni-app": "^3.0.0-3090620231104002",
-    "@vueuse/core": "^9.13.0"
+    "@dcloudio/types": "^3.4.7",
+    "@dcloudio/uni-app": "^3.0.0-3090920231225001"
   },
   "devDependencies": {
-    "@commitlint/cli": "^18.4.1",
-    "@commitlint/config-conventional": "^18.4.0",
-    "@commitlint/prompt": "^18.4.1",
+    "@commitlint/cli": "^18.4.4",
+    "@commitlint/config-conventional": "^18.4.4",
+    "@commitlint/prompt": "^18.4.4",
     "@modyqyw/fabric": "^9.0.6",
     "@tsconfig/node18": "^18.2.2",
-    "@types/node": "^18.18.9",
-    "@typescript-eslint/eslint-plugin": "^6.10.0",
-    "@typescript-eslint/parser": "^6.10.0",
-    "bumpp": "^9.2.0",
+    "@types/node": "^20.11.0",
+    "@typescript-eslint/eslint-plugin": "^6.18.1",
+    "@typescript-eslint/parser": "^6.18.1",
+    "@vueuse/core": "^10.7.2",
+    "bumpp": "^9.2.1",
     "commitizen": "^4.3.0",
     "concurrently": "^8.2.2",
-    "eslint": "^8.53.0",
+    "eslint": "^8.56.0",
     "is-ci": "^3.0.1",
-    "lint-staged": "^15.1.0",
-    "markdownlint-cli": "^0.37.0",
-    "prettier": "^3.0.3",
-    "publint": "^0.2.5",
+    "lint-staged": "^15.2.0",
+    "markdownlint-cli": "^0.38.0",
+    "prettier": "^3.2.2",
+    "publint": "^0.2.7",
     "simple-git-hooks": "^2.9.0",
     "sort-package-json": "^2.6.0",
-    "taze": "^0.12.0",
-    "ts-node": "^10.9.1",
-    "tsx": "^4.1.1",
-    "typescript": "^5.2.2",
+    "taze": "^0.13.1",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3",
     "unbuild": "^2.0.0",
-    "vue": "^3.3.8"
+    "vue": "^3.4.13"
   },
   "peerDependencies": {
-    "@vueuse/core": "^9.0.0",
+    "@vueuse/core": "^9.0.0 || ^10.0.0",
     "typescript": "^4.5.0 || ^5.0.0",
     "vue": "^3.2.0"
   },
@@ -97,7 +99,7 @@
       "optional": true
     }
   },
-  "packageManager": "pnpm@8.10.3",
+  "packageManager": "pnpm@8.14.1",
   "engines": {
     "node": ">=18"
   },
