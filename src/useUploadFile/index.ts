@@ -1,4 +1,4 @@
-import { Ref, ShallowRef, ref, shallowRef } from 'vue';
+import { type Ref, type ShallowRef, ref, shallowRef } from 'vue';
 import { until } from '@vueuse/core';
 import { isString } from '../utils';
 

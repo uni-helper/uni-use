@@ -1,6 +1,7 @@
 import { ref, shallowRef } from 'vue';
-import { RemovableRef, resolveUnref, watchWithFilter } from '@vueuse/core';
-import type { MaybeComputedRef, ConfigurableEventFilter, ConfigurableFlush } from '@vueuse/core';
+import { resolveUnref, watchWithFilter } from '@vueuse/core';
+import type { RemovableRef, ConfigurableEventFilter, ConfigurableFlush } from '@vueuse/core';
+import type { MaybeComputedRef } from '../types';
 import { isFunction } from '../utils';
 
 export interface UseGlobalDataOptions<T extends object | undefined>

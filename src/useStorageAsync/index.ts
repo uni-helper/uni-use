@@ -5,9 +5,10 @@ import type {
   Awaitable,
   ConfigurableEventFilter,
   ConfigurableFlush,
-  MaybeComputedRef,
   RemovableRef,
 } from '@vueuse/core';
+import type { MaybeComputedRef } from '../types';
+
 import { isFunction } from '../utils';
 
 import { useInterceptor } from '../useInterceptor';

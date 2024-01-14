@@ -1,7 +1,8 @@
 import { ref } from 'vue';
 import type { Ref } from 'vue';
 import { watchWithFilter } from '@vueuse/core';
-import type { ConfigurableEventFilter, ConfigurableFlush, MaybeComputedRef } from '@vueuse/core';
+import type { ConfigurableEventFilter, ConfigurableFlush } from '@vueuse/core';
+import type { MaybeComputedRef } from '../types';
 import { useInterceptor } from '../useInterceptor';
 
 function getClipboardData(showToast = true) {

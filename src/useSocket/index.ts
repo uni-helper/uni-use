@@ -1,11 +1,6 @@
 import { computed, ComputedRef, ref, watch, type Ref } from 'vue';
-import {
-  resolveRef,
-  tryOnScopeDispose,
-  useIntervalFn,
-  type Fn,
-  type MaybeComputedRef,
-} from '@vueuse/core';
+import { resolveRef, tryOnScopeDispose, useIntervalFn, type Fn } from '@vueuse/core';
+import type { MaybeComputedRef } from '../types';
 import { tryOnUnload } from '../tryOnUnload';
 
 export type SocketTask = UniApp.SocketTask;
