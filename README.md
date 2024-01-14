@@ -58,8 +58,10 @@
 npm install @uni-helper/uni-use @vueuse/core@9
 ```
 
+如果你希望使用 `@vueuse/core` v10，请参考 [uni-app#4604](https://github.com/dcloudio/uni-app/issues/4604)。
+
 <details>
-  <summary>yarn v2+</summary>
+  <summary>yarn v2 或以上</summary>
   <p>请参考 <a href="https://yarnpkg.com/configuration/yarnrc/#nodeLinker">文档</a> 设置 <code>nodeLinker</code> 为 <code>node_modules</code>。</p>
 </details>
 
