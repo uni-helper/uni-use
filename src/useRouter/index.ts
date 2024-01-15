@@ -23,10 +23,6 @@ function initIfNotInited() {
     return;
   }
 
-  function refreshCurrentPages() {
-    pages.value = getCurrentPages();
-  }
-
   uni.addInterceptor('navigateTo', { complete: refreshCurrentPages });
   uni.addInterceptor('redirectTo', { complete: refreshCurrentPages });
   uni.addInterceptor('reLaunch', { complete: refreshCurrentPages });
@@ -38,7 +34,11 @@ function initIfNotInited() {
   isInited = true;
 }
 
-function warpPromiseOptions<T = any>(opts: T, resolve: Function, reject: Function) {
+function refreshCurrentPages() {
+  pages.value = getCurrentPages();
+}
+
+function warpPromiseOptions<T = any>(opts: T, resolve: (res: any) => any, reject: (err: any) => any) {
   let { fail, success, complete } = opts as any;
 
   fail = fail || ((err: any) => err);
@@ -93,10 +93,10 @@ function reLaunch(options: UniNamespace.ReLaunchOptions): Promise<any> {
   });
 }
 
-function back(options: UniNamespace.NavigateBackOptions = { delta: 1 }): Promise<any> {
+function back(options?: UniNamespace.NavigateBackOptions): Promise<any> {
   return new Promise((resolve, reject) => {
     uni.navigateBack(
-      warpPromiseOptions(options, resolve, reject),
+      warpPromiseOptions(options || {}, resolve, reject),
     );
   });
 }
