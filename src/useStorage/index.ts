@@ -136,7 +136,7 @@ export interface UseStorageAsyncOptions<T> extends ConfigurableEventFilter, Conf
   /**
    * 当本地缓存不存在时，是否把默认值写入缓存
    *
-   * @deprecated 变量ref和storage时响应式的，当storage没值，返回带默认值的ref必然会写入storage
+   * @deprecated 变量ref和storage是响应式的，当storage没值，返回带默认值的ref必然会写入storage
    * @default true
    */
   writeDefaults?: boolean;
