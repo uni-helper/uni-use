@@ -200,7 +200,7 @@ const clipboardData = useClipboardData('', { onError: (error) => { ... } });
 
 ### useDownloadFile
 
-`uni.downloadFile` 的封装。使用方法参见 <https://vueuse.org/integrations/useAxios/>。
+`uni.downloadFile` 的封装，对标 `@vueuse/core` v10.7.1。使用方法参见 <https://vueuse.org/integrations/useAxios/>。
 
 **返回值中含有 task，可自行操作。**
 
@@ -423,7 +423,7 @@ getProvider({
 
 ### useRequest
 
-`uni.request` 的封装。使用方法参见 <https://vueuse.org/integrations/useAxios/>。
+`uni.request` 的封装，对标 `@vueuse/core` v10.7.1。使用方法参见 <https://vueuse.org/integrations/useAxios/>。
 
 **返回值中含有 task，可自行操作。**
 
@@ -515,13 +515,13 @@ const rects = await getBoundingClientRect('.selector', true);
 
 ### useSocket
 
-`uni-app` 关于 `socket` 的封装。使用方法参见 <https://vueuse.org/core/useWebSocket/>。
+`uni-app` 关于 `socket` 的封装，对标 `@vueuse/core` v10.7.1。使用方法参见 <https://vueuse.org/core/useWebSocket/>。
 
 **返回值中含有 task，可自行操作。**
 
 ### useStorageAsync
 
-`uni-app` 关于 `storage` 的封装，使用方法参见 <https://vueuse.org/core/useStorageAsync/>。
+`uni-app` 关于 `storage` 的封装，对标 `@vueuse/core` v10.7.1。使用方法参见 <https://vueuse.org/core/useStorageAsync/>。
 
 ### useToast
 
@@ -547,7 +547,7 @@ showToast({
 
 ### useUploadFile
 
-`uni.uploadFile` 的封装。使用方法参见 <https://vueuse.org/integrations/useAxios/>。
+`uni.uploadFile` 的封装，对标 `@vueuse/core` v10.7.1。使用方法参见 <https://vueuse.org/integrations/useAxios/>。
 
 **返回值中含有 task，可自行操作。**
 
