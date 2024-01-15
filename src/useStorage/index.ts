@@ -235,10 +235,10 @@ export function useStorage<T extends string | number | boolean | object | null>(
   // 不使用 pausableWatch 使用 updating 变量标识。
   // 因为除了 watch 之外，uniapp 的 interceptor 也会导致连带更新
   let updating = false;
-  async function withUpdate(callback: Awaitable<() => any>) {
+  async function withUpdate(callback: () => Awaitable<any>) {
     if (updating) return;
     updating = true;
-    await Promise.resolve(callback).finally(() => (updating = false));
+    await Promise.resolve(callback()).finally(() => (updating = false));
   }
 
   watchWithFilter(data, () => write(data.value), { flush, deep, eventFilter });
