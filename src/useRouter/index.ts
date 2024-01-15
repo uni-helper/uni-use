@@ -53,57 +53,57 @@ function warpPromiseOptions<T = any>(opts: T, resolve: Function, reject: Functio
   };
 }
 
+function navigate(options: UniNamespace.NavigateToOptions): Promise<any> {
+  return new Promise((resolve, reject) => {
+    // 先尝试能否切换 tabbar
+    uni.switchTab(
+      warpPromiseOptions(options, resolve, reject),
+    );
+  }).catch(() => {
+    // 失败再尝试跳转 navigateTo
+    return new Promise((resolve, reject) => {
+      uni.navigateTo(
+        warpPromiseOptions(options, resolve, reject),
+      );
+    });
+  });
+}
+
+function redirect(options: UniNamespace.RedirectToOptions): Promise<any> {
+  return new Promise((resolve, reject) => {
+    // 先尝试能否切换 tabbar
+    uni.switchTab(
+      warpPromiseOptions(options, resolve, reject),
+    );
+  }).catch(() => {
+    // 失败再尝试跳转 redirectTo
+    return new Promise((resolve, reject) => {
+      uni.redirectTo(
+        warpPromiseOptions(options, resolve, reject),
+      );
+    });
+  });
+}
+
+function reLaunch(options: UniNamespace.ReLaunchOptions): Promise<any> {
+  return new Promise((resolve, reject) => {
+    uni.reLaunch(
+      warpPromiseOptions(options, resolve, reject),
+    );
+  });
+}
+
+function back(options: UniNamespace.NavigateBackOptions = { delta: 1 }): Promise<any> {
+  return new Promise((resolve, reject) => {
+    uni.navigateBack(
+      warpPromiseOptions(options, resolve, reject),
+    );
+  });
+}
+
 /** 获取路由信息 */
 export function useRouter() {
   initIfNotInited();
-
-  function navigate(options: UniNamespace.NavigateToOptions): Promise<any> {
-    return new Promise((resolve, reject) => {
-      // 先尝试能否切换 tabbar
-      uni.switchTab(
-        warpPromiseOptions(options, resolve, reject),
-      );
-    }).catch(() => {
-      // 失败再尝试跳转 navigateTo
-      return new Promise((resolve, reject) => {
-        uni.navigateTo(
-          warpPromiseOptions(options, resolve, reject),
-        );
-      });
-    });
-  }
-
-  function redirect(options: UniNamespace.RedirectToOptions): Promise<any> {
-    return new Promise((resolve, reject) => {
-      // 先尝试能否切换 tabbar
-      uni.switchTab(
-        warpPromiseOptions(options, resolve, reject),
-      );
-    }).catch(() => {
-      // 失败再尝试跳转 redirectTo
-      return new Promise((resolve, reject) => {
-        uni.redirectTo(
-          warpPromiseOptions(options, resolve, reject),
-        );
-      });
-    });
-  }
-
-  function reLaunch(options: UniNamespace.ReLaunchOptions): Promise<any> {
-    return new Promise((resolve, reject) => {
-      uni.reLaunch(
-        warpPromiseOptions(options, resolve, reject),
-      );
-    });
-  }
-
-  function back(options: UniNamespace.NavigateBackOptions = { delta: 1 }): Promise<any> {
-    return new Promise((resolve, reject) => {
-      uni.navigateBack(
-        warpPromiseOptions(options, resolve, reject),
-      );
-    });
-  }
 
   return {
     /** 获取当前页面栈信息 */
