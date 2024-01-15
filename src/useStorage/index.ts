@@ -258,8 +258,8 @@ export function useStorage<T extends string | number | boolean | object | null>(
   function write(val: any) {
     if (timer) clearTimeout(timer);
     // 避免太频繁写入 storage 导致的性能问题
-    setTimeout(() => {
-      withUpdate(async () => {
+    setTimeout(async () => {
+      await withUpdate(async () => {
         if (val == null) {
           await storage.removeItem(key);
           return;
@@ -296,7 +296,7 @@ export function useStorage<T extends string | number | boolean | object | null>(
         value = await serializer.read(rawValue);
       }
 
-      withUpdate(() => {
+      await withUpdate(() => {
         data.value = value;
       });
     } catch (error) {
