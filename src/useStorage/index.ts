@@ -258,7 +258,7 @@ export function useStorage<T extends string | number | boolean | object | null>(
   function write(val: any) {
     if (timer) clearTimeout(timer);
     // 避免太频繁写入 storage 导致的性能问题
-    setTimeout(async () => {
+    timer = setTimeout(async () => {
       await withUpdate(async () => {
         if (val == null) {
           await storage.removeItem(key);
