@@ -1,6 +1,8 @@
 import { type Ref, type ShallowRef, ref, shallowRef } from 'vue';
 import { until } from '@vueuse/core';
-import { isString } from '../utils';
+import { isString, noop } from '../utils';
+
+/** 对标 @vueuse/core v10.7.1 useAxios */
 
 export interface UseUploadFileReturn<T> {
   task: ShallowRef<UniApp.UploadTask | undefined>;
@@ -50,15 +52,31 @@ export type OverallUseUploadFileReturn<T> =
   | StrictUseUploadFileReturn<T>
   | EasyUseUploadFileReturn<T>;
 
-export interface UseUploadFileOptions {
+export interface UseUploadFileOptions<T = any> {
   /** 是否自动开始上传 */
   immediate?: boolean;
+
   /**
    * 是否使用 shallowRef
    *
    * @default true
    */
   shallow?: boolean;
+
+  /** 上传错误时的回调 */
+  onError?: (e: UniApp.GeneralCallbackResult) => void;
+
+  /** 上传成功时的回调 */
+  onSuccess?: (data: T) => void;
+
+  /** 要使用的初始化数据 */
+  initialData?: T;
+
+  /** 是否在执行承诺之前将状态设置为初始状态 */
+  resetOnExecute?: boolean;
+
+  /** 上传结束时的回调 */
+  onFinish?: (result?: UniApp.GeneralCallbackResult) => void;
 }
 
 export function useUploadFile<T = any>(
@@ -76,8 +94,12 @@ export function useUploadFile<T = any>(
 ): OverallUseUploadFileReturn<T> & PromiseLike<OverallUseUploadFileReturn<T>> {
   const url: string | undefined = typeof args[0] === 'string' ? args[0] : undefined;
   const argsPlaceholder = isString(url) ? 1 : 0;
+  const defaultOptions: UseUploadFileOptions<T> = {
+    immediate: !!argsPlaceholder,
+    shallow: true,
+  };
   let defaultConfig: Partial<UniApp.UploadFileOption> = {};
-  let options: UseUploadFileOptions = { immediate: !!argsPlaceholder, shallow: true };
+  let options: UseUploadFileOptions<T> = defaultOptions;
 
   if (args.length > 0 + argsPlaceholder) {
     defaultConfig = args[0 + argsPlaceholder];
@@ -87,9 +109,19 @@ export function useUploadFile<T = any>(
     options = args[0 + argsPlaceholder];
   }
 
+  const {
+    initialData,
+    shallow,
+    onSuccess = noop,
+    onError = noop,
+    onFinish = noop,
+    immediate,
+    resetOnExecute = false,
+  } = options;
+
   const task = shallowRef<UniApp.UploadTask>();
   const response = shallowRef<UniApp.UploadFileSuccessCallbackResult>();
-  const data = options.shallow ? shallowRef<T>() : ref<T>();
+  const data = shallow ? shallowRef<T>() : ref<T>();
   const isFinished = ref(false);
   const isLoading = ref(false);
   const isAborted = ref(false);
@@ -97,56 +129,86 @@ export function useUploadFile<T = any>(
 
   const abort = (message?: string) => {
     if (isFinished.value || !isLoading.value) return;
-
     // @ts-expect-error no types
     task.value?.abort(message);
     isAborted.value = true;
     isLoading.value = false;
     isFinished.value = false;
   };
+
   const loading = (loading: boolean) => {
     isLoading.value = loading;
     isFinished.value = !loading;
   };
+
+  const resetData = () => {
+    if (resetOnExecute) data.value = initialData;
+  };
+
   const waitUntilFinished = () =>
     new Promise<OverallUseUploadFileReturn<T>>((resolve, reject) => {
       until(isFinished)
         .toBe(true)
-        .then(() => resolve(result))
-        .catch(reject);
+        .then(() => (error.value ? reject(error.value) : resolve(result)));
     });
-  const then: PromiseLike<OverallUseUploadFileReturn<T>>['then'] = (onFulfilled, onRejected) =>
-    waitUntilFinished().then(onFulfilled, onRejected);
+
+  const promise = {
+    then: (...args) => waitUntilFinished().then(...args),
+    catch: (...args) => waitUntilFinished().catch(...args),
+  } as Promise<OverallUseUploadFileReturn<T>>;
+
+  let executeCounter = 0;
   const execute: OverallUseUploadFileReturn<T>['execute'] = (
     executeUrl: string | UniApp.UploadFileOption | undefined = url,
     config: Partial<UniApp.UploadFileOption> = {},
   ) => {
-    const _url = typeof executeUrl === 'string' ? executeUrl : url ?? '';
+    error.value = undefined;
+    const _url = typeof executeUrl === 'string' ? executeUrl : url ?? config.url;
+
+    if (_url === undefined) {
+      error.value = {
+        errMsg: 'Invalid URL provided for uni.request.',
+      };
+      isFinished.value = true;
+      return promise;
+    }
+    resetData();
+    abort();
     loading(true);
+
+    executeCounter += 1;
+    const currentExecuteCounter = executeCounter;
+    isAborted.value = false;
+
     const _config = {
       ...defaultConfig,
-      ...config,
+      ...(typeof executeUrl === 'object' ? executeUrl : config),
       url: _url,
     };
     task.value = uni.uploadFile({
       ..._config,
       success: (r) => {
-        response.value = r;
-        data.value = r.data as unknown as T;
+        if (isAborted.value) return;
         _config.success?.(r);
+        response.value = r;
+        const result = r.data as unknown as T;
+        data.value = result;
+        onSuccess(result);
       },
       fail: (e) => {
-        error.value = e;
         _config.fail?.(e);
+        error.value = e;
+        onError(e);
       },
       complete: (r) => {
-        loading(false);
         _config.complete?.(r);
+        onFinish(r);
+        if (currentExecuteCounter === executeCounter) loading(false);
       },
     });
-    return { then };
+    return promise;
   };
-  if (options.immediate && url) (execute as StrictUseUploadFileReturn<T>['execute'])();
+  if (immediate && url) (execute as StrictUseUploadFileReturn<T>['execute'])();
 
   const result = {
     task,
@@ -164,6 +226,6 @@ export function useUploadFile<T = any>(
 
   return {
     ...result,
-    then,
+    ...promise,
   };
 }

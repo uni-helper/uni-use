@@ -3,6 +3,8 @@ import { resolveRef, tryOnScopeDispose, useIntervalFn, type Fn } from '@vueuse/c
 import type { MaybeComputedRef } from '../types';
 import { tryOnUnload } from '../tryOnUnload';
 
+/** 对标 @vueuse/core v10.7.1 useWebSocket */
+
 export type SocketTask = UniApp.SocketTask;
 
 export type SocketStatus = 'OPEN' | 'CONNECTING' | 'CLOSED';
@@ -11,9 +13,10 @@ const DEFAULT_PING_MESSAGE = 'ping';
 
 export interface UseSocketOptions {
   onConnected?: (task: SocketTask, result: UniApp.OnSocketOpenCallbackResult) => void;
-  onClosed?: (task: SocketTask, result: any) => void;
+  onClosed?: (task: SocketTask, result: UniApp.OnSocketCloseOptions) => void;
   onError?: (task: SocketTask, error: UniApp.GeneralCallbackResult) => void;
   onMessage?: (task: SocketTask, result: UniApp.OnSocketMessageCallbackResult) => void;
+
   /**
    * 是否每过 x 毫秒发送一次心跳信号
    *
@@ -28,12 +31,14 @@ export interface UseSocketOptions {
          * @default 'ping'
          */
         message?: string | ArrayBuffer;
+
         /**
          * 毫秒级时间间隔
          *
          * @default 1000
          */
         interval?: number;
+
         /**
          * 毫秒级心跳信号响应超时时间
          *
@@ -41,6 +46,7 @@ export interface UseSocketOptions {
          */
         pongTimeout?: number;
       };
+
   /**
    * 是否允许自动重连
    *
@@ -57,41 +63,49 @@ export interface UseSocketOptions {
          * @default -1
          */
         retries?: number | (() => boolean);
+
         /**
          * 毫秒级重连延迟
          *
          * @default 1000
          */
         delay?: number;
+
         /** 到达最大重连次数时触发 */
         onFailed?: Fn;
       };
+
   /**
    * 是否自动打开连接
    *
    * @default true
    */
   immediate?: boolean;
+
   /**
    * 是否自动关闭连接
    *
    * @default true
    */
   autoClose?: boolean;
+
   /**
    * 是否多实例
    *
    * @default false
    */
   multiple?: boolean;
+
   /** 头部 */
   headers?: Record<string, any>;
+
   /**
    * 请求方法
    *
    * @default 'GET'
    */
   method?: 'OPTIONS' | 'GET' | 'HEAD' | 'POST' | 'PUT' | 'DELETE' | 'TRACE' | 'CONNECT';
+
   /**
    * 一个或多个子协议字符串的列表
    *
@@ -149,7 +163,7 @@ function resolveNestedOptions<T>(options: T | true): T {
  * https://uniapp.dcloud.net.cn/api/request/websocket.html
  */
 export function useSocket<Data = any>(
-  url: MaybeComputedRef<string | undefined>,
+  url: MaybeComputedRef<string | URL | undefined>,
   options: UseSocketOptions = {},
 ): UseSocketReturn<Data> {
   const {
@@ -185,16 +199,6 @@ export function useSocket<Data = any>(
 
   let pongTimeoutWait: ReturnType<typeof setTimeout> | undefined;
 
-  // 1000 表示正常关闭
-  // https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent/code
-  // https://uniapp.dcloud.net.cn/api/request/socket-task.html#sockettask-close
-  const close: SocketTask['close'] = ({ code = 1000, reason } = {}) => {
-    if (!taskRef.value) return;
-    explicitlyClosed = true;
-    heartbeatPause?.();
-    taskRef.value.close({ code, reason });
-  };
-
   const _sendBuffer = () => {
     if (bufferedData.length > 0 && taskRef.value && status.value === 'OPEN') {
       for (const buffer of bufferedData) taskRef.value.send({ data: buffer });
@@ -205,6 +209,16 @@ export function useSocket<Data = any>(
   const resetHeartbeat = () => {
     clearTimeout(pongTimeoutWait);
     pongTimeoutWait = undefined;
+  };
+
+  // 1000 表示正常关闭
+  // https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent/code
+  // https://uniapp.dcloud.net.cn/api/request/socket-task.html#sockettask-close
+  const close: SocketTask['close'] = ({ code = 1000, reason } = {}) => {
+    if (!taskRef.value) return;
+    explicitlyClosed = true;
+    heartbeatPause?.();
+    taskRef.value.close({ code, reason });
   };
 
   const send = (data: string | ArrayBuffer, useBuffer = true) => {
@@ -229,7 +243,7 @@ export function useSocket<Data = any>(
       complete: () => {
         // just for correct types
       },
-    });
+    } as UniApp.ConnectSocketOption) as unknown as UniApp.SocketTask;
     taskRef.value = task;
     status.value = 'CONNECTING';
 

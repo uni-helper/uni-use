@@ -1,6 +1,6 @@
 import { ref, shallowRef } from 'vue';
 import type { Ref } from 'vue';
-import { resolveUnref, watchWithFilter } from '@vueuse/core';
+import { resolveUnref, tryOnMounted, watchWithFilter } from '@vueuse/core';
 import type {
   Awaitable,
   ConfigurableEventFilter,
@@ -12,6 +12,8 @@ import type { MaybeComputedRef } from '../types';
 import { isFunction } from '../utils';
 
 import { useInterceptor } from '../useInterceptor';
+
+/** 对标 @vueuse/core v10.7.1 useAxios */
 
 export interface StorageLikeAsync {
   getItem(key: string): Awaitable<string | null>;
@@ -109,6 +111,12 @@ const StorageSerializers: Record<
 
 export interface UseStorageAsyncOptions<T> extends ConfigurableEventFilter, ConfigurableFlush {
   /**
+   * 是否监听深层变化
+   *
+   * @default true
+   */
+  deep?: boolean;
+  /**
    * 是否监听 setStorage、removeStorage 和 clearStorage 引起的本地缓存变化
    *
    * @default true
@@ -133,23 +141,23 @@ export interface UseStorageAsyncOptions<T> extends ConfigurableEventFilter, Conf
   /** 自定义数据序列化 */
   serializer?: SerializerAsync<T>;
   /**
-   * 是否使用 shallowRef
-   *
-   * @default false
-   */
-  shallow?: boolean;
-  /**
    * 错误回调
    *
    * 默认用 `console.error` 打印错误
    */
   onError?: (error: unknown) => void;
   /**
-   * 是否监听深层变化
+   * 是否使用 shallowRef
    *
-   * @default true
+   * @default false
    */
-  deep?: boolean;
+  shallow?: boolean;
+  /**
+   * Wait for the component to be mounted before reading the storage.
+   *
+   * @default false
+   */
+  initOnMounted?: boolean;
 }
 
 export function useStorageAsync(
@@ -195,14 +203,15 @@ export function useStorageAsync<T extends string | number | boolean | object | n
   options: UseStorageAsyncOptions<T> = {},
 ): RemovableRef<T> {
   const {
+    flush = 'pre',
+    deep = true,
     listenToStorageChanges = true,
     writeDefaults = true,
     mergeDefaults = false,
     shallow = false,
-    onError = (error) => console.error(error),
-    deep = true,
-    flush = 'pre',
     eventFilter,
+    onError = (error) => console.error(error),
+    initOnMounted,
   } = options;
 
   const rawInit: T = resolveUnref(initialValue);
@@ -221,7 +230,7 @@ export function useStorageAsync<T extends string | number | boolean | object | n
       if (rawValue == null) {
         // 没有对应的值，直接使用默认值
         data.value = rawInit;
-        if (writeDefaults && rawInit !== null) {
+        if (writeDefaults && rawInit != null) {
           // 需要时将默认值写入缓存
           await storage.setItem(key, await serializer.write(rawInit));
         }
@@ -246,12 +255,15 @@ export function useStorageAsync<T extends string | number | boolean | object | n
     }
   }
 
-  read();
+  if (!initOnMounted) read();
 
   if (listenToStorageChanges) {
-    useInterceptor('setStorage', { complete: () => setTimeout(() => read(), 0) });
-    useInterceptor('removeStorage', { complete: () => setTimeout(() => read(), 0) });
-    useInterceptor('clearStorage', { complete: () => setTimeout(() => read(), 0) });
+    tryOnMounted(() => {
+      useInterceptor('setStorage', { complete: () => setTimeout(() => read(), 0) });
+      useInterceptor('removeStorage', { complete: () => setTimeout(() => read(), 0) });
+      useInterceptor('clearStorage', { complete: () => setTimeout(() => read(), 0) });
+      if (initOnMounted) read();
+    });
   }
 
   if (storage) {
