@@ -1,76 +1,68 @@
+import type { ConfigurableFlushSync, RemovableRef } from '@vueuse/core';
 import { useStorage } from '../useStorage';
-import type { ConfigurableEventFilter, ConfigurableFlushSync, RemovableRef } from '@vueuse/core';
+import type { UniStorageLike, UseStorageOptions } from '../useStorage';
 import type { MaybeComputedRef } from '../types';
 
-export interface StorageLikeSync {
-  getItem(key: string): string | null;
-  setItem(key: string, value: string): void;
-  removeItem(key: string): void;
+export interface UniStorageSyncLike {
+  getItem: typeof uni.getStorageSync;
+  setItem: typeof uni.setStorageSync;
+  removeItem: typeof uni.removeStorageSync;
 }
 
-export interface SerializerSync<T> {
-  read(raw: string): T;
-  write(value: T): string;
+const UniStorage: UniStorageLike = parseUniStorageLike({
+  getItem: uni.getStorageSync,
+  setItem: uni.setStorageSync,
+  removeItem: uni.removeStorageSync,
+});
+
+function parseUniStorageLike(storageSync: UniStorageSyncLike) {
+  const storage: UniStorageLike = {
+    getItem: ({ key, success, fail, complete }) => {
+      try {
+        const data = storageSync.getItem(key);
+        success && success({ data });
+      }
+      catch (error) {
+        fail && fail(error);
+      }
+      finally {
+        complete && complete(void 0);
+      }
+    },
+    setItem: ({ key, data, success, fail, complete }) => {
+      try {
+        const raw = storageSync.setItem(key, data);
+        success && success({ data: raw });
+      }
+      catch (error) {
+        fail && fail(error);
+      }
+      finally {
+        complete && complete(void 0);
+      }
+    },
+    removeItem: ({ key, success, fail, complete }) => {
+      try {
+        storageSync.removeItem(key);
+        success && success({ data: void 0 });
+      }
+      catch (error) {
+        fail && fail(error);
+      }
+      finally {
+        complete && complete(void 0);
+      }
+    },
+  };
+
+  return storage;
 }
 
-const UniStorageSync: StorageLikeSync = {
-  getItem: (key) => uni.getStorageSync(key) as string | null,
-  setItem: (key, value) => uni.setStorageSync(key, value),
-  removeItem: (key) => uni.removeStorageSync(key),
-};
-
-export interface UseStorageSyncOptions<T> extends ConfigurableEventFilter, ConfigurableFlushSync {
-  /**
-   * 是否监听深层变化
-   *
-   * @default true
+export interface UseStorageSyncOptions<T> extends Omit<UseStorageOptions<T>, 'flush' | 'storage'>, ConfigurableFlushSync {
+  /** 
+   * 同步 storage
    */
-  deep?: boolean;
-  /**
-   * 是否监听 setStorage、removeStorage 和 clearStorage 引起的本地缓存变化
-   *
-   * @default true
-   */
-  listenToStorageChanges?: boolean;
-  /**
-   * 当本地缓存不存在时，是否把默认值写入缓存
-   *
-   * @deprecated 变量ref和storage是响应式的，当storage没值，返回带默认值的ref必然会写入storage
-   * @default true
-   */
-  writeDefaults?: boolean;
-  /**
-   * 是否合并默认值和本地缓存值
-   *
-   * 当设置为 true 时，浅合并对象
-   *
-   * 你也可以传一个方法来自定义合并
-   *
-   * @default false
-   */
-  mergeDefaults?: boolean | ((storageValue: T, defaults: T) => T);
-  /** 自定义数据序列化 */
-  serializer?: SerializerSync<T>;
-  /**
-   * 错误回调
-   *
-   * 默认用 `console.error` 打印错误
-   */
-  onError?: (error: unknown) => void;
-  /**
-   * 是否使用 shallowRef
-   *
-   * @default false
-   */
-  shallow?: boolean;
-  /**
-   * Wait for the component to be mounted before reading the storage.
-   *
-   * @default false
-   */
-  initOnMounted?: boolean;
-  /** 同步 storage */
-  storage?: StorageLikeSync;
+  storage?: UniStorageSyncLike;
 }
 
 export function useStorageSync(
@@ -100,7 +92,7 @@ export function useStorageSync<T = unknown>(
 ): RemovableRef<T>;
 
 /**
- * 响应式的本地缓存
+ * 响应式的本地缓存 （同步）
  *
  * https://uniapp.dcloud.net.cn/api/storage/storage.html
  */
@@ -109,7 +101,13 @@ export function useStorageSync<T extends string | number | boolean | object | nu
   initialValue: MaybeComputedRef<T>,
   options: UseStorageSyncOptions<T> = {},
 ): RemovableRef<T> {
-  const { flush = 'sync', storage = UniStorageSync, ...others } = options;
+  const {
+    flush = 'sync',
+    storage,
+    ...others
+  } = options;
 
-  return useStorage(key, initialValue, { flush, storage, ...others });
+  const storageAsync = storage ? parseUniStorageLike(storage) : UniStorage;
+
+  return useStorage(key, initialValue, { flush, storage: storageAsync, ...others });
 }

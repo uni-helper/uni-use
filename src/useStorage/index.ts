@@ -1,22 +1,18 @@
-import { ref, shallowRef } from 'vue';
+import { ref, shallowRef, toValue } from 'vue';
+import { tryOnMounted, watchWithFilter } from '@vueuse/core';
+import { useInterceptor } from 'src/useInterceptor';
 import type { Ref } from 'vue';
-import { toValue, tryOnMounted, watchWithFilter } from '@vueuse/core';
+import type { MaybeComputedRef } from '../types';
 import type {
-  Awaitable,
   ConfigurableEventFilter,
   ConfigurableFlush,
   RemovableRef,
 } from '@vueuse/core';
-import type { MaybeComputedRef } from '../types';
-import { isFunction } from '../utils';
-import { useInterceptor } from '../useInterceptor';
 
-/** 对标 @vueuse/core v10.7.1 useAxios */
-
-export interface StorageLikeAsync {
-  getItem(key: string): Awaitable<string | null>;
-  setItem(key: string, value: string): Awaitable<void>;
-  removeItem(key: string): Awaitable<void>;
+export interface UniStorageLike {
+  getItem(options: UniNamespace.GetStorageOptions): void;
+  setItem(options: UniNamespace.SetStorageOptions): void;
+  removeItem(options: UniNamespace.RemoveStorageOptions): void;
 }
 
 export interface Serializer<T> {
@@ -24,37 +20,10 @@ export interface Serializer<T> {
   write(value: T): string;
 }
 
-export interface SerializerAsync<T> {
-  read(raw: string): Awaitable<T>;
-  write(value: T): Awaitable<string>;
-}
-
-const UniStorage: StorageLikeAsync = {
-  getItem: (key) =>
-    new Promise((resolve) =>
-      uni.getStorage({
-        key,
-        success: ({ data }) => resolve(data),
-        fail: () => resolve(null), // 在这里 resolve null 匹配后续逻辑判断
-      }),
-    ),
-  setItem: (key, value) =>
-    new Promise((resolve, reject) =>
-      uni.setStorage({
-        key,
-        data: value,
-        success: () => resolve(),
-        fail: (error) => reject(error),
-      }),
-    ),
-  removeItem: (key) =>
-    new Promise((resolve, reject) =>
-      uni.removeStorage({
-        key,
-        success: () => resolve(),
-        fail: (error) => reject(error),
-      }),
-    ),
+const UniStorage: UniStorageLike = {
+  getItem: uni.getStorage,
+  setItem: uni.setStorage,
+  removeItem: uni.removeStorage,
 };
 
 export function guessSerializerType<T extends string | number | boolean | object | null>(
@@ -120,7 +89,7 @@ const StorageSerializers: Record<
 // 存储所有storage变量
 const store: Record<string, RemovableRef<any>> = {};
 
-export interface UseStorageAsyncOptions<T> extends ConfigurableEventFilter, ConfigurableFlush {
+export interface UseStorageOptions<T> extends ConfigurableEventFilter, ConfigurableFlush {
   /**
    * 是否监听深层变化
    *
@@ -150,8 +119,10 @@ export interface UseStorageAsyncOptions<T> extends ConfigurableEventFilter, Conf
    * @default false
    */
   mergeDefaults?: boolean | ((storageValue: T, defaults: T) => T);
-  /** 自定义数据序列化 */
-  serializer?: SerializerAsync<T>;
+  /**
+   * 自定义数据序列化
+   */
+  serializer?: Serializer<T>;
   /**
    * 错误回调
    *
@@ -170,45 +141,47 @@ export interface UseStorageAsyncOptions<T> extends ConfigurableEventFilter, Conf
    * @default false
    */
   initOnMounted?: boolean;
-  /** storage */
-  storage?: StorageLikeAsync;
+  /** 
+   * 异步 storage
+   */
+  storage?: UniStorageLike;
 }
 
 export function useStorage(
   key: string,
   initialValue: MaybeComputedRef<string>,
-  options?: UseStorageAsyncOptions<string>,
+  options?: UseStorageOptions<string>,
 ): RemovableRef<string>;
 export function useStorage(
   key: string,
   initialValue: MaybeComputedRef<boolean>,
-  options?: UseStorageAsyncOptions<boolean>,
+  options?: UseStorageOptions<boolean>,
 ): RemovableRef<boolean>;
 export function useStorage(
   key: string,
   initialValue: MaybeComputedRef<number>,
-  options?: UseStorageAsyncOptions<number>,
+  options?: UseStorageOptions<number>,
 ): RemovableRef<number>;
 export function useStorage<T>(
   key: string,
   initialValue: MaybeComputedRef<T>,
-  options?: UseStorageAsyncOptions<T>,
+  options?: UseStorageOptions<T>,
 ): RemovableRef<T>;
 export function useStorage<T = unknown>(
   key: string,
   initialValue: MaybeComputedRef<null>,
-  options?: UseStorageAsyncOptions<T>,
+  options?: UseStorageOptions<T>,
 ): RemovableRef<T>;
 
 /**
- * 响应式的本地缓存
+ * 响应式的本地缓存（异步）
  *
  * https://uniapp.dcloud.net.cn/api/storage/storage.html
  */
 export function useStorage<T extends string | number | boolean | object | null>(
   key: string,
   initialValue: MaybeComputedRef<T>,
-  options: UseStorageAsyncOptions<T> = {},
+  options: UseStorageOptions<T> = {},
 ): RemovableRef<T> {
   const {
     flush = 'pre',
@@ -217,7 +190,7 @@ export function useStorage<T extends string | number | boolean | object | null>(
     mergeDefaults = false,
     shallow = false,
     eventFilter,
-    onError = (error) => console.error(error),
+    onError = error => console.error(error),
     initOnMounted,
     storage = UniStorage,
   } = options;
@@ -264,54 +237,71 @@ export function useStorage<T extends string | number | boolean | object | null>(
     timer = setTimeout(() => writeStorage(val), 100);
   }
 
-  async function writeStorage(val: any) {
+  function writeStorage(val: any) {
     try {
       updating = true;
 
       if (val == null) {
-        await storage.removeItem(key);
+        storage.removeItem({
+          key,
+          fail: (error) => onError(error),
+        });
         return;
       }
-      const serialized = await serializer.write(val);
-      await storage.setItem(key, serialized);
-
-    } catch (error) {
+      const serialized = serializer.write(val);
+      storage.setItem({
+        key,
+        data: serialized,
+        fail: (error) => onError(error),
+      });
+    }
+    catch (error) {
       onError(error);
-    } finally {
+    }
+    finally {
       updating = false;
     }
   }
 
-  async function read() {
+  function read() {
     try {
       // 读取本地缓存值
-      const rawValue = await storage.getItem(key);
-      let value: T;
-      if (rawValue == null) {
-        // 没有对应的值，直接使用默认值
-        value = rawInit;
-      } else if (mergeDefaults) {
-        // 有对应的值，需要合并默认值和本地缓存值
-        value = await serializer.read(rawValue);
-        // 如果是方法，调用
-        if (isFunction(mergeDefaults)) {
-          value = mergeDefaults(value, rawInit);
-        }
-        // 如果是对象，浅合并
-        else if (type === 'object' && !Array.isArray(value))
-          value = { ...(rawInit as any), ...(value as any) };
-      } else {
-        // 有对应的值，不需要合并
-        value = await serializer.read(rawValue);
-      }
+      storage.getItem({
+        key,
+        success: ({ data: rawValue }) => {
+          let value: T;
+          if (rawValue == null) {
+            // 没有对应的值，直接使用默认值
+            value = rawInit;
+          }
+          else if (mergeDefaults) {
+            // 有对应的值，需要合并默认值和本地缓存值
+            value = serializer.read(rawValue);
+            // 如果是方法，调用
+            if (typeof mergeDefaults === 'function') {
+              value = mergeDefaults(value, rawInit);
+            }
+            // 如果是对象，浅合并
+            else if (type === 'object' && !Array.isArray(value)) {
+              value = { ...(rawInit as any), ...(value as any) };
+            }
+          }
+          else {
+            // 有对应的值，不需要合并
+            value = serializer.read(rawValue);
+          }
 
-      updating = true;
+          updating = true;
 
-      data.value = value;
-      
-    } catch (error) {
+          data.value = value;
+        },
+        fail: (error) => onError(error),
+      });
+    }
+    catch (error) {
       onError(error);
-    }finally{
+    }
+    finally {
       updating = false;
     }
   }
