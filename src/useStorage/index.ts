@@ -242,15 +242,15 @@ export function useStorage<T extends string | number | boolean | object | null>(
     await Promise.resolve(callback()).finally(() => (updating = false));
   }
 
-  watchWithFilter(data, () => write(data.value), { flush, deep, eventFilter });
+  watchWithFilter(data, () => (!updating && write(data.value)), { flush, deep, eventFilter });
 
   if (!initOnMounted) read();
 
   if (listenToStorageChanges) {
     tryOnMounted(() => {
-      useInterceptor('setStorage', { complete: update });
-      useInterceptor('removeStorage', { complete: update });
-      useInterceptor('clearStorage', { complete: update });
+      useInterceptor('setStorage', { complete: read });
+      useInterceptor('removeStorage', { complete: read });
+      useInterceptor('clearStorage', { complete: read });
       if (initOnMounted) read();
     });
   }
@@ -258,20 +258,33 @@ export function useStorage<T extends string | number | boolean | object | null>(
   let timer: NodeJS.Timeout;
   function write(val: any) {
     if (timer) clearTimeout(timer);
-    // 避免太频繁写入 storage 导致的性能问题
-    timer = setTimeout(async () => {
-      await withUpdate(async () => {
-        if (val == null) {
-          await storage.removeItem(key);
-          return;
-        }
 
-        const serialized = await serializer.write(val);
-        await storage.setItem(key, serialized);
-      }).catch((error) => {
-        onError(error);
-      });
-    }, 100);
+    // 如果是同步操作，则直接写 storage
+    if (flush === 'sync') {
+      writeStorage(val);
+      return;
+    }
+
+    // 避免太频繁写入 storage 导致的性能问题
+    timer = setTimeout(() => writeStorage(val), 100);
+  }
+
+  async function writeStorage(val: any) {
+    try {
+      updating = true;
+
+      if (val == null) {
+        await storage.removeItem(key);
+        return;
+      }
+      const serialized = await serializer.write(val);
+      await storage.setItem(key, serialized);
+
+    } catch (error) {
+      onError(error);
+    } finally {
+      updating = false;
+    }
   }
 
   async function read() {
@@ -297,18 +310,15 @@ export function useStorage<T extends string | number | boolean | object | null>(
         value = await serializer.read(rawValue);
       }
 
-      await withUpdate(() => {
-        data.value = value;
-      });
+      updating = true;
+
+      data.value = value;
+      
     } catch (error) {
       onError(error);
+    }finally{
+      updating = false;
     }
-  }
-
-  async function update() {
-    if (updating) return;
-
-    await read();
   }
 
   return data as RemovableRef<T>;
