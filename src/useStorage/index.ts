@@ -222,13 +222,14 @@ export function useStorage<T extends string | number | boolean | object | null>(
     storage = UniStorage,
   } = options;
 
-  // 如果已有 key，则直接返回对象
-  if (key in store) return store[key];
-
   const rawInit: T = toValue(initialValue);
   const type = guessSerializerType<T>(rawInit);
 
   const serializer = options.serializer ?? StorageSerializers[type];
+
+  // 如果已有 key，则直接返回对象
+  if (key in store) return store[key];
+
   const data = (shallow ? shallowRef : ref)(initialValue) as Ref<T>;
   store[key] = data;
 
