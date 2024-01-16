@@ -1,6 +1,6 @@
 import { ref, shallowRef, toValue } from 'vue';
 import { tryOnMounted, watchWithFilter } from '@vueuse/core';
-import { useInterceptor } from 'src/useInterceptor';
+import { useInterceptor } from '../useInterceptor';
 import type { Ref } from 'vue';
 import type { MaybeComputedRef } from '../types';
 import type {
