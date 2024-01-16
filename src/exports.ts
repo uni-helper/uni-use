@@ -28,6 +28,7 @@ export * from './useScanCode';
 export * from './useScreenBrightness';
 export * from './useSelectorQuery';
 export * from './useSocket';
+export * from './useStorage';
 export * from './useStorageAsync';
 export * from './useToast';
 export * from './useUploadFile';
