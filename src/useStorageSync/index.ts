@@ -1,6 +1,6 @@
-import { ConfigurableEventFilter, ConfigurableFlushSync, RemovableRef } from '@vueuse/core';
 import { useStorage } from '../useStorage';
-import { MaybeComputedRef } from '../types';
+import type { ConfigurableEventFilter, ConfigurableFlushSync, RemovableRef } from '@vueuse/core';
+import type { MaybeComputedRef } from '../types';
 
 export interface StorageLikeSync {
   getItem(key: string): string | null;
