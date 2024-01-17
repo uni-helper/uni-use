@@ -17,9 +17,9 @@ export interface Serializer<T> {
 }
 
 const UniStorage: UniStorageLike = {
-  getItem: uni.getStorage,
-  setItem: uni.setStorage,
-  removeItem: uni.removeStorage,
+  getItem: (options: UniNamespace.GetStorageOptions) => uni.getStorage(options),
+  setItem: (options: UniNamespace.SetStorageOptions) => uni.setStorage(options),
+  removeItem: (options: UniNamespace.RemoveStorageOptions) => uni.removeStorage(options),
 };
 
 export function guessSerializerType<T extends string | number | boolean | object | null>(

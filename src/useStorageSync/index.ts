@@ -9,11 +9,19 @@ export interface UniStorageSyncLike {
   removeItem: typeof uni.removeStorageSync;
 }
 
-const UniStorage: UniStorageLike = parseUniStorageLike({
-  getItem: uni.getStorageSync,
-  setItem: uni.setStorageSync,
-  removeItem: uni.removeStorageSync,
-});
+// uni is not defined
+let UniStorage: UniStorageLike;
+function initUniStorageIfNotInited(){
+  if(UniStorage) {
+    return;
+  }
+  
+  UniStorage = parseUniStorageLike({
+    getItem: uni.getStorageSync,
+    setItem: uni.setStorageSync,
+    removeItem: uni.removeStorageSync,
+  });
+}
 
 function parseUniStorageLike(storageSync: UniStorageSyncLike) {
   const storage: UniStorageLike = {
@@ -95,6 +103,9 @@ export function useStorageSync<T extends string | number | boolean | object | nu
   initialValue: MaybeComputedRef<T>,
   options: UseStorageSyncOptions<T> = {},
 ): RemovableRef<T> {
+  // fix uni is not defined
+  initUniStorageIfNotInited();
+
   const { flush = 'sync', storage, ...others } = options;
 
   const storageAsync = storage ? parseUniStorageLike(storage) : UniStorage;
