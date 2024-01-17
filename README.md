@@ -109,7 +109,7 @@ export function createApp() {
 import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vitest/config';
 import autoImport from 'unplugin-auto-import/vite';
-import { UniUseAutoImports } from '@uni-helper/uni-use';
+import { unpluginAutoImport } from '@uni-helper/uni-use';
 import uni from '@dcloudio/vite-plugin-uni';
 
 // https://vitejs.dev/config/
@@ -118,7 +118,7 @@ export default defineConfig({
     autoImport({
       imports: [
         '@vueuse/core',
-        UniUseAutoImports, // 放在 @vueuse/core 之后以覆盖同名方法
+        unpluginAutoImport(), // 放在 @vueuse/core 之后以覆盖同名方法
       ],
     }),
     uni({ ... }),
