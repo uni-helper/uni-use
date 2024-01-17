@@ -2,16 +2,18 @@ import { ref, computed } from 'vue';
 import { pathResolve } from 'src/utils';
 import type { AppJson } from '@dcloudio/uni-cli-shared'
 import type { RequiredOnly } from '../types'
+import { onBackPress } from '@dcloudio/uni-app';
 
 /** 获取当前页面栈信息 */
 const pages = ref(getCurrentPages());
+const pageLength = computed(() => pages.value.length); // 使用 computed 可触发依赖项更新
 
 /** 获取当前页信息 */
 // at is not supported
-const current = computed(() => pages.value?.[pages.value.length - 1]);
+const current = computed(() => pages.value?.[pageLength.value - 1]);
 /** 获取前一页信息 */
 const prev = computed(() =>
-  pages.value.length > 1 ? pages.value[pages.value.length - 2] : pages.value?.[pages.value.length - 1],
+  pageLength.value > 1 ? pages.value[pageLength.value - 2] : pages.value?.[pageLength.value - 1],
 );
 
 /** 获取当前页路由信息 */
@@ -175,6 +177,15 @@ export function useRouter(options: UseRouterOptions = {}) {
   if (options.tabBarList) {
     tabBarList = options.tabBarList;
   }
+
+  /**
+   * 对实体按键 / 顶部导航栏返回按钮进行监听
+   * @see https://uniapp.dcloud.net.cn/tutorial/page.html#onbackpress
+   */
+  onBackPress((e) => {
+    if (e.from === 'navigateBack') return;
+    refreshCurrentPages();
+  })
 
   /**
    * 路由跳转
