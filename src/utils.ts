@@ -8,7 +8,7 @@ export const noop = () => {};
 export function pathResolve(target: string, current?: string) {
   if (!current) {
     const pages = getCurrentPages();
-    current = pages[pages.length - 1].route;
+    current = pages.length > 0 ? pages[pages.length - 1].route : undefined;
   }
 
   if (!current) {
