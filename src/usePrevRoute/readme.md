@@ -1,6 +1,6 @@
 # usePrevRoute
 
-#### [返回首页](../../README.md)
+#### [返回列表](../readme.md)
 
 获取前一页面路由信息。
 
@@ -10,4 +10,4 @@ import { usePrevRoute } from '@uni-helper/uni-use';
 const prevRoute = usePrevRoute();
 ```
 
-#### [返回首页](../../README.md)
+#### [返回列表](../readme.md)

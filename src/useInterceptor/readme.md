@@ -1,6 +1,6 @@
 # useInterceptor
 
-#### [返回首页](../../README.md)
+#### [返回列表](../readme.md)
 
 设置拦截器。
 
@@ -30,4 +30,4 @@ const stop = useInterceptor(event, {
 stop(event);
 ```
 
-#### [返回首页](../../README.md)
+#### [返回列表](../readme.md)

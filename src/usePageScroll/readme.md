@@ -1,6 +1,6 @@
 # usePageScroll
 
-#### [返回首页](../../README.md)
+#### [返回列表](../readme.md)
 
 控制与监听页面滚动。
 
@@ -12,4 +12,4 @@ const { scrollTop } = usePageScroll({
 });
 ```
 
-#### [返回首页](../../README.md)
+#### [返回列表](../readme.md)

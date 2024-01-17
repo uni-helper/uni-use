@@ -1,49 +1,13 @@
 # @uni-helper/uni-use
 
 [![License](https://img.shields.io/github/license/uni-helper/uni-use)](https://github.com/uni-helper/uni-use/blob/main/LICENSE)
-
 [![npm](https://img.shields.io/npm/v/@uni-helper/uni-use)](https://www.npmjs.com/package/@uni-helper/uni-use)
 
 `uni-app (vue3)` 组合式工具集。要求 `node>=18`。
 
 - [@uni-helper/uni-use](#uni-helperuni-use)
   - [安装依赖](#安装依赖)
-  - 使用
-    - [tryOnHide](./src/tryOnHide/readme.md)
-    - [tryOnInit](./src/tryOnInit/readme.md)
-    - [tryOnLoad](./src/tryOnLoad/readme.md)
-    - [tryOnReady](./src/tryOnReady/readme.md)
-    - [tryOnShow](./src/tryOnShow/readme.md)
-    - [tryOnUnload](./src/tryOnUnload/readme.md)
-    - [useActionSheet](./src/useActionSheet/readme.md)
-    - [useClipboardData](./src/useClipboardData/readme.md)
-    - [useDownloadFile](./src/useDownloadFile/readme.md)
-    - [useGlobalData](./src/useGlobalData/readme.md)
-    - [useInterceptor](./src/useInterceptor/readme.md)
-    - [useLoading](./src/useLoading/readme.md)
-    - [useModal](./src/useModal/readme.md)
-    - [useNetwork](./src/useNetwork/readme.md)
-    - [useOnline](./src/useOnline/readme.md)
-    - [usePage](./src/usePage/readme.md)
-    - [usePages](./src/usePages/readme.md)
-    - [usePageScroll](./src/usePageScroll/readme.md)
-    - [usePreferredDark](./src/usePreferredDark/readme.md)
-    - [usePreferredLanguage](./src/usePreferredLanguage/readme.md)
-    - [usePrevPage](./src/usePrevPage/readme.md)
-    - [usePrevRoute](./src/usePrevRoute/readme.md)
-    - [useProvider](./src/useProvider/readme.md)
-    - [useRequest](./src/useRequest/readme.md)
-    - [useRoute](./src/useRoute/readme.md)
-    - [useRouter](./src/useRouter/readme.md)
-    - [useScanCode](./src/useScanCode/readme.md)
-    - [useScreenBrightness](./src/useScreenBrightness/readme.md)
-    - [useSelectorQuery](./src/useSelectorQuery/readme.md)
-    - [useSocket](./src/useSocket/readme.md)
-    - [useStorage](./src/useStorage/readme.md)
-    - [useStorageSync](./src/useStorageSync/readme.md)
-    - [useToast](./src/useToast/readme.md)
-    - [useUploadFile](./src/useUploadFile/readme.md)
-    - [useVisible](./src/useVisible/readme.md)
+  - [使用](#使用)
   - [其它](#其它)
     - [限制](#限制)
     - [构建](#构建)
@@ -72,6 +36,10 @@ npm install @uni-helper/uni-use @vueuse/core@9
 </details>
 
 目前没有支持 `uni_modules` 的计划，但欢迎 PR 贡献。
+
+## 使用
+
+详情请看 [`use-use`函数列表](./src/readme.md)
 
 ## 其它
 

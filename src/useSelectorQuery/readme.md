@@ -1,6 +1,6 @@
 # useSelectorQuery
 
-#### [返回首页](../../README.md)
+#### [返回列表](../readme.md)
 
 `uni.createSelectorQuery` 的封装。
 
@@ -22,4 +22,4 @@ const rects = await getBoundingClientRect('.selector', true);
 // getFields，getScrollOffset，getContext 使用方式和 getBoundingClientRect 一致
 ```
 
-#### [返回首页](../../README.md)
+#### [返回列表](../readme.md)

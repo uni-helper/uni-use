@@ -1,6 +1,6 @@
 # useNetwork
 
-#### [返回首页](../../README.md)
+#### [返回列表](../readme.md)
 
 获取网络信息。
 
@@ -11,4 +11,4 @@ const { type, isWifi, is2g, is3g, is4g, is5g, isEthernet, isUnknown, isOnline, i
   useNetwork();
 ```
 
-#### [返回首页](../../README.md)
+#### [返回列表](../readme.md)

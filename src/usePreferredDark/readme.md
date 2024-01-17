@@ -1,6 +1,6 @@
 # usePreferredDark
 
-#### [返回首页](../../README.md)
+#### [返回列表](../readme.md)
 
 响应式的暗黑主题偏好。
 
@@ -10,4 +10,4 @@ import { usePreferredDark } from '@uni-helper/uni-use';
 const prefersDark = usePreferredDark();
 ```
 
-#### [返回首页](../../README.md)
+#### [返回列表](../readme.md)

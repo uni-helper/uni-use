@@ -1,6 +1,6 @@
 # useClipboardData
 
-#### [返回首页](../../README.md)
+#### [返回列表](../readme.md)
 
 获取和设置剪切板数据。你需要将默认值作为第一个参数传入。
 
@@ -31,4 +31,4 @@ import { useClipboardData } from '@uni-helper/uni-use';
 const clipboardData = useClipboardData('', { onError: (error) => { ... } });
 ```
 
-#### [返回首页](../../README.md)
+#### [返回列表](../readme.md)

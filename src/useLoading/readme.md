@@ -1,6 +1,6 @@
 # useLoading
 
-#### [返回首页](../../README.md)
+#### [返回列表](../readme.md)
 
 返回一个对象，包含两个方法。其中`showLoading` 调用后显示加载提示框，`hideLoading` 调用后隐藏加载提示框。
 
@@ -34,4 +34,4 @@ showLoading({
 });
 ```
 
-#### [返回首页](../../README.md)
+#### [返回列表](../readme.md)

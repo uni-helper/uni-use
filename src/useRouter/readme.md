@@ -1,6 +1,6 @@
 # useRouter
 
-#### [返回首页](../../README.md)
+#### [返回列表](../readme.md)
 
 路由相关的操作和变量
 
@@ -43,4 +43,4 @@ router.reLaunch({ url: '/pages/auth/login' });
 router.back();
 ```
 
-#### [返回首页](../../README.md)
+#### [返回列表](../readme.md)

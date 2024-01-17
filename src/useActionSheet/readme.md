@@ -1,6 +1,6 @@
 # useActionSheet
 
-#### [返回首页](../../README.md)
+#### [返回列表](../readme.md)
 
 返回一个方法，调用后从底部向上弹出操作菜单。
 
@@ -21,4 +21,4 @@ showActionSheet({
 });
 ```
 
-#### [返回首页](../../README.md)
+#### [返回列表](../readme.md)

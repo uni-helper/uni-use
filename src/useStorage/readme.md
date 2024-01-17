@@ -1,6 +1,6 @@
 # useStorage
 
-#### [返回首页](../../README.md)
+#### [返回列表](../readme.md)
 
 `uni-app` 关于 `异步 storage 操作` 的封装。
 
@@ -25,4 +25,4 @@ console.log(token.value); // authorization-token
 
 ```
 
-#### [返回首页](../../README.md)
+#### [返回列表](../readme.md)

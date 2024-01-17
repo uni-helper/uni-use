@@ -1,6 +1,6 @@
 # useGlobalData
 
-#### [返回首页](../../README.md)
+#### [返回列表](../readme.md)
 
 获取和设置当前应用实例的 `globalData`。你需要将默认值作为第一个参数传入。
 
@@ -18,4 +18,4 @@ useGlobalData({}, { shallow: true });
 
 我们建议直接使用 [pinia](https://pinia.vuejs.org/zh/) 作为状态管理工具。
 
-#### [返回首页](../../README.md)
+#### [返回列表](../readme.md)

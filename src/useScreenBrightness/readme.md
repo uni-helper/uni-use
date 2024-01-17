@@ -1,6 +1,6 @@
 # useScreenBrightness
 
-#### [返回首页](../../README.md)
+#### [返回列表](../readme.md)
 
 获取和设置屏幕亮度。你需要将默认值作为第一个参数传入。
 
@@ -23,4 +23,4 @@ import { useScreenBrightness } from '@uni-helper/uni-use';
 const screenBrightness = useScreenBrightness('', { onError: (error) => { ... } });
 ```
 
-#### [返回首页](../../README.md)
+#### [返回列表](../readme.md)
