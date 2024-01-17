@@ -5,7 +5,7 @@ import type { RequiredOnly } from '../types';
 import { tryOnBackPress } from '../tryOnBackPress';
 
 /** 获取当前页面栈信息 */
-const pages = ref(getCurrentPages());
+const pages = ref<Page.PageInstance[]>([]);
 const pageLength = computed(() => pages.value.length); // 使用 computed 可触发依赖项更新
 
 /** 获取当前页信息 */
