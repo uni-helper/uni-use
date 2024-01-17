@@ -49,7 +49,7 @@
     "check:types": "tsc --noEmit",
     "commit": "git-cz",
     "dev": "unbuild --stub",
-    "lint": "conc \"pnpm:lint:eslint\" \"pnpm:lint:markdownlint\" \"pnpm:lint:publint\"",
+    "lint": "conc \"pnpm:check:types\" \"pnpm:lint:eslint\" \"pnpm:lint:markdownlint\" \"pnpm:lint:publint\"",
     "lint:eslint": "eslint ./src --fix --cache --ignore-path=.gitignore",
     "lint:markdownlint": "markdownlint . --fix --ignore-path=.gitignore",
     "lint:publint": "publint",
