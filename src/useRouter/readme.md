@@ -16,13 +16,13 @@ const router = useRouter({
    * 开启后，使用 navigate / redirect 将会先尝试 tabBar
    * @default true
    */
-  tryTabBar: true;
+  tryTabBar: true,
   /**
    * pages.json 里的 tabBar list 配置
    * tryTabBar 开启时，会判断跳转页面
    * 全局配置，仅需要配置一次
    */
-  tabBarList: tabBar.list;
+  tabBarList: tabBar.list,
 });
 
 // 如果上面的 tryTabBar 设定为 false，或非常确定是 tabbar 页面，可以直接使用 switchTab

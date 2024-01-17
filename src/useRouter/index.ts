@@ -1,7 +1,7 @@
 import { ref, computed } from 'vue';
+import type { AppJson } from '@dcloudio/uni-cli-shared';
 import { pathResolve } from '../utils';
-import type { AppJson } from '@dcloudio/uni-cli-shared'
-import type { RequiredOnly } from '../types'
+import type { RequiredOnly } from '../types';
 import { tryOnBackPress } from '../tryOnBackPress';
 
 /** 获取当前页面栈信息 */
@@ -45,12 +45,16 @@ function refreshCurrentPages() {
   pages.value = getCurrentPages();
 }
 
-function warpPromiseOptions<T = any>(opts: T, resolve: (res: any) => any, reject: (err: any) => any) {
+function warpPromiseOptions<T = any>(
+  opts: T,
+  resolve: (res: any) => any,
+  reject: (err: any) => any,
+) {
   let { fail, success, complete } = opts as any;
 
   fail = fail || ((err: any) => err);
   success = success || ((res: any) => res);
-  complete = complete || (() => { });
+  complete = complete || (() => {});
 
   return {
     ...opts,
@@ -60,67 +64,52 @@ function warpPromiseOptions<T = any>(opts: T, resolve: (res: any) => any, reject
   };
 }
 
-/**
- * 切换 tabbar 页面
- */
+/** 切换 tabbar 页面 */
 function switchTab(options: UniNamespace.SwitchTabOptions): Promise<any> {
   return new Promise((resolve, reject) => {
-    uni.switchTab(
-      warpPromiseOptions(options, resolve, reject),
-    );
-  })
+    uni.switchTab(warpPromiseOptions(options, resolve, reject));
+  });
 }
 
 function navigateTo(options: UniNamespace.NavigateToOptions) {
   return new Promise((resolve, reject) => {
-    uni.navigateTo(
-      warpPromiseOptions(options, resolve, reject),
-    );
+    uni.navigateTo(warpPromiseOptions(options, resolve, reject));
   });
 }
 
 function redirectTo(options: UniNamespace.RedirectToOptions) {
   return new Promise((resolve, reject) => {
-    uni.redirectTo(
-      warpPromiseOptions(options, resolve, reject),
-    );
+    uni.redirectTo(warpPromiseOptions(options, resolve, reject));
   });
 }
 
-/**
- * 重定向，并清空当前页面栈
- */
+/** 重定向，并清空当前页面栈 */
 function reLaunch(options: UniNamespace.ReLaunchOptions): Promise<any> {
   return new Promise((resolve, reject) => {
-    uni.reLaunch(
-      warpPromiseOptions(options, resolve, reject),
-    );
+    uni.reLaunch(warpPromiseOptions(options, resolve, reject));
   });
 }
 
-/**
- * 后退
- */
+/** 后退 */
 function back(options?: UniNamespace.NavigateBackOptions): Promise<any> {
   return new Promise((resolve, reject) => {
-    uni.navigateBack(
-      warpPromiseOptions(options || {}, resolve, reject),
-    );
+    uni.navigateBack(warpPromiseOptions(options || {}, resolve, reject));
   });
 }
 
-/**
- * 路由跳转
- * `tryTabBar = true` 时，自动判断是否 tabbar 页面
- */
-function trySwitchTab<FN extends (typeof navigateTo | typeof redirectTo)>(tryTabBar: boolean, forward: FN, options: Parameters<FN>[0]): Promise<any> {
+/** 路由跳转 `tryTabBar = true` 时，自动判断是否 tabbar 页面 */
+function trySwitchTab<FN extends typeof navigateTo | typeof redirectTo>(
+  tryTabBar: boolean,
+  forward: FN,
+  options: Parameters<FN>[0],
+): Promise<any> {
   // 不尝试 tabbar 页面，直接跳转
   if (!tryTabBar) {
     return forward(options);
   }
 
   // 未设置 tabBarList，先尝试 switchTab，报错再尝试跳转
-  if (!tabBarList.length) {
+  if (tabBarList.length === 0) {
     return switchTab(options).catch(() => navigateTo(options));
   }
 
@@ -135,44 +124,36 @@ function trySwitchTab<FN extends (typeof navigateTo | typeof redirectTo)>(tryTab
   return navigateTo(options);
 }
 
-
 function isTabBarPath(path: string) {
   const target = pathResolve(path);
-  const tabbar = tabBarList.find(t => `/${t.pagePath}` === target);
+  const tabbar = tabBarList.find((t) => `/${t.pagePath}` === target);
   return !!tabbar;
 }
 
-type UniTabBarItem = Exclude<AppJson['tabBar'], undefined>['list'][number]
+type UniTabBarItem = Exclude<AppJson['tabBar'], undefined>['list'][number];
 
 type TabBarItem = RequiredOnly<UniTabBarItem, 'pagePath'>;
 
 export interface UseRouterOptions {
   /**
-   * 是否尝试跳转 tabBar
-   * 开启后，使用 navigate / redirect 将会先尝试 tabBar
+   * 是否尝试跳转 tabBar 开启后，使用 navigate / redirect 将会先尝试 tabBar
+   *
    * @default true
    */
   tryTabBar?: boolean;
-  /**
-   * pages.json 里的 tabBar list 配置
-   * tryTabBar 开启时，会判断跳转页面
-   * 全局配置，仅需要配置一次
-   */
+  /** pages.json 里的 tabBar list 配置 tryTabBar 开启时，会判断跳转页面 全局配置，仅需要配置一次 */
   tabBarList?: TabBarItem[];
 }
 
-
 /**
  * 路由操作的封装
- * 
+ *
  * UNIAPP 官方文档 @see https://uniapp.dcloud.net.cn/api/router.html
  */
 export function useRouter(options: UseRouterOptions = {}) {
   initIfNotInited();
 
-  const {
-    tryTabBar = true
-  } = options;
+  const { tryTabBar = true } = options;
 
   if (options.tabBarList) {
     tabBarList = options.tabBarList;
@@ -180,6 +161,7 @@ export function useRouter(options: UseRouterOptions = {}) {
 
   /**
    * 对实体按键 / 顶部导航栏返回按钮进行监听
+   *
    * @see https://uniapp.dcloud.net.cn/tutorial/page.html#onbackpress
    */
   tryOnBackPress((e) => {
@@ -187,20 +169,15 @@ export function useRouter(options: UseRouterOptions = {}) {
     refreshCurrentPages();
   });
 
-  /**
-   * 路由跳转
-   */
+  /** 路由跳转 */
   function navigate(options: UniNamespace.NavigateToOptions): Promise<any> {
     return trySwitchTab(tryTabBar, navigateTo, options);
   }
 
-  /**
-   * 路由重定向
-   */
+  /** 路由重定向 */
   function redirect(options: UniNamespace.RedirectToOptions): Promise<any> {
     return trySwitchTab(tryTabBar, redirectTo, options);
   }
-
 
   return {
     /** 获取当前页面栈信息 */

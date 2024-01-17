@@ -1,13 +1,9 @@
 import { ref, shallowRef, toValue } from 'vue';
 import { tryOnMounted, watchWithFilter } from '@vueuse/core';
-import { useInterceptor } from '../useInterceptor';
 import type { Ref } from 'vue';
+import type { ConfigurableEventFilter, ConfigurableFlush, RemovableRef } from '@vueuse/core';
+import { useInterceptor } from '../useInterceptor';
 import type { MaybeComputedRef } from '../types';
-import type {
-  ConfigurableEventFilter,
-  ConfigurableFlush,
-  RemovableRef,
-} from '@vueuse/core';
 
 export interface UniStorageLike {
   getItem(options: UniNamespace.GetStorageOptions): void;
@@ -119,9 +115,7 @@ export interface UseStorageOptions<T> extends ConfigurableEventFilter, Configura
    * @default false
    */
   mergeDefaults?: boolean | ((storageValue: T, defaults: T) => T);
-  /**
-   * 自定义数据序列化
-   */
+  /** 自定义数据序列化 */
   serializer?: Serializer<T>;
   /**
    * 错误回调
@@ -141,9 +135,7 @@ export interface UseStorageOptions<T> extends ConfigurableEventFilter, Configura
    * @default false
    */
   initOnMounted?: boolean;
-  /** 
-   * 异步 storage
-   */
+  /** 异步 storage */
   storage?: UniStorageLike;
 }
 
@@ -190,7 +182,7 @@ export function useStorage<T extends string | number | boolean | object | null>(
     mergeDefaults = false,
     shallow = false,
     eventFilter,
-    onError = error => console.error(error),
+    onError = (error) => console.error(error),
     initOnMounted,
     storage = UniStorage,
   } = options;
@@ -210,7 +202,7 @@ export function useStorage<T extends string | number | boolean | object | null>(
   // 因为除了 watch 之外，uniapp 的 interceptor 也会导致连带更新
   let updating = false;
 
-  watchWithFilter(data, () => (!updating && write(data.value)), { flush, deep, eventFilter });
+  watchWithFilter(data, () => !updating && write(data.value), { flush, deep, eventFilter });
 
   if (!initOnMounted) read();
 
@@ -254,11 +246,9 @@ export function useStorage<T extends string | number | boolean | object | null>(
         data: serialized,
         fail: (error) => onError(error),
       });
-    }
-    catch (error) {
+    } catch (error) {
       onError(error);
-    }
-    finally {
+    } finally {
       updating = false;
     }
   }
@@ -273,8 +263,7 @@ export function useStorage<T extends string | number | boolean | object | null>(
           if (rawValue == null) {
             // 没有对应的值，直接使用默认值
             value = rawInit;
-          }
-          else if (mergeDefaults) {
+          } else if (mergeDefaults) {
             // 有对应的值，需要合并默认值和本地缓存值
             value = serializer.read(rawValue);
             // 如果是方法，调用
@@ -285,8 +274,7 @@ export function useStorage<T extends string | number | boolean | object | null>(
             else if (type === 'object' && !Array.isArray(value)) {
               value = { ...(rawInit as any), ...(value as any) };
             }
-          }
-          else {
+          } else {
             // 有对应的值，不需要合并
             value = serializer.read(rawValue);
           }
@@ -297,11 +285,9 @@ export function useStorage<T extends string | number | boolean | object | null>(
         },
         fail: (error) => onError(error),
       });
-    }
-    catch (error) {
+    } catch (error) {
       onError(error);
-    }
-    finally {
+    } finally {
       updating = false;
     }
   }
