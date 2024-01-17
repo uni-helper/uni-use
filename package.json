@@ -65,6 +65,7 @@
     "@commitlint/cli": "^18.4.4",
     "@commitlint/config-conventional": "^18.4.4",
     "@commitlint/prompt": "^18.4.4",
+    "@dcloudio/uni-cli-shared": "3.0.0-3090920231225001",
     "@modyqyw/fabric": "^9.0.6",
     "@tsconfig/node18": "^18.2.2",
     "@types/node": "^20.11.0",
