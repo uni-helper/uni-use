@@ -30,6 +30,7 @@ export * from './useSelectorQuery';
 export * from './useSocket';
 export * from './useStorage';
 export * from './useStorageAsync';
+export * from './useStorageSync';
 export * from './useToast';
 export * from './useUploadFile';
 export * from './useVisible';
