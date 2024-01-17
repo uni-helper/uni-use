@@ -25,7 +25,7 @@ importers:
         specifier: ^18.4.4
         version: 18.4.4(@types/node@20.11.0)(typescript@5.3.3)
       '@dcloudio/uni-cli-shared':
-        specifier: 3.0.0-3090920231225001
+        specifier: ^3.0.0-3090920231225001
         version: 3.0.0-3090920231225001(postcss@8.4.33)(ts-node@10.9.2)(vue@3.4.13)
       '@modyqyw/fabric':
         specifier: ^9.0.6
