@@ -11,11 +11,11 @@ export interface UniStorageSyncLike {
 
 // uni is not defined
 let UniStorage: UniStorageLike;
-function initUniStorageIfNotInited(){
-  if(UniStorage) {
+function initUniStorageIfNotInited() {
+  if (UniStorage) {
     return;
   }
-  
+
   UniStorage = parseUniStorageLike({
     getItem: uni.getStorageSync,
     setItem: uni.setStorageSync,
