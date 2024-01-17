@@ -1,5 +1,5 @@
 import { ref, shallowRef } from 'vue';
-import { tryOnMounted, watchWithFilter, toValue } from '@vueuse/core';
+import { tryOnMounted, watchWithFilter, resolveUnref } from '@vueuse/core';
 import type { Ref } from 'vue';
 import type { ConfigurableEventFilter, ConfigurableFlush, RemovableRef } from '@vueuse/core';
 import { useInterceptor } from '../useInterceptor';
@@ -187,7 +187,7 @@ export function useStorage<T extends string | number | boolean | object | null>(
     storage = UniStorage,
   } = options;
 
-  const rawInit: T = toValue(initialValue);
+  const rawInit: T = resolveUnref(initialValue);
   const type = guessSerializerType<T>(rawInit);
 
   const serializer = options.serializer ?? StorageSerializers[type];

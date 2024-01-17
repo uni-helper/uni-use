@@ -1,6 +1,6 @@
 {
   "name": "@uni-helper/uni-use",
-  "version": "0.19.4",
+  "version": "0.19.5",
   "description": "uni-app (vue3) 组合式工具集",
   "keywords": [
     "uni-app",
@@ -71,7 +71,7 @@
     "@types/node": "^20.11.0",
     "@typescript-eslint/eslint-plugin": "^6.18.1",
     "@typescript-eslint/parser": "^6.18.1",
-    "@vueuse/core": "^10.7.2",
+    "@vueuse/core": "^9.13.0",
     "bumpp": "^9.2.1",
     "commitizen": "^4.3.0",
     "concurrently": "^8.2.2",
