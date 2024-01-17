@@ -1,6 +1,6 @@
 # `uni-use` 函数列表
 
-#### [返回首页](../../README.md)
+#### [返回首页](../README.md)
 
 ### 函数列表
 
@@ -41,4 +41,4 @@
 - [useUploadFile](./useUploadFile/readme.md)
 - [useVisible](./useVisible/readme.md)
 
-#### [返回首页](../../README.md)
+#### [返回首页](../README.md)
