@@ -2,10 +2,13 @@
 
 #### [返回首页](../../README.md)
 
+路由相关的操作和变量
+
 ## 使用方式
 
 ```ts
 import { tabBar } from '@/pages.json';
+import { useRouter } from '@uni-helper/uni-use';
 
 const router = useRouter({
   /**
