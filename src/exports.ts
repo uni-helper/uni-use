@@ -1,3 +1,4 @@
+export * from './tryOnBackPress';
 export * from './tryOnHide';
 export * from './tryOnInit';
 export * from './tryOnLoad';

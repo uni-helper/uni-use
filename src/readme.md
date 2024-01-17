@@ -4,6 +4,7 @@
 
 ### 函数列表
 
+- [tryOnBackPress](./tryOnBackPress/readme.md)
 - [tryOnHide](./tryOnHide/readme.md)
 - [tryOnInit](./tryOnInit/readme.md)
 - [tryOnLoad](./tryOnLoad/readme.md)
