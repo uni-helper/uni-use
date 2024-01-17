@@ -2,7 +2,7 @@ import { ref, computed } from 'vue';
 import { pathResolve } from '../utils';
 import type { AppJson } from '@dcloudio/uni-cli-shared'
 import type { RequiredOnly } from '../types'
-import { onBackPress } from '@dcloudio/uni-app';
+import { tryOnBackPress } from '../tryOnBackPress';
 
 /** 获取当前页面栈信息 */
 const pages = ref(getCurrentPages());
@@ -182,7 +182,7 @@ export function useRouter(options: UseRouterOptions = {}) {
    * 对实体按键 / 顶部导航栏返回按钮进行监听
    * @see https://uniapp.dcloud.net.cn/tutorial/page.html#onbackpress
    */
-  onBackPress((e) => {
+  tryOnBackPress((e) => {
     if (e.from === 'navigateBack') return;
     refreshCurrentPages();
   });
