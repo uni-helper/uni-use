@@ -17,3 +17,7 @@ export function pathResolve(target: string, current?: string) {
   }
   return new URL(target, new URL(current, 'http://no-exists.com')).pathname;
 }
+
+export function sleep(ms = 0) {
+  return new Promise<void>(resolve => setTimeout(resolve, ms));
+}
