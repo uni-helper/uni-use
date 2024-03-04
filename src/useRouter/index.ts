@@ -23,22 +23,37 @@ const prevUrl = computed(() => prev.value?.route);
 
 let tabBarList: TabBarItem[] = [];
 
-let isInited = false;
+let isAddInterceptors = false;
+let isBindBackPress = false;
 
 function initIfNotInited() {
-  if (isInited) {
-    return;
+  // 默认路由的拦截
+  if (!isAddInterceptors) {
+    isAddInterceptors = true;
+
+    uni.addInterceptor('navigateTo', { complete: refreshCurrentPages });
+    uni.addInterceptor('redirectTo', { complete: refreshCurrentPages });
+    uni.addInterceptor('reLaunch', { complete: refreshCurrentPages });
+    uni.addInterceptor('switchTab', { complete: refreshCurrentPages });
+    uni.addInterceptor('navigateBack', { complete: refreshCurrentPages });
   }
 
-  uni.addInterceptor('navigateTo', { complete: refreshCurrentPages });
-  uni.addInterceptor('redirectTo', { complete: refreshCurrentPages });
-  uni.addInterceptor('reLaunch', { complete: refreshCurrentPages });
-  uni.addInterceptor('switchTab', { complete: refreshCurrentPages });
-  uni.addInterceptor('navigateBack', { complete: refreshCurrentPages });
+  //  对实体按键 / 顶部导航栏返回按钮进行监听
+  if (!isBindBackPress) {
+    isBindBackPress = true;
 
+    tryOnBackPress((e) => {
+      if (e.from === 'navigateBack') {
+        return;
+      }
+      refreshCurrentPages();
+    }).catch(() => {
+      isBindBackPress = false;
+    });
+  }
+
+  // 每次 init 都更新一次
   refreshCurrentPages();
-
-  isInited = true;
 }
 
 function refreshCurrentPages() {
@@ -158,18 +173,6 @@ export function useRouter(options: UseRouterOptions = {}) {
   if (options.tabBarList) {
     tabBarList = options.tabBarList;
   }
-
-  /**
-   * 对实体按键 / 顶部导航栏返回按钮进行监听
-   *
-   * @see https://uniapp.dcloud.net.cn/tutorial/page.html#onbackpress
-   */
-  tryOnBackPress((e) => {
-    if (e.from === 'navigateBack') {
-      return;
-    }
-    refreshCurrentPages();
-  });
 
   /** 路由跳转 */
   function navigate(options: UniNamespace.NavigateToOptions): Promise<any> {
