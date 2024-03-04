@@ -1,7 +1,23 @@
 {
   "name": "@uni-helper/uni-use",
+  "type": "module",
   "version": "0.19.6",
+  "packageManager": "pnpm@8.14.1",
   "description": "uni-app (vue3) 组合式工具集",
+  "author": {
+    "name": "ModyQyW",
+    "email": "wurui-dev@foxmail.com",
+    "url": "https://modyqyw.github.io"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/uni-helper/uni-use#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uni-helper/uni-use.git"
+  },
+  "bugs": {
+    "url": "https://github.com/uni-helper/uni-use/issues"
+  },
   "keywords": [
     "uni-app",
     "uniapp",
@@ -10,21 +26,6 @@
     "composition",
     "composable"
   ],
-  "homepage": "https://github.com/uni-helper/uni-use#readme",
-  "bugs": {
-    "url": "https://github.com/uni-helper/uni-use/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/uni-helper/uni-use.git"
-  },
-  "license": "MIT",
-  "author": {
-    "name": "ModyQyW",
-    "email": "wurui-dev@foxmail.com",
-    "url": "https://modyqyw.github.io"
-  },
-  "type": "module",
   "exports": {
     ".": {
       "import": {
@@ -43,6 +44,9 @@
   "files": [
     "dist"
   ],
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "build": "unbuild",
     "check:deps": "taze -f",
@@ -50,23 +54,33 @@
     "commit": "git-cz",
     "dev": "unbuild --stub",
     "lint": "conc \"pnpm:check:types\" \"pnpm:lint:eslint\" \"pnpm:lint:markdownlint\" \"pnpm:lint:publint\"",
-    "lint:eslint": "eslint ./src --fix --cache --ignore-path=.gitignore",
+    "lint:eslint": "eslint . --fix --cache",
     "lint:markdownlint": "markdownlint . --fix --ignore-path=.gitignore",
     "lint:publint": "publint",
     "prepare": "is-ci || simple-git-hooks",
     "prepublishOnly": "pnpm run build",
     "release": "pnpm install && pnpm run lint && bumpp"
   },
+  "peerDependencies": {
+    "@vueuse/core": "^9.0.0 || ^10.0.0",
+    "typescript": "^4.5.0 || ^5.0.0",
+    "vue": "^3.2.0"
+  },
+  "peerDependenciesMeta": {
+    "typescript": {
+      "optional": true
+    }
+  },
   "dependencies": {
     "@dcloudio/types": "^3.4.7",
     "@dcloudio/uni-app": "^3.0.0-3090920231225001"
   },
   "devDependencies": {
+    "@antfu/eslint-config": "^2.7.0",
     "@commitlint/cli": "^18.4.4",
     "@commitlint/config-conventional": "^18.4.4",
     "@commitlint/prompt": "^18.4.4",
     "@dcloudio/uni-cli-shared": "^3.0.0-3090920231225001",
-    "@modyqyw/fabric": "^9.0.6",
     "@tsconfig/node18": "^18.2.2",
     "@types/node": "^20.11.0",
     "@typescript-eslint/eslint-plugin": "^6.18.1",
@@ -82,27 +96,12 @@
     "prettier": "^3.2.2",
     "publint": "^0.2.7",
     "simple-git-hooks": "^2.9.0",
-    "sort-package-json": "^2.6.0",
     "taze": "^0.13.1",
     "ts-node": "^10.9.2",
     "tsx": "^4.7.0",
     "typescript": "^5.3.3",
     "unbuild": "^2.0.0",
     "vue": "^3.4.13"
-  },
-  "peerDependencies": {
-    "@vueuse/core": "^9.0.0 || ^10.0.0",
-    "typescript": "^4.5.0 || ^5.0.0",
-    "vue": "^3.2.0"
-  },
-  "peerDependenciesMeta": {
-    "typescript": {
-      "optional": true
-    }
-  },
-  "packageManager": "pnpm@8.14.1",
-  "engines": {
-    "node": ">=18"
   },
   "publishConfig": {
     "access": "public",

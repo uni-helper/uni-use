@@ -1,4 +1,4 @@
-import { nextTick, getCurrentInstance } from 'vue';
+import { getCurrentInstance, nextTick } from 'vue';
 import { onLoad } from '@dcloudio/uni-app';
 
 export type OnLoadFn = (query?: Record<string, string | undefined>) => void;
@@ -12,9 +12,11 @@ export type OnLoadFn = (query?: Record<string, string | undefined>) => void;
 export function tryOnLoad(fn: OnLoadFn, sync = true) {
   if (getCurrentInstance()) {
     onLoad(fn);
-  } else if (sync) {
+  }
+  else if (sync) {
     fn();
-  } else {
+  }
+  else {
     nextTick(fn);
   }
 }

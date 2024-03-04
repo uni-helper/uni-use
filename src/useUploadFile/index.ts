@@ -128,7 +128,9 @@ export function useUploadFile<T = any>(
   const error = shallowRef<UniApp.GeneralCallbackResult>();
 
   const abort = (message?: string) => {
-    if (isFinished.value || !isLoading.value) return;
+    if (isFinished.value || !isLoading.value) {
+      return;
+    }
     // @ts-expect-error no types
     task.value?.abort(message);
     isAborted.value = true;
@@ -142,15 +144,10 @@ export function useUploadFile<T = any>(
   };
 
   const resetData = () => {
-    if (resetOnExecute) data.value = initialData;
+    if (resetOnExecute) {
+      data.value = initialData;
+    }
   };
-
-  const waitUntilFinished = () =>
-    new Promise<OverallUseUploadFileReturn<T>>((resolve, reject) => {
-      until(isFinished)
-        .toBe(true)
-        .then(() => (error.value ? reject(error.value) : resolve(result)));
-    });
 
   const promise = {
     then: (...args) => waitUntilFinished().then(...args),
@@ -188,7 +185,9 @@ export function useUploadFile<T = any>(
     task.value = uni.uploadFile({
       ..._config,
       success: (r) => {
-        if (isAborted.value) return;
+        if (isAborted.value) {
+          return;
+        }
         _config.success?.(r);
         response.value = r;
         const result = r.data as unknown as T;
@@ -203,12 +202,16 @@ export function useUploadFile<T = any>(
       complete: (r) => {
         _config.complete?.(r);
         onFinish(r);
-        if (currentExecuteCounter === executeCounter) loading(false);
+        if (currentExecuteCounter === executeCounter) {
+          loading(false);
+        }
       },
     });
     return promise;
   };
-  if (immediate && url) (execute as StrictUseUploadFileReturn<T>['execute'])();
+  if (immediate && url) {
+    (execute as StrictUseUploadFileReturn<T>['execute'])();
+  }
 
   const result = {
     task,
@@ -223,6 +226,14 @@ export function useUploadFile<T = any>(
     abort,
     execute,
   } as OverallUseUploadFileReturn<T>;
+
+  function waitUntilFinished() {
+    return new Promise<OverallUseUploadFileReturn<T>>((resolve, reject) => {
+      until(isFinished)
+        .toBe(true)
+        .then(() => (error.value ? reject(error.value) : resolve(result)));
+    });
+  }
 
   return {
     ...result,

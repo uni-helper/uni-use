@@ -1,19 +1,19 @@
 {
   "compilerOptions": {
     "target": "esnext",
+    "jsx": "preserve",
+    "lib": ["esnext", "dom"],
     "useDefineForClassFields": true,
     "module": "esnext",
     "moduleResolution": "node",
-    "strict": true,
-    "jsx": "preserve",
-    "sourceMap": true,
-    "resolveJsonModule": true,
-    "esModuleInterop": true,
-    "lib": ["esnext", "dom"],
-    "types": ["vite/client", "@dcloudio/types"],
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "resolveJsonModule": true,
+    "types": ["vite/client", "@dcloudio/types"],
+    "strict": true,
+    "sourceMap": true,
+    "esModuleInterop": true
   },
   "vueCompilerOptions": {
     "experimentalRuntimeMode": "runtime-uni-app",

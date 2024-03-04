@@ -1,12 +1,12 @@
 import { ref, shallowRef } from 'vue';
 import { resolveUnref, watchWithFilter } from '@vueuse/core';
-import type { RemovableRef, ConfigurableEventFilter, ConfigurableFlush } from '@vueuse/core';
+import type { ConfigurableEventFilter, ConfigurableFlush, RemovableRef } from '@vueuse/core';
 import type { MaybeComputedRef } from '../types';
 import { isFunction } from '../utils';
 
 export interface UseGlobalDataOptions<T extends object | undefined>
   extends ConfigurableEventFilter,
-    ConfigurableFlush {
+  ConfigurableFlush {
   /**
    * 当 globalData 还没有已有值时，是否写入 globalData
    *
@@ -72,14 +72,18 @@ export function useGlobalData<T extends object | undefined>(
     // 读取已有值
     const rawValue = app.value.globalData;
     if (rawValue == null) {
-      if (writeDefaults && rawInit !== null) app.value.globalData = rawInit;
+      if (writeDefaults && rawInit !== null) {
+        app.value.globalData = rawInit;
+      }
       return rawInit;
-    } else if (mergeDefaults) {
+    }
+    else if (mergeDefaults) {
       const value = rawValue as T;
       return isFunction(mergeDefaults)
         ? mergeDefaults(value, rawInit)
         : { ...(rawInit as any), ...value };
-    } else {
+    }
+    else {
       return rawValue;
     }
   }

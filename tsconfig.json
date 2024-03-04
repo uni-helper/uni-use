@@ -1,11 +1,11 @@
 {
   "extends": "@tsconfig/node18",
   "compilerOptions": {
-    "baseUrl": ".",
+    "target": "ESNext",
     "lib": ["ESNext"],
+    "baseUrl": ".",
     "module": "ESNext",
     "moduleResolution": "Node",
-    "target": "ESNext",
     "resolveJsonModule": true,
     "types": ["@dcloudio/types", "node"]
   },

@@ -1,9 +1,10 @@
 export const isString = (val: unknown): val is string => typeof val === 'string';
 
-export const isFunction = <T extends (...args: any[]) => any>(val: any): val is T =>
-  typeof val === 'function';
+export function isFunction<T extends (...args: any[]) => any>(val: any): val is T {
+  return typeof val === 'function';
+}
 
-export const noop = () => {};
+export function noop() {}
 
 export function pathResolve(target: string, current?: string) {
   if (!current) {

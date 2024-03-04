@@ -9,7 +9,7 @@ function getScreenBrightness() {
   return new Promise<number>((resolve, reject) => {
     uni.getScreenBrightness({
       success: ({ value }) => resolve(value),
-      fail: (error) => reject(error),
+      fail: error => reject(error),
     });
   });
 }
@@ -19,7 +19,7 @@ function setScreenBrightness(value: number) {
     uni.setScreenBrightness({
       value,
       success: () => resolve(),
-      fail: (error) => reject(error),
+      fail: error => reject(error),
     });
   });
 }
@@ -50,7 +50,7 @@ export function useScreenBrightness(
 ) {
   const {
     listenToScreenBrightnessChanges = true,
-    onError = (error) => console.error(error),
+    onError = error => console.error(error),
     flush = 'pre',
     eventFilter,
   } = options;
@@ -60,7 +60,8 @@ export function useScreenBrightness(
   async function read() {
     try {
       data.value = await getScreenBrightness();
-    } catch (error) {
+    }
+    catch (error) {
       onError(error);
     }
   }
@@ -76,7 +77,8 @@ export function useScreenBrightness(
     async () => {
       try {
         await setScreenBrightness(data.value);
-      } catch (error) {
+      }
+      catch (error) {
         onError(error);
       }
     },

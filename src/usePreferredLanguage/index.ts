@@ -1,5 +1,5 @@
 import { tryOnScopeDispose } from '@vueuse/core';
-import { ref, readonly } from 'vue';
+import { readonly, ref } from 'vue';
 
 /**
  * 响应式的语言偏好

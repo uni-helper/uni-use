@@ -1,4 +1,4 @@
-import { ref, computed } from 'vue';
+import { computed, ref } from 'vue';
 import { tryOnScopeDispose } from '@vueuse/core';
 
 export type NetworkType = 'ethernet' | 'none' | 'wifi' | 'unknown' | '2g' | '3g' | '4g' | '5g';
@@ -28,7 +28,7 @@ export function useNetwork() {
   };
 
   uni.getNetworkType({
-    success: (result) => updateNetwork(result),
+    success: result => updateNetwork(result),
   });
 
   const callback = (result: UniApp.OnNetworkStatusChangeSuccess) => updateNetwork(result);

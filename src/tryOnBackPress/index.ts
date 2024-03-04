@@ -42,7 +42,7 @@ export function tryOnBackPress(
     retry = 3,
     circle = 1,
     interval = 100,
-    onError = (error) => console.error(error),
+    onError = error => console.error(error),
   } = options;
 
   const instance = (target || getCurrentInstance()) as OnBackPressParameters[1] | undefined;

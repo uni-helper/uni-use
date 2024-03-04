@@ -1,19 +1,19 @@
 import { ref, shallowRef } from 'vue';
-import { tryOnMounted, watchWithFilter, resolveUnref } from '@vueuse/core';
+import { resolveUnref, tryOnMounted, watchWithFilter } from '@vueuse/core';
 import type { Ref } from 'vue';
 import type { ConfigurableEventFilter, ConfigurableFlush, RemovableRef } from '@vueuse/core';
 import { useInterceptor } from '../useInterceptor';
 import type { MaybeComputedRef } from '../types';
 
 export interface UniStorageLike {
-  getItem(options: UniNamespace.GetStorageOptions): void;
-  setItem(options: UniNamespace.SetStorageOptions): void;
-  removeItem(options: UniNamespace.RemoveStorageOptions): void;
+  getItem: (options: UniNamespace.GetStorageOptions) => void;
+  setItem: (options: UniNamespace.SetStorageOptions) => void;
+  removeItem: (options: UniNamespace.RemoveStorageOptions) => void;
 }
 
 export interface Serializer<T> {
-  read(raw: string): T;
-  write(value: T): string;
+  read: (raw: string) => T;
+  write: (value: T) => string;
 }
 
 const UniStorage: UniStorageLike = {
@@ -182,7 +182,7 @@ export function useStorage<T extends string | number | boolean | object | null>(
     mergeDefaults = false,
     shallow = false,
     eventFilter,
-    onError = (error) => console.error(error),
+    onError = error => console.error(error),
     initOnMounted,
     storage = UniStorage,
   } = options;
@@ -193,7 +193,9 @@ export function useStorage<T extends string | number | boolean | object | null>(
   const serializer = options.serializer ?? StorageSerializers[type];
 
   // 如果已有 key，则直接返回对象
-  if (key in store) return store[key];
+  if (key in store) {
+    return store[key];
+  }
 
   const data = (shallow ? shallowRef : ref)(initialValue) as Ref<T>;
   store[key] = data;
@@ -204,20 +206,26 @@ export function useStorage<T extends string | number | boolean | object | null>(
 
   watchWithFilter(data, () => !updating && write(data.value), { flush, deep, eventFilter });
 
-  if (!initOnMounted) read();
+  if (!initOnMounted) {
+    read();
+  }
 
   if (listenToStorageChanges) {
     tryOnMounted(() => {
       useInterceptor('setStorage', { complete: read });
       useInterceptor('removeStorage', { complete: read });
       useInterceptor('clearStorage', { complete: read });
-      if (initOnMounted) read();
+      if (initOnMounted) {
+        read();
+      }
     });
   }
 
   let timer: NodeJS.Timeout;
   function write(val: any) {
-    if (timer) clearTimeout(timer);
+    if (timer) {
+      clearTimeout(timer);
+    }
 
     // 如果是同步操作，则直接写 storage
     if (flush === 'sync') {
@@ -236,7 +244,7 @@ export function useStorage<T extends string | number | boolean | object | null>(
       if (val == null) {
         storage.removeItem({
           key,
-          fail: (error) => onError(error),
+          fail: error => onError(error),
         });
         return;
       }
@@ -244,11 +252,13 @@ export function useStorage<T extends string | number | boolean | object | null>(
       storage.setItem({
         key,
         data: serialized,
-        fail: (error) => onError(error),
+        fail: error => onError(error),
       });
-    } catch (error) {
+    }
+    catch (error) {
       onError(error);
-    } finally {
+    }
+    finally {
       updating = false;
     }
   }
@@ -263,7 +273,8 @@ export function useStorage<T extends string | number | boolean | object | null>(
           if (rawValue == null) {
             // 没有对应的值，直接使用默认值
             value = rawInit;
-          } else if (mergeDefaults) {
+          }
+          else if (mergeDefaults) {
             // 有对应的值，需要合并默认值和本地缓存值
             value = serializer.read(rawValue);
             // 如果是方法，调用
@@ -274,7 +285,8 @@ export function useStorage<T extends string | number | boolean | object | null>(
             else if (type === 'object' && !Array.isArray(value)) {
               value = { ...(rawInit as any), ...(value as any) };
             }
-          } else {
+          }
+          else {
             // 有对应的值，不需要合并
             value = serializer.read(rawValue);
           }
@@ -283,11 +295,13 @@ export function useStorage<T extends string | number | boolean | object | null>(
 
           data.value = value;
         },
-        fail: (error) => onError(error),
+        fail: error => onError(error),
       });
-    } catch (error) {
+    }
+    catch (error) {
       onError(error);
-    } finally {
+    }
+    finally {
       updating = false;
     }
   }

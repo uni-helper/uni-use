@@ -1,4 +1,4 @@
-import { fileURLToPath } from 'url';
+import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
 import uni from '@dcloudio/vite-plugin-uni';
 

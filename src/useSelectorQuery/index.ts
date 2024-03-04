@@ -1,4 +1,4 @@
-import { getCurrentInstance, ref, onMounted } from 'vue';
+import { getCurrentInstance, onMounted, ref } from 'vue';
 
 export type SelectAll = boolean;
 export type QueryResult<M extends SelectAll> = M extends true ? UniApp.NodeInfo[] : UniApp.NodeInfo;
@@ -11,15 +11,19 @@ export function useSelectorQuery() {
   onMounted(initQuery);
 
   function initQuery() {
-    if (query.value) return;
+    if (query.value) {
+      return;
+    }
     const instance = getCurrentInstance();
-    if (instance == null) return;
+    if (instance == null) {
+      return;
+    }
     query.value = uni.createSelectorQuery().in(instance);
   }
 
   function getQuery(): UniApp.SelectorQuery {
     initQuery();
-    if (query.value == undefined) {
+    if (query.value == null) {
       throw new Error('SelectorQuery initialization failed');
     }
     return query.value;
@@ -39,7 +43,7 @@ export function useSelectorQuery() {
   ) {
     return new Promise<R>((resolve) => {
       select(selector, all)
-        .boundingClientRect((res) => resolve(res as R))
+        .boundingClientRect(res => resolve(res as R))
         .exec();
     });
   }
@@ -51,7 +55,7 @@ export function useSelectorQuery() {
   ) {
     return new Promise<R>((resolve) => {
       select(selector, all)
-        .fields(fields, (res) => resolve(res as R))
+        .fields(fields, res => resolve(res as R))
         .exec();
     });
   }
@@ -61,7 +65,7 @@ export function useSelectorQuery() {
   ) {
     return new Promise<R>((resolve) => {
       const node = selector === undefined ? getQuery().selectViewport() : select(selector);
-      node.scrollOffset((res) => resolve(res as R)).exec();
+      node.scrollOffset(res => resolve(res as R)).exec();
     });
   }
 
@@ -71,7 +75,7 @@ export function useSelectorQuery() {
   ) {
     return new Promise<R>((resolve) => {
       select(selector, all)
-        .context((res) => resolve(res as R))
+        .context(res => resolve(res as R))
         .exec();
     });
   }

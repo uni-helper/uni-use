@@ -1,5 +1,6 @@
-import { computed, ComputedRef, ref, watch, type Ref } from 'vue';
-import { resolveRef, tryOnScopeDispose, useIntervalFn, type Fn } from '@vueuse/core';
+import { computed, ref, watch } from 'vue';
+import type { ComputedRef, Ref } from 'vue';
+import { type Fn, resolveRef, tryOnScopeDispose, useIntervalFn } from '@vueuse/core';
 import type { MaybeComputedRef } from '../types';
 import { tryOnUnload } from '../tryOnUnload';
 
@@ -25,27 +26,27 @@ export interface UseSocketOptions {
   heartbeat?:
     | boolean
     | {
-        /**
-         * 心跳信号信息
-         *
-         * @default 'ping'
-         */
-        message?: string | ArrayBuffer;
+      /**
+       * 心跳信号信息
+       *
+       * @default 'ping'
+       */
+      message?: string | ArrayBuffer;
 
-        /**
-         * 毫秒级时间间隔
-         *
-         * @default 1000
-         */
-        interval?: number;
+      /**
+       * 毫秒级时间间隔
+       *
+       * @default 1000
+       */
+      interval?: number;
 
-        /**
-         * 毫秒级心跳信号响应超时时间
-         *
-         * @default 1000
-         */
-        pongTimeout?: number;
-      };
+      /**
+       * 毫秒级心跳信号响应超时时间
+       *
+       * @default 1000
+       */
+      pongTimeout?: number;
+    };
 
   /**
    * 是否允许自动重连
@@ -55,25 +56,25 @@ export interface UseSocketOptions {
   autoReconnect?:
     | boolean
     | {
-        /**
-         * 最大重连次数
-         *
-         * 你也可以传一个方法，返回 true 表示需要重连
-         *
-         * @default -1
-         */
-        retries?: number | (() => boolean);
+      /**
+       * 最大重连次数
+       *
+       * 你也可以传一个方法，返回 true 表示需要重连
+       *
+       * @default -1
+       */
+      retries?: number | (() => boolean);
 
-        /**
-         * 毫秒级重连延迟
-         *
-         * @default 1000
-         */
-        delay?: number;
+      /**
+       * 毫秒级重连延迟
+       *
+       * @default 1000
+       */
+      delay?: number;
 
-        /** 到达最大重连次数时触发 */
-        onFailed?: Fn;
-      };
+      /** 到达最大重连次数时触发 */
+      onFailed?: Fn;
+    };
 
   /**
    * 是否自动打开连接
@@ -153,7 +154,9 @@ export interface UseSocketReturn<T> {
 }
 
 function resolveNestedOptions<T>(options: T | true): T {
-  if (options === true) return {} as T;
+  if (options === true) {
+    return {} as T;
+  }
   return options;
 }
 
@@ -201,7 +204,9 @@ export function useSocket<Data = any>(
 
   const _sendBuffer = () => {
     if (bufferedData.length > 0 && taskRef.value && status.value === 'OPEN') {
-      for (const buffer of bufferedData) taskRef.value.send({ data: buffer });
+      for (const buffer of bufferedData) {
+        taskRef.value.send({ data: buffer });
+      }
       bufferedData = [];
     }
   };
@@ -215,7 +220,9 @@ export function useSocket<Data = any>(
   // https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent/code
   // https://uniapp.dcloud.net.cn/api/request/socket-task.html#sockettask-close
   const close: SocketTask['close'] = ({ code = 1000, reason } = {}) => {
-    if (!taskRef.value) return;
+    if (!taskRef.value) {
+      return;
+    }
     explicitlyClosed = true;
     heartbeatPause?.();
     taskRef.value.close({ code, reason });
@@ -223,7 +230,9 @@ export function useSocket<Data = any>(
 
   const send = (data: string | ArrayBuffer, useBuffer = true) => {
     if (!taskRef.value || status.value !== 'OPEN') {
-      if (useBuffer) bufferedData.push(data);
+      if (useBuffer) {
+        bufferedData.push(data);
+      }
       return false;
     }
     _sendBuffer();
@@ -232,7 +241,9 @@ export function useSocket<Data = any>(
   };
 
   const _init = () => {
-    if (explicitlyClosed || urlRef.value === undefined) return;
+    if (explicitlyClosed || urlRef.value === undefined) {
+      return;
+    }
 
     const task = uni.connectSocket({
       url: urlRef.value,
@@ -261,10 +272,13 @@ export function useSocket<Data = any>(
       if (!explicitlyClosed && autoReconnect) {
         const { retries = -1, delay = 1000, onFailed } = resolveNestedOptions(autoReconnect);
         retried += 1;
-        if (typeof retries === 'number' && (retries < 0 || retried < retries))
+        if (typeof retries === 'number' && (retries < 0 || retried < retries)) {
           setTimeout(_init, delay);
-        else if (typeof retries === 'function' && retries()) setTimeout(_init, delay);
-        else onFailed?.();
+        }
+        else if (typeof retries === 'function' && retries()) {
+          setTimeout(_init, delay);
+        }
+        else { onFailed?.(); }
       }
     });
 
@@ -276,7 +290,9 @@ export function useSocket<Data = any>(
       if (heartbeat) {
         resetHeartbeat();
         const { message = DEFAULT_PING_MESSAGE } = resolveNestedOptions(heartbeat);
-        if (result.data === message) return;
+        if (result.data === message) {
+          return;
+        }
       }
       data.value = result.data;
       onMessage?.(task, result);
@@ -293,7 +309,9 @@ export function useSocket<Data = any>(
     const { pause, resume } = useIntervalFn(
       () => {
         send(message, false);
-        if (pongTimeoutWait != null) return;
+        if (pongTimeoutWait != null) {
+          return;
+        }
         pongTimeoutWait = setTimeout(() => {
           // 明确关闭连接以避免重试
           close({});
@@ -319,7 +337,9 @@ export function useSocket<Data = any>(
     _init();
   };
 
-  if (immediate) watch(urlRef, open, { immediate: true });
+  if (immediate) {
+    watch(urlRef, open, { immediate: true });
+  }
 
   return {
     data,

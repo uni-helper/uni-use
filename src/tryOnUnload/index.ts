@@ -1,4 +1,4 @@
-import { nextTick, getCurrentInstance } from 'vue';
+import { getCurrentInstance, nextTick } from 'vue';
 import type { Fn } from '@vueuse/core';
 import { onUnload } from '@dcloudio/uni-app';
 
@@ -13,9 +13,11 @@ export type OnUnloadFn = Fn;
 export function tryOnUnload(fn: OnUnloadFn, sync = true) {
   if (getCurrentInstance()) {
     onUnload(fn);
-  } else if (sync) {
+  }
+  else if (sync) {
     fn();
-  } else {
+  }
+  else {
     nextTick(fn);
   }
 }

@@ -1,4 +1,4 @@
-import { nextTick, getCurrentInstance } from 'vue';
+import { getCurrentInstance, nextTick } from 'vue';
 import type { Fn } from '@vueuse/core';
 import { onShow } from '@dcloudio/uni-app';
 
@@ -13,9 +13,11 @@ export type OnShowFn = Fn;
 export function tryOnShow(fn: OnShowFn, sync = true) {
   if (getCurrentInstance()) {
     onShow(fn);
-  } else if (sync) {
+  }
+  else if (sync) {
     fn();
-  } else {
+  }
+  else {
     nextTick(fn);
   }
 }

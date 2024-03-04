@@ -29,9 +29,11 @@ function parseUniStorageLike(storageSync: UniStorageSyncLike) {
       try {
         const data = storageSync.getItem(key);
         success && success({ data });
-      } catch (error) {
+      }
+      catch (error) {
         fail && fail(error);
-      } finally {
+      }
+      finally {
         complete && complete(void 0);
       }
     },
@@ -39,9 +41,11 @@ function parseUniStorageLike(storageSync: UniStorageSyncLike) {
       try {
         const raw = storageSync.setItem(key, data);
         success && success({ data: raw });
-      } catch (error) {
+      }
+      catch (error) {
         fail && fail(error);
-      } finally {
+      }
+      finally {
         complete && complete(void 0);
       }
     },
@@ -49,9 +53,11 @@ function parseUniStorageLike(storageSync: UniStorageSyncLike) {
       try {
         storageSync.removeItem(key);
         success && success({ data: void 0 });
-      } catch (error) {
+      }
+      catch (error) {
         fail && fail(error);
-      } finally {
+      }
+      finally {
         complete && complete(void 0);
       }
     },
@@ -62,7 +68,7 @@ function parseUniStorageLike(storageSync: UniStorageSyncLike) {
 
 export interface UseStorageSyncOptions<T>
   extends Omit<UseStorageOptions<T>, 'flush' | 'storage'>,
-    ConfigurableFlushSync {
+  ConfigurableFlushSync {
   /** 同步 storage */
   storage?: UniStorageSyncLike;
 }

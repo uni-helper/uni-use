@@ -7,8 +7,8 @@
 ## 使用方式
 
 ```ts
-import { tabBar } from '@/pages.json';
 import { useRouter } from '@uni-helper/uni-use';
+import { tabBar } from '@/pages.json';
 
 const router = useRouter({
   /**

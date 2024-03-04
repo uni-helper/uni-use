@@ -14,11 +14,11 @@ tryOnBackPress((e) => {
   if(e.from === 'navigateBack') {
     // do somthing
   }
-  
+
   if(e.from === 'backbutton'){
     // do something
   }
-}, 
+},
 null,
 {
   retry: 5, // optional

@@ -10,12 +10,16 @@ function getClipboardData(showToast = true) {
     uni.getClipboardData({
       showToast,
       success: ({ data }) => resolve(data),
-      fail: (error) => reject(error),
+      fail: error => reject(error),
       complete: () => {
-        if (!showToast) uni.hideToast();
+        if (!showToast) {
+          uni.hideToast();
+        }
       },
     });
-    if (!showToast) uni.hideToast();
+    if (!showToast) {
+      uni.hideToast();
+    }
   });
 }
 
@@ -25,12 +29,16 @@ function setClipboardData(data: string, showToast = true) {
       data,
       showToast,
       success: ({ data }) => resolve(data),
-      fail: (error) => reject(error),
+      fail: error => reject(error),
       complete: () => {
-        if (!showToast) uni.hideToast();
+        if (!showToast) {
+          uni.hideToast();
+        }
       },
     });
-    if (!showToast) uni.hideToast();
+    if (!showToast) {
+      uni.hideToast();
+    }
   });
 }
 
@@ -67,7 +75,7 @@ export function useClipboardData(
   const {
     showToast = true,
     listenToClipboardDataChanges = true,
-    onError = (error) => console.error(error),
+    onError = error => console.error(error),
     flush = 'pre',
     eventFilter,
   } = options;
@@ -77,7 +85,8 @@ export function useClipboardData(
   async function read() {
     try {
       data.value = await getClipboardData(showToast);
-    } catch (error) {
+    }
+    catch (error) {
       onError(error);
     }
   }
@@ -93,7 +102,8 @@ export function useClipboardData(
     async () => {
       try {
         await setClipboardData(data.value);
-      } catch (error) {
+      }
+      catch (error) {
         onError(error);
       }
     },

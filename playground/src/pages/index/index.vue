@@ -8,19 +8,23 @@ const clipboardData = useClipboardData('');
 watchEffect(() => {
   console.log('clipboardData', clipboardData.value);
 });
-const onUpdateClipboardData = () => {
+function onUpdateClipboardData() {
   clipboardData.value = Math.random().toFixed(2).toString();
-};
+}
 </script>
 
 <template>
   <view class="content">
     <image class="logo" src="/static/logo.png" />
     <view class="text-area">
-      <text class="title">{{ title }}</text>
+      <text class="title">
+        {{ title }}
+      </text>
     </view>
     {{ clipboardData }}
-    <button @click="onUpdateClipboardData">Update Clipboard Data</button>
+    <button @click="onUpdateClipboardData">
+      Update Clipboard Data
+    </button>
   </view>
 </template>
 

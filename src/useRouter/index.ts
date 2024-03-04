@@ -1,4 +1,4 @@
-import { ref, computed } from 'vue';
+import { computed, ref } from 'vue';
 import type { AppJson } from '@dcloudio/uni-cli-shared';
 import { pathResolve } from '../utils';
 import type { RequiredOnly } from '../types';
@@ -126,7 +126,7 @@ function trySwitchTab<FN extends typeof navigateTo | typeof redirectTo>(
 
 function isTabBarPath(path: string) {
   const target = pathResolve(path);
-  const tabbar = tabBarList.find((t) => `/${t.pagePath}` === target);
+  const tabbar = tabBarList.find(t => `/${t.pagePath}` === target);
   return !!tabbar;
 }
 
@@ -165,7 +165,9 @@ export function useRouter(options: UseRouterOptions = {}) {
    * @see https://uniapp.dcloud.net.cn/tutorial/page.html#onbackpress
    */
   tryOnBackPress((e) => {
-    if (e.from === 'navigateBack') return;
+    if (e.from === 'navigateBack') {
+      return;
+    }
     refreshCurrentPages();
   });
 

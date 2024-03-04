@@ -4,7 +4,7 @@ export default defineBuildConfig({
   entries: ['./src/index'],
   clean: true,
   declaration: true,
-  externals:[
+  externals: [
     '@dcloudio/uni-cli-shared',
     '@vue/runtime-core',
   ],
