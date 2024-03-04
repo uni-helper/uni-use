@@ -204,40 +204,40 @@ export function useStorage<T extends string | number | boolean | object | null>(
   // 因为除了 watch 之外，uniapp 的 interceptor 也会导致连带更新
   let updating = false;
 
-  watchWithFilter(data, () => !updating && write(data.value), { flush, deep, eventFilter });
+  watchWithFilter(data, () => !updating && writeStorage(data.value), { flush, deep, eventFilter });
 
   if (!initOnMounted) {
-    read();
+    readStorage();
   }
 
   if (listenToStorageChanges) {
     tryOnMounted(() => {
-      useInterceptor('setStorage', { complete: read });
-      useInterceptor('removeStorage', { complete: read });
-      useInterceptor('clearStorage', { complete: read });
+      useInterceptor('setStorage', { complete: readStorage });
+      useInterceptor('removeStorage', { complete: readStorage });
+      useInterceptor('clearStorage', { complete: readStorage });
       if (initOnMounted) {
-        read();
+        readStorage();
       }
     });
   }
 
   let timer: NodeJS.Timeout;
-  function write(val: any) {
+  function writeStorage(val: any) {
     if (timer) {
       clearTimeout(timer);
     }
 
     // 如果是同步操作，则直接写 storage
     if (flush === 'sync') {
-      writeStorage(val);
+      writeStorageImmediately(val);
       return;
     }
 
     // 避免太频繁写入 storage 导致的性能问题
-    timer = setTimeout(() => writeStorage(val), 100);
+    timer = setTimeout(() => writeStorageImmediately(val), 100);
   }
 
-  function writeStorage(val: any) {
+  function writeStorageImmediately(val: any) {
     try {
       updating = true;
 
@@ -263,47 +263,55 @@ export function useStorage<T extends string | number | boolean | object | null>(
     }
   }
 
-  function read() {
-    try {
-      // 读取本地缓存值
-      storage.getItem({
-        key,
-        success: ({ data: rawValue }) => {
-          let value: T;
-          if (rawValue == null) {
-            // 没有对应的值，直接使用默认值
-            value = rawInit;
-          }
-          else if (mergeDefaults) {
-            // 有对应的值，需要合并默认值和本地缓存值
-            value = serializer.read(rawValue);
-            // 如果是方法，调用
-            if (typeof mergeDefaults === 'function') {
-              value = mergeDefaults(value, rawInit);
-            }
-            // 如果是对象，浅合并
-            else if (type === 'object' && !Array.isArray(value)) {
-              value = { ...(rawInit as any), ...(value as any) };
-            }
-          }
-          else {
-            // 有对应的值，不需要合并
-            value = serializer.read(rawValue);
-          }
+  function readStorage() {
+    const parseRaw = (raw: string | null): T => {
+      if (raw == null) {
+        // 没有对应的值，直接使用默认值
+        return rawInit;
+      }
 
-          updating = true;
+      if (mergeDefaults) {
+        // 有对应的值，需要合并默认值和本地缓存值
+        const value: T = serializer.read(raw);
+        // 如果是方法，调用
+        if (typeof mergeDefaults === 'function') {
+          return mergeDefaults(value, rawInit);
+        }
+        // 如果是对象，浅合并
 
-          data.value = value;
-        },
-        fail: error => onError(error),
-      });
-    }
-    catch (error) {
-      onError(error);
-    }
-    finally {
-      updating = false;
-    }
+        if (type === 'object' && !Array.isArray(value)) {
+          return { ...(rawInit as any), ...(value as any) };
+        }
+
+        return value;
+      }
+
+      // 有对应的值，不需要合并
+      return serializer.read(raw);
+    };
+
+    const updateData = (raw: string | null) => {
+      try {
+        const value = parseRaw(raw);
+
+        updating = true;
+
+        data.value = value;
+      }
+      catch (err: any) {
+        onError(err);
+      }
+      finally {
+        updating = false;
+      }
+    };
+
+    // 读取本地缓存值
+    storage.getItem({
+      key,
+      success: ({ data }) => updateData(data),
+      fail: () => updateData(null),
+    });
   }
 
   return data as RemovableRef<T>;
