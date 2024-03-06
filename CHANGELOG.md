@@ -1,5 +1,12 @@
 # 改动日志
 
+## 0.19.0 (2024-01-17)
+
+- fix: 重构 `useStorage` / `useStorageSync`，使其更贴合 `uniapp` 的使用习惯
+- feat: 强化 `useRouter`，增加功能。
+- feat: 增加 `uniUseAutoImports` 函数。
+- feat: 增加 `tryOnBackPress` 函数
+
 ## 0.18.0 (2023-01-15)
 
 - feat!: 调整 `useLoading`，现在返回是一个对象，其中包含 `showLoading` 和 `hideLoading` 两个方法
