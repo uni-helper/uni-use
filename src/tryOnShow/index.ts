@@ -1,23 +1,47 @@
-import { getCurrentInstance, nextTick } from 'vue';
-import type { Fn } from '@vueuse/core';
+import { getCurrentInstance } from 'vue';
 import { onShow } from '@dcloudio/uni-app';
+import type { TryOptions } from '../types';
+import { sleep } from '../utils';
 
-export type OnShowFn = Fn;
+type OnShowParameters = Parameters<typeof onShow>;
+
+export type TryOnShowOptions = TryOptions;
 
 /**
- * 如果在组件生命周期内，在 onShow 中调用方法，否则直接调用方法
+ * 尝试获取组件生命周期，并调用 onShow
  *
- * @param fn 需要调用的方法
- * @param sync 默认为 true，如果设置为 false，在 nextTick 中调用方法
+ * 超过重试次数，根据 runFinally 直接执行或抛出异常
  */
-export function tryOnShow(fn: OnShowFn, sync = true) {
-  if (getCurrentInstance()) {
-    onShow(fn);
+export async function tryOnShow(
+  hook: OnShowParameters[0],
+  target?: OnShowParameters[1],
+  options: TryOnShowOptions = {},
+) {
+  const {
+    retry = 3,
+    interval = 500,
+    runFinally = true,
+  } = options;
+
+  function tryBind() {
+    const instance = (target || getCurrentInstance()) as OnShowParameters[1] | undefined;
+    if (instance) {
+      onShow(hook, instance);
+      return true;
+    }
+
+    return false;
   }
-  else if (sync) {
-    fn();
+  for (let circle = 1; circle <= retry; circle++) {
+    if (tryBind()) {
+      return;
+    }
+    await sleep(interval);
   }
-  else {
-    nextTick(fn);
+
+  if (runFinally) {
+    return onShow(hook);
   }
+
+  throw new Error('Binding onShow failed, maximum number of attempts exceeded.');
 }

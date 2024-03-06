@@ -1,23 +1,47 @@
-import { getCurrentInstance, nextTick } from 'vue';
-import type { Fn } from '@vueuse/core';
+import { getCurrentInstance } from 'vue';
 import { onInit } from '@dcloudio/uni-app';
+import type { TryOptions } from '../types';
+import { sleep } from '../utils';
 
-export type OnInitFn = Fn;
+type OnInitParameters = Parameters<typeof onInit>;
+
+export type TryOnInitOptions = TryOptions;
 
 /**
- * 如果在组件生命周期内，在 onInit 中调用方法，否则直接调用方法
+ * 尝试获取组件生命周期，并调用 onInit
  *
- * @param fn 需要调用的方法
- * @param sync 默认为 true，如果设置为 false，在 nextTick 中调用方法
+ * 超过重试次数，根据 runFinally 直接执行或抛出异常
  */
-export function tryOnInit(fn: OnInitFn, sync = true) {
-  if (getCurrentInstance()) {
-    onInit(fn);
+export async function tryOnInit(
+  hook: OnInitParameters[0],
+  target?: OnInitParameters[1],
+  options: TryOnInitOptions = {},
+) {
+  const {
+    retry = 3,
+    interval = 500,
+    runFinally = true,
+  } = options;
+
+  function tryBind() {
+    const instance = (target || getCurrentInstance()) as OnInitParameters[1] | undefined;
+    if (instance) {
+      onInit(hook, instance);
+      return true;
+    }
+
+    return false;
   }
-  else if (sync) {
-    fn();
+  for (let circle = 1; circle <= retry; circle++) {
+    if (tryBind()) {
+      return;
+    }
+    await sleep(interval);
   }
-  else {
-    nextTick(fn);
+
+  if (runFinally) {
+    return onInit(hook);
   }
+
+  throw new Error('Binding onInit failed, maximum number of attempts exceeded.');
 }

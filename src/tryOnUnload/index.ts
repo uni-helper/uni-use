@@ -1,23 +1,47 @@
-import { getCurrentInstance, nextTick } from 'vue';
-import type { Fn } from '@vueuse/core';
+import { getCurrentInstance } from 'vue';
 import { onUnload } from '@dcloudio/uni-app';
+import type { TryOptions } from '../types';
+import { sleep } from '../utils';
 
-export type OnUnloadFn = Fn;
+type OnUnloadParameters = Parameters<typeof onUnload>;
+
+export type TryOnUnloadOptions = TryOptions;
 
 /**
- * 如果在组件生命周期内，在 onUnload 中调用方法，否则直接调用方法
+ * 尝试获取组件生命周期，并调用 onUnload
  *
- * @param fn 需要调用的方法
- * @param sync 默认为 true，如果设置为 false，在 nextTick 中调用方法
+ * 超过重试次数，根据 runFinally 直接执行或抛出异常
  */
-export function tryOnUnload(fn: OnUnloadFn, sync = true) {
-  if (getCurrentInstance()) {
-    onUnload(fn);
+export async function tryOnUnload(
+  hook: OnUnloadParameters[0],
+  target?: OnUnloadParameters[1],
+  options: TryOnUnloadOptions = {},
+) {
+  const {
+    retry = 3,
+    interval = 500,
+    runFinally = true,
+  } = options;
+
+  function tryBind() {
+    const instance = (target || getCurrentInstance()) as OnUnloadParameters[1] | undefined;
+    if (instance) {
+      onUnload(hook, instance);
+      return true;
+    }
+
+    return false;
   }
-  else if (sync) {
-    fn();
+  for (let circle = 1; circle <= retry; circle++) {
+    if (tryBind()) {
+      return;
+    }
+    await sleep(interval);
   }
-  else {
-    nextTick(fn);
+
+  if (runFinally) {
+    return onUnload(hook);
   }
+
+  throw new Error('Binding onUnload failed, maximum number of attempts exceeded.');
 }

@@ -1,22 +1,47 @@
-import { getCurrentInstance, nextTick } from 'vue';
+import { getCurrentInstance } from 'vue';
 import { onLoad } from '@dcloudio/uni-app';
+import type { TryOptions } from '../types';
+import { sleep } from '../utils';
 
-export type OnLoadFn = (query?: Record<string, string | undefined>) => void;
+type OnLoadParameters = Parameters<typeof onLoad>;
+
+export type TryOnLoadOptions = TryOptions;
 
 /**
- * 如果在组件生命周期内，在 onLoad 中调用方法，否则直接调用方法
+ * 尝试获取组件生命周期，并调用 onLoad
  *
- * @param fn 需要调用的方法
- * @param sync 默认为 true，如果设置为 false，在 nextTick 中调用方法（可能会丢失参数）
+ * 超过重试次数，根据 runFinally 直接执行或抛出异常
  */
-export function tryOnLoad(fn: OnLoadFn, sync = true) {
-  if (getCurrentInstance()) {
-    onLoad(fn);
+export async function tryOnLoad(
+  hook: OnLoadParameters[0],
+  target?: OnLoadParameters[1],
+  options: TryOnLoadOptions = {},
+) {
+  const {
+    retry = 3,
+    interval = 500,
+    runFinally = true,
+  } = options;
+
+  function tryBind() {
+    const instance = (target || getCurrentInstance()) as OnLoadParameters[1] | undefined;
+    if (instance) {
+      onLoad(hook, instance);
+      return true;
+    }
+
+    return false;
   }
-  else if (sync) {
-    fn();
+  for (let circle = 1; circle <= retry; circle++) {
+    if (tryBind()) {
+      return;
+    }
+    await sleep(interval);
   }
-  else {
-    nextTick(fn);
+
+  if (runFinally) {
+    return onLoad(hook);
   }
+
+  throw new Error('Binding onLoad failed, maximum number of attempts exceeded.');
 }

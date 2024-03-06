@@ -1,23 +1,47 @@
-import { getCurrentInstance, nextTick } from 'vue';
-import type { Fn } from '@vueuse/core';
+import { getCurrentInstance } from 'vue';
 import { onHide } from '@dcloudio/uni-app';
+import { sleep } from '../utils';
+import type { TryOptions } from '../types';
 
-export type OnHideFn = Fn;
+type OnHideParameters = Parameters<typeof onHide>;
+
+export type TryOnHideOptions = TryOptions;
 
 /**
- * 如果在组件生命周期内，在 onHide 中调用方法，否则直接调用方法
+ * 尝试获取组件生命周期，并调用 onHide
  *
- * @param fn 需要调用的方法
- * @param sync 默认为 true，如果设置为 false，在 nextTick 中调用方法
+ * 超过重试次数，根据 runFinally 直接执行或抛出异常
  */
-export function tryOnHide(fn: OnHideFn, sync = true) {
-  if (getCurrentInstance()) {
-    onHide(fn);
+export async function tryOnHide(
+  hook: OnHideParameters[0],
+  target?: OnHideParameters[1],
+  options: TryOnHideOptions = {},
+) {
+  const {
+    retry = 3,
+    interval = 500,
+    runFinally = true,
+  } = options;
+
+  function tryBind() {
+    const instance = (target || getCurrentInstance()) as OnHideParameters[1] | undefined;
+    if (instance) {
+      onHide(hook, instance);
+      return true;
+    }
+
+    return false;
   }
-  else if (sync) {
-    fn();
+  for (let circle = 1; circle <= retry; circle++) {
+    if (tryBind()) {
+      return;
+    }
+    await sleep(interval);
   }
-  else {
-    nextTick(fn);
+
+  if (runFinally) {
+    return onHide(hook);
   }
+
+  throw new Error('Binding onHide failed, maximum number of attempts exceeded.');
 }
