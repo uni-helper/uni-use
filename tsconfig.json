@@ -2,12 +2,12 @@
   "extends": "@tsconfig/node18",
   "compilerOptions": {
     "target": "ESNext",
-    "lib": ["ESNext"],
+    "lib": ["ESNext", "DOM"],
     "baseUrl": ".",
     "module": "ESNext",
     "moduleResolution": "Node",
     "resolveJsonModule": true,
-    "types": ["@dcloudio/types", "node"]
+    "typeRoots": ["types"]
   },
   "include": ["**/*.js", "**/*.cjs", "**/*.mjs", "**/*.ts", "**/*.cts", "**/*.mts"],
   "exclude": ["**/node_modules", "**/dist", "playground"]

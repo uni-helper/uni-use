@@ -1,12 +1,12 @@
 import { ref, shallowRef } from 'vue';
-import { resolveUnref, tryOnMounted, watchWithFilter } from '@vueuse/core';
+import { resolveUnref, tryOnMounted, tryOnScopeDispose, watchWithFilter } from '@vueuse/core';
 import type { Ref } from 'vue';
 import type { ConfigurableEventFilter, ConfigurableFlush, RemovableRef } from '@vueuse/core';
 import { useInterceptor } from '../useInterceptor';
-import type { MaybeComputedRef } from '../types';
+import type { MaybeComputedRef, MaybePromise } from '../types';
 
-export interface UniStorageLike {
-  getItem: (options: UniNamespace.GetStorageOptions) => void;
+export interface UniStorageLike<T = any> {
+  getItem: (options: UniNamespace.GetStorageOptions<T>) => MaybePromise<T>;
   setItem: (options: UniNamespace.SetStorageOptions) => void;
   removeItem: (options: UniNamespace.RemoveStorageOptions) => void;
 }
@@ -16,30 +16,32 @@ export interface Serializer<T> {
   write: (value: T) => string;
 }
 
-const UniStorage: UniStorageLike = {
+const UniStorage: UniStorageLike<any> = {
   getItem: (options: UniNamespace.GetStorageOptions) => uni.getStorage(options),
   setItem: (options: UniNamespace.SetStorageOptions) => uni.setStorage(options),
   removeItem: (options: UniNamespace.RemoveStorageOptions) => uni.removeStorage(options),
 };
 
-export function guessSerializerType<T extends string | number | boolean | object | null>(
-  rawInit: T,
+export type DataType = string | number | boolean | object | null;
+
+export function guessSerializerType<T extends DataType>(
+  raw: T,
 ) {
-  return rawInit == null
+  return raw == null
     ? 'any'
-    : rawInit instanceof Set
+    : raw instanceof Set
       ? 'set'
-      : rawInit instanceof Map
+      : raw instanceof Map
         ? 'map'
-        : rawInit instanceof Date
+        : raw instanceof Date
           ? 'date'
-          : typeof rawInit === 'boolean'
+          : typeof raw === 'boolean'
             ? 'boolean'
-            : typeof rawInit === 'string'
+            : typeof raw === 'string'
               ? 'string'
-              : typeof rawInit === 'object'
+              : typeof raw === 'object'
                 ? 'object'
-                : Number.isNaN(rawInit)
+                : Number.isNaN(raw)
                   ? 'any'
                   : 'number';
 }
@@ -82,8 +84,16 @@ const StorageSerializers: Record<
   },
 };
 
-// 存储所有storage变量
-const store: Record<string, RemovableRef<any>> = {};
+interface Data<T> extends Ref<T> {
+  key: string;
+  type: 'boolean' | 'object' | 'number' | 'any' | 'string' | 'map' | 'set' | 'date';
+  updating: boolean;
+  serializer: Serializer<T>;
+  default: T;
+  read: () => T;
+  write: (val: T) => void;
+  refresh: () => Data<T>;
+}
 
 export interface UseStorageOptions<T> extends ConfigurableEventFilter, ConfigurableFlush {
   /**
@@ -139,29 +149,15 @@ export interface UseStorageOptions<T> extends ConfigurableEventFilter, Configura
   storage?: UniStorageLike;
 }
 
-export function useStorage(
+export function useStorage<T = unknown>(
   key: string,
-  initialValue: MaybeComputedRef<string>,
-  options?: UseStorageOptions<string>,
-): RemovableRef<string>;
-export function useStorage(
-  key: string,
-  initialValue: MaybeComputedRef<boolean>,
-  options?: UseStorageOptions<boolean>,
-): RemovableRef<boolean>;
-export function useStorage(
-  key: string,
-  initialValue: MaybeComputedRef<number>,
-  options?: UseStorageOptions<number>,
-): RemovableRef<number>;
+  initialValue?: MaybeComputedRef<null>,
+  options?: UseStorageOptions<T>,
+): RemovableRef<T>;
+
 export function useStorage<T>(
   key: string,
   initialValue: MaybeComputedRef<T>,
-  options?: UseStorageOptions<T>,
-): RemovableRef<T>;
-export function useStorage<T = unknown>(
-  key: string,
-  initialValue: MaybeComputedRef<null>,
   options?: UseStorageOptions<T>,
 ): RemovableRef<T>;
 
@@ -170,9 +166,9 @@ export function useStorage<T = unknown>(
  *
  * https://uniapp.dcloud.net.cn/api/storage/storage.html
  */
-export function useStorage<T extends string | number | boolean | object | null>(
+export function useStorage<T extends DataType>(
   key: string,
-  initialValue: MaybeComputedRef<T>,
+  initialValue?: MaybeComputedRef<T>,
   options: UseStorageOptions<T> = {},
 ): RemovableRef<T> {
   const {
@@ -187,68 +183,80 @@ export function useStorage<T extends string | number | boolean | object | null>(
     storage = UniStorage,
   } = options;
 
-  const rawInit: T = resolveUnref(initialValue);
+  const rawInit = resolveUnref(initialValue) as T;
+
   const type = guessSerializerType<T>(rawInit);
+
+  const data = (shallow ? shallowRef : ref)(rawInit) as Ref<T> as Data<T>;
 
   const serializer = options.serializer ?? StorageSerializers[type];
 
-  // 如果已有 key，则直接返回对象
-  if (key in store) {
-    return store[key];
-  }
+  data.key = key;
+  data.type = type;
+  data.serializer = serializer;
+  data.updating = false;
+  data.default = rawInit;
+  data.read = readStorage;
+  data.write = writeStorageImmediately;
+  data.refresh = () => {
+    data.read();
+    return data;
+  };
 
-  const data = (shallow ? shallowRef : ref)(initialValue) as Ref<T>;
-  store[key] = data;
+  let timer: NodeJS.Timeout;
 
-  // 不使用 pausableWatch 使用 updating 变量标识。
-  // 因为除了 watch 之外，uniapp 的 interceptor 也会导致连带更新
-  let updating = false;
-
-  watchWithFilter(data, () => !updating && writeStorage(data.value), { flush, deep, eventFilter });
+  watchWithFilter(data, () => !data.updating && writeStorage(data.value), { flush, deep, eventFilter });
 
   if (!initOnMounted) {
-    readStorage();
+    data.read();
   }
 
   if (listenToStorageChanges) {
     tryOnMounted(() => {
-      useInterceptor('setStorage', { complete: readStorage });
-      useInterceptor('removeStorage', { complete: readStorage });
-      useInterceptor('clearStorage', { complete: readStorage });
+      useInterceptor('setStorage', { complete: data.read });
+      useInterceptor('removeStorage', { complete: data.read });
+      useInterceptor('clearStorage', { complete: data.read });
+
       if (initOnMounted) {
-        readStorage();
+        data.read();
       }
     });
   }
 
-  let timer: NodeJS.Timeout;
-  function writeStorage(val: any) {
+  tryOnScopeDispose(() => {
+    clearTimeout(timer);
+  });
+
+  function writeStorage(val: T) {
     if (timer) {
       clearTimeout(timer);
     }
-
     // 如果是同步操作，则直接写 storage
     if (flush === 'sync') {
       writeStorageImmediately(val);
       return;
     }
 
-    // 避免太频繁写入 storage 导致的性能问题
     timer = setTimeout(() => writeStorageImmediately(val), 100);
   }
 
-  function writeStorageImmediately(val: any) {
+  function writeStorageImmediately(val: T) {
+    if (timer) {
+      clearTimeout(timer);
+    }
+
     try {
-      updating = true;
+      data.updating = true;
 
       if (val == null) {
         storage.removeItem({
           key,
           fail: error => onError(error),
         });
+        clearTimeout(timer);
         return;
       }
-      const serialized = serializer.write(val);
+      const serialized = data.serializer.write(val);
       storage.setItem({
         key,
         data: serialized,
@@ -259,7 +267,7 @@ export function useStorage<T extends string | number | boolean | object | null>(
       onError(error);
     }
     finally {
-      updating = false;
+      data.updating = false;
     }
   }
 
@@ -267,34 +275,34 @@ export function useStorage<T extends string | number | boolean | object | null>(
     const parseRaw = (raw: string | null): T => {
       if (raw == null) {
         // 没有对应的值，直接使用默认值
-        return rawInit;
+        return data.default;
       }
 
       if (mergeDefaults) {
         // 有对应的值，需要合并默认值和本地缓存值
-        const value: T = serializer.read(raw);
+        const value: T = data.serializer.read(raw);
         // 如果是方法，调用
         if (typeof mergeDefaults === 'function') {
-          return mergeDefaults(value, rawInit);
+          return mergeDefaults(value, data.default);
         }
         // 如果是对象，浅合并
 
         if (type === 'object' && !Array.isArray(value)) {
-          return { ...(rawInit as any), ...(value as any) };
+          return { ...(data.default as any), ...(value as any) };
         }
 
         return value;
       }
 
       // 有对应的值，不需要合并
-      return serializer.read(raw);
+      return data.serializer.read(raw);
     };
 
     const updateData = (raw: string | null) => {
       try {
         const value = parseRaw(raw);
 
-        updating = true;
+        data.updating = true;
 
         data.value = value;
       }
@@ -302,7 +310,7 @@ export function useStorage<T extends string | number | boolean | object | null>(
         onError(err);
       }
       finally {
-        updating = false;
+        data.updating = false;
       }
     };
 
@@ -312,7 +320,9 @@ export function useStorage<T extends string | number | boolean | object | null>(
       success: ({ data }) => updateData(data),
       fail: () => updateData(null),
     });
+
+    return data.value;
   }
 
-  return data as RemovableRef<T>;
+  return data;
 }
