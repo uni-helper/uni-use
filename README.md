@@ -39,7 +39,7 @@ npm install @uni-helper/uni-use @vueuse/core@9
 
 ## 使用
 
-详情请看 [`use-use`函数列表](./src/readme.md)
+详情请看 [`uni-use`函数列表](./src/readme.md)
 
 ## 其它
 
@@ -117,8 +117,7 @@ export default defineConfig({
   plugins: [
     autoImport({
       imports: [
-        '@vueuse/core',
-        uniuseAutoImports(), // 放在 @vueuse/core 之后以覆盖同名方法
+        uniuseAutoImports(),
       ],
     }),
     uni({ ... }),
