@@ -1,9 +1,9 @@
-import { ref, shallowRef } from 'vue';
+import type { ConfigurableEventFilter, ConfigurableFlush, RemovableRef } from '@vueuse/core';
 import { resolveUnref, tryOnMounted, tryOnScopeDispose, watchWithFilter } from '@vueuse/core';
 import type { Ref } from 'vue';
-import type { ConfigurableEventFilter, ConfigurableFlush, RemovableRef } from '@vueuse/core';
-import { useInterceptor } from '../useInterceptor';
+import { ref, shallowRef } from 'vue';
 import type { MaybeComputedRef, MaybePromise } from '../types';
+import { useInterceptor } from '../useInterceptor';
 
 export interface UniStorageLike<T = any> {
   getItem: (options: UniNamespace.GetStorageOptions<T>) => MaybePromise<T>;
@@ -212,11 +212,11 @@ export function useStorage<T extends DataType>(
   }
 
   if (listenToStorageChanges) {
-    tryOnMounted(() => {
-      useInterceptor('setStorage', { complete: data.read });
-      useInterceptor('removeStorage', { complete: data.read });
-      useInterceptor('clearStorage', { complete: data.read });
+    useInterceptor('setStorage', { complete: data.read });
+    useInterceptor('removeStorage', { complete: data.read });
+    useInterceptor('clearStorage', { complete: data.read });
 
+    tryOnMounted(() => {
       if (initOnMounted) {
         data.read();
       }
