@@ -203,25 +203,22 @@ export function useStorage<T extends DataType>(
     return data;
   };
 
-  let timer: NodeJS.Timeout;
-
-  watchWithFilter(data, () => !data.updating && writeStorage(data.value), { flush, deep, eventFilter });
-
-  if (!initOnMounted) {
+  if (initOnMounted) {
+    tryOnMounted(data.read);
+  }
+  else {
     data.read();
   }
+
+  watchWithFilter(data, () => !data.updating && writeStorage(data.value), { flush, deep, eventFilter });
 
   if (listenToStorageChanges) {
     useInterceptor('setStorage', { complete: data.read });
     useInterceptor('removeStorage', { complete: data.read });
     useInterceptor('clearStorage', { complete: data.read });
-
-    tryOnMounted(() => {
-      if (initOnMounted) {
-        data.read();
-      }
-    });
   }
+
+  let timer: NodeJS.Timeout;
 
   tryOnScopeDispose(() => {
     clearTimeout(timer);
