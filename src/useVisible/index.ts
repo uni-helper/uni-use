@@ -1,6 +1,6 @@
 import { ref } from 'vue';
-import { tryOnShow } from '../tryOnShow';
 import { tryOnHide } from '../tryOnHide';
+import { tryOnShow } from '../tryOnShow';
 
 /** 获取当前页面是否可见 */
 export function useVisible() {

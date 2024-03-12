@@ -1,6 +1,6 @@
-import { getCurrentInstance } from 'vue';
-import { onReady } from '@dcloudio/uni-app';
 import type { TryOptions } from '../types';
+import { onReady } from '@dcloudio/uni-app';
+import { getCurrentInstance } from 'vue';
 import { sleep } from '../utils';
 
 type OnReadyParameters = Parameters<typeof onReady>;

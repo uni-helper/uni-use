@@ -1,5 +1,5 @@
-import { readonly, ref } from 'vue';
 import { tryOnScopeDispose } from '@vueuse/core';
+import { readonly, ref } from 'vue';
 
 /**
  * 响应式的暗黑主题偏好

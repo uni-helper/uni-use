@@ -1,8 +1,8 @@
+import type { UniStorageLike } from '.';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { useSetup } from '../../test';
 import { sleep } from '../utils';
 import { useStorage } from '.';
-import type { UniStorageLike } from '.';
 
 describe('useStorage', () => {
   const storage: UniStorageLike = {

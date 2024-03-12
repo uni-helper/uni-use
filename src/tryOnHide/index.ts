@@ -1,7 +1,7 @@
-import { getCurrentInstance } from 'vue';
-import { onHide } from '@dcloudio/uni-app';
-import { sleep } from '../utils';
 import type { TryOptions } from '../types';
+import { onHide } from '@dcloudio/uni-app';
+import { getCurrentInstance } from 'vue';
+import { sleep } from '../utils';
 
 type OnHideParameters = Parameters<typeof onHide>;
 

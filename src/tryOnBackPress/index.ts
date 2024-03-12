@@ -1,5 +1,5 @@
-import { getCurrentInstance } from 'vue';
 import { onBackPress } from '@dcloudio/uni-app';
+import { getCurrentInstance } from 'vue';
 import { sleep } from '../utils';
 
 export interface TryOnBackPressOptions {

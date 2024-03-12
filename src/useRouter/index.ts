@@ -1,8 +1,8 @@
-import { computed, ref } from 'vue';
-import type { AppJson } from '@dcloudio/uni-cli-shared';
-import { pathResolve } from '../utils';
 import type { RequiredOnly } from '../types';
+import type { AppJson } from '@dcloudio/uni-cli-shared';
+import { computed, ref } from 'vue';
 import { tryOnBackPress } from '../tryOnBackPress';
+import { pathResolve } from '../utils';
 
 /** 获取当前页面栈信息 */
 const pages = ref<Page.PageInstance[]>([]);

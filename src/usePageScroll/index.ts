@@ -1,7 +1,7 @@
+import type { MaybeRef } from '../types';
 import { onPageScroll } from '@dcloudio/uni-app';
 import { resolveUnref, watchWithFilter } from '@vueuse/core';
 import { computed, ref } from 'vue';
-import type { MaybeRef } from '../types';
 
 export interface UsePageScrollOptions {
   /**

@@ -1,6 +1,6 @@
+import type { MaybeComputedRef } from '../types';
 import { resolveUnref } from '@vueuse/core';
 import { reactive } from 'vue';
-import type { MaybeComputedRef } from '../types';
 
 export interface UniGetProviderOptions extends UniApp.GetProviderOptions {}
 export type GetProviderOptions = MaybeComputedRef<UniGetProviderOptions>;

@@ -1,8 +1,8 @@
-import { ref } from 'vue';
+import type { MaybeComputedRef } from '../types';
+import type { ConfigurableEventFilter, ConfigurableFlush } from '@vueuse/core';
 import type { Ref } from 'vue';
 import { watchWithFilter } from '@vueuse/core';
-import type { ConfigurableEventFilter, ConfigurableFlush } from '@vueuse/core';
-import type { MaybeComputedRef } from '../types';
+import { ref } from 'vue';
 import { useInterceptor } from '../useInterceptor';
 
 function getScreenBrightness() {

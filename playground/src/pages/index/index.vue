@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, watchEffect } from 'vue';
 import { useClipboardData } from '@uni-helper/uni-use';
+import { ref, watchEffect } from 'vue';
 
 const title = ref('Hello');
 

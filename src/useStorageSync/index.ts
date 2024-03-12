@@ -1,7 +1,7 @@
+import type { MaybeComputedRef } from '../types';
+import type { UniStorageLike, UseStorageOptions } from '../useStorage';
 import type { ConfigurableFlushSync, RemovableRef } from '@vueuse/core';
 import { useStorage } from '../useStorage';
-import type { UniStorageLike, UseStorageOptions } from '../useStorage';
-import type { MaybeComputedRef } from '../types';
 
 export interface UniStorageSyncLike {
   getItem: typeof uni.getStorageSync;

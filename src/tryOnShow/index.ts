@@ -1,6 +1,6 @@
-import { getCurrentInstance } from 'vue';
-import { onShow } from '@dcloudio/uni-app';
 import type { TryOptions } from '../types';
+import { onShow } from '@dcloudio/uni-app';
+import { getCurrentInstance } from 'vue';
 import { sleep } from '../utils';
 
 type OnShowParameters = Parameters<typeof onShow>;
