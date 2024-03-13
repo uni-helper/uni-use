@@ -1,12 +1,10 @@
 import { uni } from '@dcloudio/uni-h5/dist/uni-h5.es';
-import { beforeAll, beforeEach, vi } from 'vitest';
+import { beforeEach, vi } from 'vitest';
 
-beforeAll(() => {
-  vi.stubEnv('NODE_ENV', 'test');
-  vi.stubEnv('UNI_PLATFORM', 'h5');
+vi.stubEnv('NODE_ENV', 'test');
+vi.stubEnv('UNI_PLATFORM', 'h5');
 
-  vi.stubGlobal('uni', uni);
-});
+vi.stubGlobal('uni', uni);
 
 beforeEach(() => {
   document.body.innerHTML = '';
