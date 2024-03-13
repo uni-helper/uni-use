@@ -16,7 +16,7 @@ export interface InterceptorOptions extends UniApp.InterceptorOptions {
  *
  * https://cn.vuejs.org/api/reactivity-advanced.htmlSeffectscope
  */
-export function useInterceptor(event: UniFunctions, options: InterceptorOptions, autoRemove = true) {
+export function useInterceptor(event: UniFunctions, options: InterceptorOptions, autoRestore = true) {
   const origin = uni[event] as Function;
 
   uni[event] = (...args: any) => {
@@ -69,7 +69,7 @@ export function useInterceptor(event: UniFunctions, options: InterceptorOptions,
     uni[event] = origin as any;
   };
 
-  if (autoRemove) {
+  if (autoRestore) {
     tryOnScopeDispose(stop);
   }
 
