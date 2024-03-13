@@ -5,22 +5,12 @@ import { resolveUnref, tryOnMounted, tryOnScopeDispose, watchWithFilter } from '
 import { ref, shallowRef } from 'vue';
 import { useInterceptor } from '../useInterceptor';
 
-export interface UniStorageLike<T = any> {
-  getItem: (options: UniNamespace.GetStorageOptions<T>) => MaybePromise<T>;
-  setItem: (options: UniNamespace.SetStorageOptions) => void;
-  removeItem: (options: UniNamespace.RemoveStorageOptions) => void;
-}
+export type UniStorageLike = Pick<Uni, 'getStorage' | 'setStorage' | 'removeStorage'>;
 
 export interface Serializer<T> {
   read: (raw: string) => T;
   write: (value: T) => string;
 }
-
-const UniStorage: UniStorageLike<any> = {
-  getItem: (options: UniNamespace.GetStorageOptions) => uni.getStorage(options),
-  setItem: (options: UniNamespace.SetStorageOptions) => uni.setStorage(options),
-  removeItem: (options: UniNamespace.RemoveStorageOptions) => uni.removeStorage(options),
-};
 
 export type DataType = string | number | boolean | object | null;
 
@@ -92,7 +82,10 @@ interface Data<T> extends Ref<T> {
   default: T;
   read: () => T;
   write: (val: T) => void;
+  /** 根据 storage 的值，刷新变量。 */
   refresh: () => Data<T>;
+  /** 将变量的值写入 storage */
+  sync: () => void;
 }
 
 export interface UseStorageOptions<T> extends ConfigurableEventFilter, ConfigurableFlush {
@@ -180,7 +173,7 @@ export function useStorage<T extends DataType>(
     eventFilter,
     onError = error => console.error(error),
     initOnMounted,
-    storage = UniStorage,
+    storage = uni as UniStorageLike,
   } = options;
 
   const rawInit = resolveUnref(initialValue) as T;
@@ -190,6 +183,8 @@ export function useStorage<T extends DataType>(
   const data = (shallow ? shallowRef : ref)(rawInit) as Ref<T> as Data<T>;
 
   const serializer = options.serializer ?? StorageSerializers[type];
+
+  let timer: NodeJS.Timeout;
 
   data.key = key;
   data.type = type;
@@ -202,6 +197,7 @@ export function useStorage<T extends DataType>(
     data.read();
     return data;
   };
+  data.sync = () => data.write(data.value);
 
   if (initOnMounted) {
     tryOnMounted(data.read);
@@ -213,21 +209,23 @@ export function useStorage<T extends DataType>(
   watchWithFilter(data, () => !data.updating && writeStorage(data.value), { flush, deep, eventFilter });
 
   if (listenToStorageChanges) {
-    useInterceptor('setStorage', { complete: data.read });
-    useInterceptor('removeStorage', { complete: data.read });
-    useInterceptor('clearStorage', { complete: data.read });
+    useInterceptor('setStorage', { complete: () => !data.updating && data.read() });
+    useInterceptor('removeStorage', { complete: () => !data.updating && data.read() });
+    useInterceptor('clearStorage', { complete: () => !data.updating && data.read() });
+
+    useInterceptor('setStorageSync', { complete: () => !data.updating && data.read() });
+    useInterceptor('removeStorageSync', { complete: () => !data.updating && data.read() });
+    useInterceptor('clearStorageSync', { complete: () => !data.updating && data.read() });
   }
 
-  let timer: NodeJS.Timeout;
+  tryOnScopeDispose(clearTimer);
 
-  tryOnScopeDispose(() => {
-    clearTimeout(timer);
-  });
+  function clearTimer() {
+    timer && clearTimeout(timer);
+  }
 
   function writeStorage(val: T) {
-    if (timer) {
-      clearTimeout(timer);
-    }
+    clearTimer();
     // 如果是同步操作，则直接写 storage
     if (flush === 'sync') {
       writeStorageImmediately(val);
@@ -238,23 +236,25 @@ export function useStorage<T extends DataType>(
   }
 
   function writeStorageImmediately(val: T) {
-    if (timer) {
-      clearTimeout(timer);
+    clearTimer();
+
+    if (data.updating) {
+      return;
     }
 
     try {
       data.updating = true;
 
       if (val == null) {
-        storage.removeItem({
+        storage.removeStorage({
           key,
           fail: error => onError(error),
         });
-        clearTimeout(timer);
+        clearTimer();
         return;
       }
       const serialized = data.serializer.write(val);
-      storage.setItem({
+      storage.setStorage({
         key,
         data: serialized,
         fail: error => onError(error),
@@ -269,53 +269,43 @@ export function useStorage<T extends DataType>(
   }
 
   function readStorage() {
-    const parseRaw = (raw: string | null): T => {
-      if (raw == null) {
-        // 没有对应的值，直接使用默认值
-        return data.default;
-      }
-
-      if (mergeDefaults) {
-        // 有对应的值，需要合并默认值和本地缓存值
-        const value: T = data.serializer.read(raw);
-        // 如果是方法，调用
-        if (typeof mergeDefaults === 'function') {
-          return mergeDefaults(value, data.default);
-        }
-        // 如果是对象，浅合并
-
-        if (type === 'object' && !Array.isArray(value)) {
-          return { ...(data.default as any), ...(value as any) };
-        }
-
-        return value;
-      }
-
-      // 有对应的值，不需要合并
-      return data.serializer.read(raw);
-    };
-
-    const updateData = (raw: string | null) => {
+    const updateData = (raw: string | null | undefined) => {
       try {
-        const value = parseRaw(raw);
+        if (raw == null) {
+          // 没有对应的值，直接使用默认值
+          data.value = data.default;
+          return;
+        }
 
-        data.updating = true;
+        // 解析 value
+        const value: T = data.serializer.read(raw);
 
+        if (mergeDefaults) {
+          // 如果是方法，调用
+          if (typeof mergeDefaults === 'function') {
+            data.value = mergeDefaults(value, data.default);
+            return;
+          }
+
+          // 如果是对象，浅合并
+          if (type === 'object' && !Array.isArray(value)) {
+            data.value = { ...(data.default as any), ...(value as any) };
+            return;
+          }
+        }
+        // 有对应的值，不需要合并
         data.value = value;
       }
       catch (err: any) {
         onError(err);
       }
-      finally {
-        data.updating = false;
-      }
     };
 
     // 读取本地缓存值
-    storage.getItem({
+    storage.getStorage({
       key,
       success: ({ data }) => updateData(data),
-      fail: () => updateData(null),
+      fail: () => updateData(undefined),
     });
 
     return data.value;

@@ -3,11 +3,7 @@ import type { UniStorageLike, UseStorageOptions } from '../useStorage';
 import type { ConfigurableFlushSync, RemovableRef } from '@vueuse/core';
 import { useStorage } from '../useStorage';
 
-export interface UniStorageSyncLike {
-  getItem: typeof uni.getStorageSync;
-  setItem: typeof uni.setStorageSync;
-  removeItem: typeof uni.removeStorageSync;
-}
+export type UniStorageSyncLike = Pick<Uni, 'getStorageSync' | 'setStorageSync' | 'removeStorageSync'>;
 
 // uni is not defined
 let UniStorage: UniStorageLike;
@@ -17,17 +13,17 @@ function initUniStorageIfNotInited() {
   }
 
   UniStorage = parseUniStorageLike({
-    getItem: uni.getStorageSync,
-    setItem: uni.setStorageSync,
-    removeItem: uni.removeStorageSync,
+    getStorageSync: uni.getStorageSync,
+    setStorageSync: uni.setStorageSync,
+    removeStorageSync: uni.removeStorageSync,
   });
 }
 
 function parseUniStorageLike(storageSync: UniStorageSyncLike) {
   const storage: UniStorageLike = {
-    getItem: ({ key, success, fail, complete }) => {
+    getStorage: ({ key, success, fail, complete }: UniNamespace.GetStorageOptions) => {
       try {
-        const data = storageSync.getItem(key);
+        const data = storageSync.getStorageSync(key);
         success && success({ data });
       }
       catch (error) {
@@ -37,9 +33,9 @@ function parseUniStorageLike(storageSync: UniStorageSyncLike) {
         complete && complete(void 0);
       }
     },
-    setItem: ({ key, data, success, fail, complete }) => {
+    setStorage: ({ key, data, success, fail, complete }: UniNamespace.SetStorageOptions) => {
       try {
-        const raw = storageSync.setItem(key, data);
+        const raw = storageSync.setStorageSync(key, data);
         success && success({ data: raw });
       }
       catch (error) {
@@ -49,9 +45,9 @@ function parseUniStorageLike(storageSync: UniStorageSyncLike) {
         complete && complete(void 0);
       }
     },
-    removeItem: ({ key, success, fail, complete }) => {
+    removeStorage: ({ key, success, fail, complete }: UniNamespace.RemoveStorageOptions) => {
       try {
-        storageSync.removeItem(key);
+        storageSync.removeStorageSync(key);
         success && success({ data: void 0 });
       }
       catch (error) {

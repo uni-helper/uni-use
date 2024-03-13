@@ -1,18 +1,11 @@
-import type { UniStorageLike } from '.';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { useSetup } from '../../test';
 import { sleep } from '../utils';
 import { useStorage } from '.';
 
 describe('useStorage', () => {
-  const storage: UniStorageLike = {
-    getItem: (options: UniNamespace.GetStorageOptions) => uni.getStorage(options),
-    setItem: (options: UniNamespace.SetStorageOptions) => uni.setStorage(options),
-    removeItem: (options: UniNamespace.RemoveStorageOptions) => uni.removeStorage(options),
-  };
-
-  const getItemSpy = vi.spyOn(storage, 'getItem');
-  const setItemSpy = vi.spyOn(storage, 'setItem');
+  const getItemSpy = vi.spyOn(uni, 'getStorage');
+  const setItemSpy = vi.spyOn(uni, 'setStorage');
 
   afterEach(() => {
     uni.clearStorage(); // uni 的 interceptor 仅支持异步接口
@@ -26,7 +19,7 @@ describe('useStorage', () => {
     const key = 'string';
 
     const vm = useSetup(() => {
-      const ref = useStorage(key, 'a', { storage });
+      const ref = useStorage(key, 'a');
       return { ref };
     });
     expect(vm.ref).toBe('a');
@@ -45,7 +38,7 @@ describe('useStorage', () => {
     uni.setStorageSync(key, '0'); // 模拟先有值
 
     await sleep(200);
-    const store = useStorage(key, 1, { storage }); // 再初始化
+    const store = useStorage(key, 1); // 再初始化
     expect(store.value).toBe(0);
 
     store.value = 2;
@@ -59,7 +52,7 @@ describe('useStorage', () => {
 
   it('boolean', async () => {
     const key = 'boolean';
-    const store = useStorage(key, true, { storage });
+    const store = useStorage(key, true);
     await sleep(200);
     expect(store.value).toBe(true);
   });
@@ -67,11 +60,11 @@ describe('useStorage', () => {
   it('null string', async () => {
     const key = 'null_string';
 
-    storage.setItem({ key, data: 'null' });
+    uni.setStorage({ key, data: 'null' });
 
-    const store = useStorage(key, null, { storage });
+    const store = useStorage(key, null);
     await sleep(200);
-    const { data: storedValue } = await storage.getItem({ key });
+    const { data: storedValue } = await uni.getStorage({ key });
 
     expect(store.value).toBe('null');
     expect(storedValue).toBe('null');
@@ -79,33 +72,33 @@ describe('useStorage', () => {
 
   it('null value', async () => {
     const key = 'null_value';
-    storage.removeItem({ key });
+    uni.removeStorage({ key });
 
     const store = useStorage(key, null);
-    await sleep(200);
-    const { data: storedValue } = storage.getItem({ key });
 
     expect(store.value).toBe(null);
-    expect(storedValue).toBeFalsy();
+
+    await sleep(200);
+    expect(uni.getStorage({ key })).rejects.toThrowError(); // 将storage设为null将自动删除uni storage
   });
 
   it('undefined value', async () => {
     const key = 'undefined_value';
-    storage.removeItem({ key });
+    uni.removeStorage({ key });
 
-    const store = useStorage(key, undefined, { storage });
-    await sleep(200);
-    const { data: storedValue } = storage.getItem({ key });
+    const store = useStorage(key, undefined);
 
     expect(store.value).toBe(undefined);
-    expect(storedValue).toBeFalsy();
+
+    await sleep(200);
+    expect(uni.getStorage({ key })).rejects.toThrowError(); // 将storage设为undefined将自动删除uni storage
   });
 
   it('remove value', async () => {
     const key = 'remove_value';
-    storage.setItem({ key, data: 'random' });
+    uni.getStorage({ key, data: 'random' });
 
-    const store = useStorage(key, null, { storage });
+    const store = useStorage(key, null);
 
     store.value = null;
 
@@ -113,6 +106,6 @@ describe('useStorage', () => {
 
     expect(store.value).toBe(null);
 
-    expect(storage.getItem({ key })).rejects.toThrowError();
+    expect(uni.getStorage({ key })).rejects.toThrowError();
   });
 });
