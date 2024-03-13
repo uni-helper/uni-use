@@ -6,9 +6,9 @@ type FunctionKeys<T> = {
 
 type UniFunctions = FunctionKeys<Uni>;
 
-export interface InterceptorOptions extends UniApp.InterceptorOptions {
+export interface InterceptorOptions<F extends UniFunctions> extends UniApp.InterceptorOptions {
   /** 返回 false 则终止执行 */
-  invoke?: (args: any) => void | boolean;
+  invoke?: (args: Parameters<Uni[F]>) => void | boolean;
 }
 
 /**
@@ -16,12 +16,12 @@ export interface InterceptorOptions extends UniApp.InterceptorOptions {
  *
  * https://cn.vuejs.org/api/reactivity-advanced.htmlSeffectscope
  */
-export function useInterceptor(event: UniFunctions, options: InterceptorOptions) {
-  const origin = uni[event] as Function;
+export function useInterceptor<F extends UniFunctions>(method: F, options: InterceptorOptions<F>) {
+  const origin = uni[method];
 
-  uni[event] = (...args: any) => {
-    let result: any;
+  type FN = typeof origin;
 
+  uni[method] = ((...args: Parameters<FN>) => {
     let skip = false;
 
     try {
@@ -37,7 +37,7 @@ export function useInterceptor(event: UniFunctions, options: InterceptorOptions)
       /**
        * 调用原始方法
        */
-      result = origin(...args);
+      const result = (origin as any)(...args);
       /**
        * 方法调用后触发，处理返回值
        */
@@ -61,12 +61,12 @@ export function useInterceptor(event: UniFunctions, options: InterceptorOptions)
       /**
        * 完成回调拦截
        */
-      !skip && options.complete && options.complete(result);
+      !skip && options.complete && options.complete(void 0);
     }
-  };
+  }) as FN;
 
   const stop = () => {
-    uni[event] = origin as any;
+    uni[method] = origin;
   };
 
   tryOnScopeDispose(stop);
