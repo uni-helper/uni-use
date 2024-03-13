@@ -1,4 +1,3 @@
-import { invoke } from '@vueuse/core';
 import { tryOnScopeDispose } from '../tryOnScopeDispose';
 
 type FunctionKeys<T> = {
@@ -30,7 +29,6 @@ export function useInterceptor(event: UniFunctions, options: InterceptorOptions,
        * 拦截前触发
        */
       if (options.invoke && options.invoke(args) === false) {
-        console.log(`${event} invoke return FALSE, SKIP IT`);
         skip = true;
         // 如果返回false，则终止执行
         return;
