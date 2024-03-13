@@ -9,6 +9,7 @@
 - [tryOnInit](./tryOnInit/readme.md)
 - [tryOnLoad](./tryOnLoad/readme.md)
 - [tryOnReady](./tryOnReady/readme.md)
+- [tryOnScopeDispose](./tryOnScopeDispose/readme.md)
 - [tryOnShow](./tryOnShow/readme.md)
 - [tryOnUnload](./tryOnUnload/readme.md)
 - [useActionSheet](./useActionSheet/readme.md)
