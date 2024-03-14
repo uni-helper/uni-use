@@ -12,7 +12,7 @@ const event = 'request';
 // 设置拦截器
 const stop = useInterceptor(event, {
   invoke: (args) => {
-    args.url = 'https://www.example.com/' + args.url;
+    args[0].url = 'https://www.example.com/' + args[0].url;
   },
   success: (response) => {
     console.log('interceptor-success', response);
@@ -21,13 +21,13 @@ const stop = useInterceptor(event, {
   fail: (error) => {
     console.log('interceptor-fail', error);
   },
-  complete: (result) => {
-    console.log('interceptor-complete', result);
+  complete: () => {
+    console.log('interceptor-complete');
   },
 });
 
 // 删除拦截器
-stop(event);
+stop();
 ```
 
 #### [返回列表](../readme.md)
