@@ -80,13 +80,19 @@ interface Data<T> extends Ref<T> {
   updating: boolean;
   serializer: Serializer<T>;
   default: T;
+  /** 写入 storage 的 timer */
+  timer: NodeJS.Timeout;
   read: () => T;
   write: (val: T) => void;
   /** 根据 storage 的值，刷新变量。 */
   refresh: () => Data<T>;
   /** 将变量的值写入 storage */
   sync: () => void;
+  /** 清除写入操作的timer */
+  clearTimer: () => void;
 }
+
+const store: Record<string, Data<any>> = {};
 
 export interface UseStorageOptions<T> extends ConfigurableEventFilter, ConfigurableFlush {
   /**
@@ -180,11 +186,11 @@ export function useStorage<T extends DataType>(
 
   const type = guessSerializerType<T>(rawInit);
 
-  const data = (shallow ? shallowRef : ref)(rawInit) as Ref<T> as Data<T>;
+  const hasStore = !!store[key];
+
+  const data = hasStore ? store[key] : (shallow ? shallowRef : ref)(rawInit) as Ref<T> as Data<T>;
 
   const serializer = options.serializer ?? StorageSerializers[type];
-
-  let timer: NodeJS.Timeout;
 
   data.key = key;
   data.type = type;
@@ -198,6 +204,14 @@ export function useStorage<T extends DataType>(
     return data;
   };
   data.sync = () => data.write(data.value);
+  data.clearTimer = clearTimer;
+
+  store[key] = data; // 重新映射
+
+  if (hasStore) {
+    // 不重复读数据
+    return data;
+  }
 
   if (initOnMounted) {
     tryOnMounted(data.read);
@@ -209,19 +223,59 @@ export function useStorage<T extends DataType>(
   watchWithFilter(data, () => !data.updating && writeStorage(data.value), { flush, deep, eventFilter });
 
   if (listenToStorageChanges) {
-    useInterceptor('setStorage', { complete: () => !data.updating && data.read() });
-    useInterceptor('removeStorage', { complete: () => !data.updating && data.read() });
-    useInterceptor('clearStorage', { complete: () => !data.updating && data.read() });
+    useInterceptor('setStorage', { invoke: (args) => {
+      if (args[0].key !== data.key) {
+        return false;
+      }
+      // 非主动更新
+      if (!data.updating) {
+        data.updating = true;
+        updateByRaw(args[0].data);
+        return false; // 阻断继续进行更新
+      }
+    }, complete: () => data.updating = false });
+    useInterceptor('removeStorage', { invoke: (args) => {
+      if (args[0].key !== data.key) {
+        return false;
+      }
+      // 非主动更新
+      if (!data.updating) {
+        data.updating = true;
+        data.value = undefined as unknown as T;
+        return false; // 阻断继续进行更新
+      }
+    }, complete: () => data.updating = false });
+    useInterceptor('clearStorage', { complete: () => data.value = undefined as unknown as T });
 
-    useInterceptor('setStorageSync', { complete: () => !data.updating && data.read() });
-    useInterceptor('removeStorageSync', { complete: () => !data.updating && data.read() });
-    useInterceptor('clearStorageSync', { complete: () => !data.updating && data.read() });
+    useInterceptor('setStorageSync', { invoke: (args) => {
+      if (args[0] !== data.key) {
+        return false;
+      }
+      // 非主动更新
+      if (!data.updating) {
+        data.updating = true;
+        updateByRaw(args[1]);
+        return false; // 阻断继续进行更新
+      }
+    }, complete: () => data.updating = false });
+    useInterceptor('removeStorageSync', { invoke: (args) => {
+      if (args[0] !== data.key) {
+        return false;
+      }
+      // 非主动更新
+      if (!data.updating) {
+        data.updating = true;
+        data.value = undefined as unknown as T;
+        return false; // 阻断继续进行更新
+      }
+    }, complete: () => data.updating = false });
+    useInterceptor('clearStorageSync', { complete: () => data.value = undefined as unknown as T });
   }
 
   tryOnScopeDispose(clearTimer);
 
   function clearTimer() {
-    timer && clearTimeout(timer);
+    data.timer && clearTimeout(data.timer);
   }
 
   function writeStorage(val: T) {
@@ -232,7 +286,7 @@ export function useStorage<T extends DataType>(
       return;
     }
 
-    timer = setTimeout(() => writeStorageImmediately(val), 100);
+    data.timer = setTimeout(() => writeStorageImmediately(val), 100);
   }
 
   function writeStorageImmediately(val: T) {
@@ -268,44 +322,49 @@ export function useStorage<T extends DataType>(
     }
   }
 
-  function readStorage() {
-    const updateData = (raw: string | null | undefined) => {
-      try {
-        if (raw == null) {
-          // 没有对应的值，直接使用默认值
-          data.value = data.default;
+  function updateByRaw(raw: string | null | undefined) {
+    try {
+      if (raw == null) {
+        // 没有对应的值，直接使用默认值
+        data.value = data.default;
+        return;
+      }
+
+      // 解析 value
+      const value: T = data.serializer.read(raw);
+
+      if (mergeDefaults) {
+        // 如果是方法，调用
+        if (typeof mergeDefaults === 'function') {
+          data.value = mergeDefaults(value, data.default);
           return;
         }
 
-        // 解析 value
-        const value: T = data.serializer.read(raw);
-
-        if (mergeDefaults) {
-          // 如果是方法，调用
-          if (typeof mergeDefaults === 'function') {
-            data.value = mergeDefaults(value, data.default);
-            return;
-          }
-
-          // 如果是对象，浅合并
-          if (type === 'object' && !Array.isArray(value)) {
-            data.value = { ...(data.default as any), ...(value as any) };
-            return;
-          }
+        // 如果是对象，浅合并
+        if (type === 'object' && !Array.isArray(value)) {
+          data.value = { ...(data.default as any), ...(value as any) };
+          return;
         }
-        // 有对应的值，不需要合并
-        data.value = value;
       }
-      catch (err: any) {
-        onError(err);
-      }
-    };
 
+      // 有对应的值，不需要合并
+      data.value = value;
+    }
+    catch (err: any) {
+      onError(err);
+    }
+  };
+
+  function readStorage() {
     // 读取本地缓存值
     storage.getStorage({
-      key,
-      success: ({ data }) => updateData(data),
-      fail: () => updateData(undefined),
+      key: data.key,
+      success: ({ data: raw }) => {
+        updateByRaw(raw);
+      },
+      fail: () => {
+        updateByRaw(undefined);
+      },
     });
 
     return data.value;
