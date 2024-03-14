@@ -2,7 +2,7 @@
 
 #### [返回列表](../readme.md)
 
-设置拦截器。 支持拦截 sync 函数，并且 `invoke` 返回 false 将终止函数执行
+设置拦截器。 支持拦截 sync 函数，并且 `invoke` 返回 false 将终止拦截器继续执行
 
 ```typescript
 import { useInterceptor } from '@uni-helper/uni-use';
