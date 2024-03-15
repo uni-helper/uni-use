@@ -1,7 +1,7 @@
-import type { MaybeComputedRef, MaybePromise } from '../types';
-import type { ConfigurableEventFilter, ConfigurableFlush, RemovableRef } from '@vueuse/core';
+import type { MaybeComputedRef } from '../types';
+import type { ConfigurableEventFilter, ConfigurableFlush, RemovableRef, WatchPausableReturn } from '@vueuse/core';
 import type { Ref } from 'vue';
-import { resolveUnref, tryOnMounted, tryOnScopeDispose, watchWithFilter } from '@vueuse/core';
+import { pausableWatch, resolveUnref, tryOnMounted, tryOnScopeDispose, watchWithFilter } from '@vueuse/core';
 import { ref, shallowRef } from 'vue';
 import { useInterceptor } from '../useInterceptor';
 
@@ -77,11 +77,13 @@ const StorageSerializers: Record<
 interface Data<T> extends Ref<T> {
   key: string;
   type: 'boolean' | 'object' | 'number' | 'any' | 'string' | 'map' | 'set' | 'date';
-  updating: boolean;
+  isUpdating: boolean;
   serializer: Serializer<T>;
   default: T;
   /** 写入 storage 的 timer */
   timer: NodeJS.Timeout;
+  /** data 修改监听器 */
+  watch: WatchPausableReturn;
   read: () => T;
   write: (val: T) => void;
   /** 根据 storage 的值，刷新变量。 */
@@ -90,6 +92,8 @@ interface Data<T> extends Ref<T> {
   sync: () => void;
   /** 清除写入操作的timer */
   clearTimer: () => void;
+  /** 使用 raw 值更新 data */
+  updateByRaw: (raw: string | null | undefined) => void;
 }
 
 const store: Record<string, Data<any>> = {};
@@ -195,7 +199,7 @@ export function useStorage<T extends DataType>(
   data.key = key;
   data.type = type;
   data.serializer = serializer;
-  data.updating = false;
+  data.isUpdating = false;
   data.default = rawInit;
   data.read = readStorage;
   data.write = writeStorageImmediately;
@@ -205,6 +209,7 @@ export function useStorage<T extends DataType>(
   };
   data.sync = () => data.write(data.value);
   data.clearTimer = clearTimer;
+  data.updateByRaw = updateByRaw;
 
   store[key] = data; // 重新映射
 
@@ -220,56 +225,10 @@ export function useStorage<T extends DataType>(
     data.read();
   }
 
-  watchWithFilter(data, () => !data.updating && writeStorage(data.value), { flush, deep, eventFilter });
+  data.watch = pausableWatch(data, () => !data.isUpdating && writeStorage(data.value), { flush, deep, eventFilter });
 
   if (listenToStorageChanges) {
-    useInterceptor('setStorage', { invoke: (args) => {
-      if (args[0].key !== data.key) {
-        return false;
-      }
-      // 非主动更新
-      if (!data.updating) {
-        data.updating = true;
-        updateByRaw(args[0].data);
-        return false; // 阻断继续进行更新
-      }
-    }, complete: () => data.updating = false });
-    useInterceptor('removeStorage', { invoke: (args) => {
-      if (args[0].key !== data.key) {
-        return false;
-      }
-      // 非主动更新
-      if (!data.updating) {
-        data.updating = true;
-        data.value = undefined as unknown as T;
-        return false; // 阻断继续进行更新
-      }
-    }, complete: () => data.updating = false });
-    useInterceptor('clearStorage', { complete: () => data.value = undefined as unknown as T });
-
-    useInterceptor('setStorageSync', { invoke: (args) => {
-      if (args[0] !== data.key) {
-        return false;
-      }
-      // 非主动更新
-      if (!data.updating) {
-        data.updating = true;
-        updateByRaw(args[1]);
-        return false; // 阻断继续进行更新
-      }
-    }, complete: () => data.updating = false });
-    useInterceptor('removeStorageSync', { invoke: (args) => {
-      if (args[0] !== data.key) {
-        return false;
-      }
-      // 非主动更新
-      if (!data.updating) {
-        data.updating = true;
-        data.value = undefined as unknown as T;
-        return false; // 阻断继续进行更新
-      }
-    }, complete: () => data.updating = false });
-    useInterceptor('clearStorageSync', { complete: () => data.value = undefined as unknown as T });
+    listenDataChange(data);
   }
 
   tryOnScopeDispose(clearTimer);
@@ -292,12 +251,12 @@ export function useStorage<T extends DataType>(
   function writeStorageImmediately(val: T) {
     clearTimer();
 
-    if (data.updating) {
+    if (data.isUpdating) {
       return;
     }
 
     try {
-      data.updating = true;
+      data.isUpdating = true;
 
       if (val == null) {
         storage.removeStorage({
@@ -318,7 +277,7 @@ export function useStorage<T extends DataType>(
       onError(error);
     }
     finally {
-      data.updating = false;
+      data.isUpdating = false;
     }
   }
 
@@ -371,4 +330,74 @@ export function useStorage<T extends DataType>(
   }
 
   return data;
+}
+
+function listenDataChange<T>(data: Data<T>) {
+  useInterceptor('setStorage', { invoke: (args) => {
+    if (args[0].key !== data.key) {
+      return false;
+    }
+    // 非主动更新
+    if (!data.isUpdating) {
+      data.isUpdating = true;
+
+      const raw = (typeof args[0].data !== 'string' && args[0].data != null)
+        ? JSON.stringify(args[0].data)
+        : args[0].data;
+
+      data.updateByRaw(raw);
+
+      data.isUpdating = false;
+    }
+  } });
+  useInterceptor('removeStorage', { invoke: (args) => {
+    if (args[0].key !== data.key) {
+      return false;
+    }
+    // 非主动更新
+    if (!data.isUpdating) {
+      data.isUpdating = true;
+      data.value = undefined as unknown as T;
+      data.isUpdating = false;
+    }
+  } });
+  useInterceptor('clearStorage', { complete: () => {
+    data.isUpdating = true;
+    data.value = undefined as unknown as T;
+    data.isUpdating = false;
+  } });
+
+  useInterceptor('setStorageSync', { invoke: (args) => {
+    if (args[0] !== data.key) {
+      return false;
+    }
+    // 非主动更新
+    if (!data.isUpdating) {
+      data.isUpdating = true;
+
+      const raw = (typeof args[1] !== 'string' && args[1] != null)
+        ? JSON.stringify(args[1])
+        : args[1];
+
+      data.updateByRaw(raw);
+
+      data.isUpdating = false;
+    }
+  } });
+  useInterceptor('removeStorageSync', { invoke: (args) => {
+    if (args[0] !== data.key) {
+      return false;
+    }
+    // 非主动更新
+    if (!data.isUpdating) {
+      data.isUpdating = true;
+      data.value = undefined as unknown as T;
+      data.isUpdating = false;
+    }
+  } });
+  useInterceptor('clearStorageSync', { complete: () => {
+    data.isUpdating = true;
+    data.value = undefined as unknown as T;
+    data.isUpdating = false;
+  } });
 }
