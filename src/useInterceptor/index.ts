@@ -1,5 +1,6 @@
 import { isPlainObject } from '@dcloudio/uni-app';
 import { tryOnScopeDispose } from '../tryOnScopeDispose';
+import { isThenable } from '../utils';
 
 type FunctionKeys<T> = {
   [K in keyof T]: T[K] extends Function ? K : never;
@@ -44,17 +45,14 @@ function wrappMethod(method: UniMethod) {
       effectInterceptors.push(interceptor);
     }
 
-    // 判断是否单一函数，且为object
-    const isObjOption = args.length === 1 && isPlainObject(args[0]);
+    /**
+     * 判断函数是否符合异步函数的参数
+     * 含有 success / fail / complete 的async函数将不会返回promise
+     * @see https://uniapp.dcloud.net.cn/api/#api-promise-%E5%8C%96
+     */
+    const hasAsyncOption = args.length === 1 && ((args[0] as any).success || (args[0] as any).fail || (args[0] as any).complete);
 
-    if (isObjOption) {
-      let resolve: (value: unknown) => void;
-      let reject: (reason?: any) => void;
-      const promise = new Promise((resolv, rej) => {
-        resolve = resolv;
-        reject = rej;
-      });
-
+    if (hasAsyncOption) {
       const opt = args[0];
 
       const oldSuccess = opt.success;
@@ -63,7 +61,6 @@ function wrappMethod(method: UniMethod) {
           interceptor.success && interceptor.success(result);
         }
         oldSuccess && oldSuccess(result);
-        resolve(result);
       };
 
       const oldFail = opt.fail;
@@ -72,7 +69,6 @@ function wrappMethod(method: UniMethod) {
           interceptor.fail && interceptor.fail(err);
         }
         oldFail && oldFail(err);
-        reject(err);
       };
 
       const oldComplete = opt.complete;
@@ -83,13 +79,26 @@ function wrappMethod(method: UniMethod) {
         oldComplete && oldComplete();
       };
 
-      const returnVal = (origin as any)(opt);
-
-      return (returnVal === undefined) ? promise : returnVal;
+      return (origin as any)(opt);
     }
     else {
       try {
         const result = (origin as any)(...args);
+
+        // is promise
+        if (isThenable(result)) {
+          return result.then((res: any) => {
+            for (const interceptor of effectInterceptors) {
+              interceptor.success && interceptor.success(res);
+            }
+            return res;
+          }).catch((err: any) => {
+            for (const interceptor of effectInterceptors) {
+              interceptor.fail && interceptor.fail(err);
+            }
+            return err;
+          });
+        }
 
         for (const interceptor of effectInterceptors) {
           interceptor.success && interceptor.success(result);
@@ -97,12 +106,12 @@ function wrappMethod(method: UniMethod) {
 
         return result;
       }
-      catch (err: any) {
+      catch (err: any) { // only catch for not thenable
         for (const interceptor of effectInterceptors) {
           interceptor.fail && interceptor.fail(err);
         }
       }
-      finally {
+      finally { // finally for ALL (thenable and normal)
         for (const interceptor of effectInterceptors) {
           interceptor.complete && interceptor.complete();
         }

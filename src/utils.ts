@@ -21,3 +21,7 @@ export function pathResolve(target: string, current?: string) {
 export function sleep(ms = 0) {
   return new Promise<void>(resolve => setTimeout(resolve, ms));
 }
+
+export function isThenable(promise: any) {
+  return typeof promise.then === 'function';
+}
