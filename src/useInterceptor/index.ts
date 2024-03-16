@@ -34,61 +34,60 @@ function wrappMethod(method: UniMethod) {
   uni[method] = ((...args: Parameters<FN>) => {
     const interceptors = globalInterceptors[method] || {};
 
+    const effectInterceptors: InterceptorOptions<UniMethod>[] = [];
+
+    for (const [_key, interceptor] of Object.entries(interceptors)) {
+      if (interceptor.invoke && interceptor.invoke(args) === false) {
+        continue;
+      }
+
+      effectInterceptors.push(interceptor);
+    }
+
     // 判断是否单一函数，且为object
     const isObjOption = args.length === 1 && isPlainObject(args[0]);
 
     if (isObjOption) {
+      let resolve: (value: unknown) => void;
+      let reject: (reason?: any) => void;
+      const promise = new Promise((resolv, rej) => {
+        resolve = resolv;
+        reject = rej;
+      });
+
       const opt = args[0];
 
-      for (const [_key, interceptor] of Object.entries(interceptors)) {
-        if (interceptor.invoke && interceptor.invoke(args) === false) {
-          continue;
-        }
-
-        const oldSuccess = opt.success;
-        opt.success = (result: any) => {
+      const oldSuccess = opt.success;
+      opt.success = (result: any) => {
+        for (const interceptor of effectInterceptors) {
           interceptor.success && interceptor.success(result);
-          oldSuccess && oldSuccess(result);
-        };
+        }
+        oldSuccess && oldSuccess(result);
+        resolve(result);
+      };
 
-        const oldFail = opt.fail;
-        opt.fail = (err: any) => {
+      const oldFail = opt.fail;
+      opt.fail = (err: any) => {
+        for (const interceptor of effectInterceptors) {
           interceptor.fail && interceptor.fail(err);
-          oldFail && oldFail(err);
-        };
+        }
+        oldFail && oldFail(err);
+        reject(err);
+      };
 
-        const oldComplete = opt.complete;
-        opt.complete = () => {
+      const oldComplete = opt.complete;
+      opt.complete = () => {
+        for (const interceptor of effectInterceptors) {
           interceptor.complete && interceptor.complete();
-          oldComplete && oldComplete();
-        };
-      }
+        }
+        oldComplete && oldComplete();
+      };
 
-      return new Promise((resolve, reject) => {
-        (origin as any)({
-          ...opt,
-          success: (result: any) => {
-            opt.success && opt.success(result);
-            resolve(result);
-          },
-          fail: (err: any) => {
-            opt.fail && opt.fail(err);
-            reject(err);
-          },
-        });
-      });
+      const returnVal = (origin as any)(opt);
+
+      return (returnVal === undefined) ? promise : returnVal;
     }
     else {
-      const effectInterceptors: InterceptorOptions<UniMethod>[] = [];
-
-      for (const [_key, interceptor] of Object.entries(interceptors)) {
-        if (interceptor.invoke && interceptor.invoke(args) === false) {
-          continue;
-        }
-
-        effectInterceptors.push(interceptor);
-      }
-
       try {
         const result = (origin as any)(...args);
 
