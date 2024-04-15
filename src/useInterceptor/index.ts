@@ -23,7 +23,7 @@ const globalInterceptors: Record<string, Record<string, InterceptorOptions>> = {
 const originMethods = {} as Record<UniMethod, any>;
 function wrappMethod(method: UniMethod) {
   if (method in originMethods) {
-    return originMethods[method];
+    return uni[method];
   }
 
   const origin = uni[method];
@@ -119,7 +119,7 @@ function wrappMethod(method: UniMethod) {
     }
   }) as any;
 
-  return origin;
+  return uni[method];
 }
 
 /**
