@@ -32,7 +32,7 @@ export interface UsePageScrollOptions {
  * @param options 配置项
  * @see https://uniapp.dcloud.net.cn/tutorial/page.html#onpagescroll
  */
-export default function usePageScroll(options: UsePageScrollOptions = {}) {
+export function usePageScroll(options: UsePageScrollOptions = {}) {
   const { duration = 300, scrollToSelector } = options;
 
   const _scrollTop = ref(0);
