@@ -87,6 +87,10 @@ function switchTab(options: UniNamespace.SwitchTabOptions): Promise<any> {
 }
 
 function navigateTo(options: UniNamespace.NavigateToOptions) {
+  // uni.navigateTo 最大支持跳转10个页面，当打开10个页面时，用redirectTo
+  if (pages.value.length >= 10) {
+    return redirectTo(options);
+  }
   return new Promise((resolve, reject) => {
     uni.navigateTo(warpPromiseOptions(options, resolve, reject));
   });
