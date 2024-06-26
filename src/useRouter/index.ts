@@ -125,7 +125,7 @@ function trySwitchTab<FN extends typeof navigateTo | typeof redirectTo>(
 
   // 未设置 tabBarList，先尝试 switchTab，报错再尝试跳转
   if (tabBarList.length === 0) {
-    return switchTab(options).catch(() => navigateTo(options));
+    return switchTab(options).catch(() => forward(options));
   }
 
   const url = typeof options.url === 'string' ? options.url : options.url.toString();
@@ -136,7 +136,7 @@ function trySwitchTab<FN extends typeof navigateTo | typeof redirectTo>(
   }
 
   // 不是 tabBar，直接跳转
-  return navigateTo(options);
+  return forward(options);
 }
 
 function isTabBarPath(path: string) {
