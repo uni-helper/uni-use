@@ -32,7 +32,10 @@ describe('useInterceptor', () => {
     expect(returnVal.then).toBeDefined();
 
     returnVal.then((val: any) => {
-      expect(val).toBe('a');
+      expect(val).toStrictEqual({
+        data: 'a',
+        errMsg: 'getStorage:ok',
+      });
     });
 
     stop();
