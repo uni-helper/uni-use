@@ -1,4 +1,3 @@
-import { isPlainObject } from '@dcloudio/uni-app';
 import { tryOnScopeDispose } from '../tryOnScopeDispose';
 import { isThenable } from '../utils';
 
@@ -21,22 +20,35 @@ export interface InterceptorOptions<F extends UniMethod = UniMethod> {
 
 const globalInterceptors: Record<string, Record<string, InterceptorOptions>> = {};
 const originMethods = {} as Record<UniMethod, any>;
+
+/**
+ * 包装uni-app中的方法，添加拦截器功能
+ *
+ * @param method uni-app中的方法名
+ * @returns 包装后的方法
+ */
 function wrappMethod(method: UniMethod) {
+  // 判断是否已经包装过
   if (method in originMethods) {
+    // 直接返回
     return uni[method];
   }
 
+  // 获取原始方法
   const origin = uni[method];
-
+  // 记录原始方法
   originMethods[method] = origin;
-
+  // 原函数的类型定义
   type FN = typeof origin;
 
+  // 开始包裹函数
   uni[method] = ((...args: Parameters<FN>) => {
+    // 获取拦截器
     const interceptors = globalInterceptors[method] || {};
-
+    // 实际起作用的拦截器
     const effectInterceptors: InterceptorOptions<UniMethod>[] = [];
 
+    // invoke 在函数执行前运行，返回false则终止此拦截器执行后续的 success / fail / complete 回调
     for (const [_key, interceptor] of Object.entries(interceptors)) {
       if (interceptor.invoke && interceptor.invoke(args) === false) {
         continue;
@@ -79,7 +91,7 @@ function wrappMethod(method: UniMethod) {
         oldComplete && oldComplete();
       };
 
-      return (origin as any)(opt);
+      return (origin as any)(opt); // 保持和官方一致，不返回promise
     }
     else {
       try {
@@ -87,6 +99,7 @@ function wrappMethod(method: UniMethod) {
 
         // is promise
         if (isThenable(result)) {
+          // 如果返回值是 Promise，则将回调挂载在 Promise 上，直接返回当前 Promise
           return result.then((res: any) => {
             for (const interceptor of effectInterceptors) {
               interceptor.success && interceptor.success(res);
@@ -100,6 +113,7 @@ function wrappMethod(method: UniMethod) {
           });
         }
 
+        // 不是 Promise，且未报错，执行 success 回调
         for (const interceptor of effectInterceptors) {
           interceptor.success && interceptor.success(result);
         }
@@ -107,11 +121,13 @@ function wrappMethod(method: UniMethod) {
         return result;
       }
       catch (err: any) { // only catch for not thenable
+        // 不是 Promise，且报错，执行 fail 回调
         for (const interceptor of effectInterceptors) {
           interceptor.fail && interceptor.fail(err);
         }
       }
       finally { // finally for ALL (thenable and normal)
+        // 无论是否 Promise 都执行的 complete 回调
         for (const interceptor of effectInterceptors) {
           interceptor.complete && interceptor.complete();
         }
@@ -128,6 +144,7 @@ function wrappMethod(method: UniMethod) {
  * https://cn.vuejs.org/api/reactivity-advanced.htmlSeffectscope
  */
 export function useInterceptor<F extends UniMethod>(method: F, interceptor: InterceptorOptions<F>) {
+  // 包裹、封装函数，注入拦截器操作
   wrappMethod(method);
 
   globalInterceptors[method] = globalInterceptors[method] || {};
