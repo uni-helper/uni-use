@@ -23,10 +23,10 @@ export function useToast(options?: UseToastOptions) {
    */
   return function showToast(newOptions?: ShowToastOptions) {
     uni.showToast(
-      reactive({
+      {
         ...resolveUnref(options),
         ...resolveUnref(newOptions),
-      }),
+      },
     );
     /**
      * 隐藏消息提示框
