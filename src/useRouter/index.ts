@@ -101,7 +101,7 @@ interface RedirectToOptions extends UniNamespace.RedirectToOptions {
 function handleParams<T extends NavigateToOptions | RedirectToOptions>(options: T) {
   if (options.params && typeof options.url === 'string') {
     options.url = setParams(options.url, options.params);
-    delete options.params;
+    options.params = undefined;
   }
   return options;
 }
