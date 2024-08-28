@@ -100,8 +100,10 @@ interface RedirectToOptions extends UniNamespace.RedirectToOptions {
  */
 function handleQuery<T extends NavigateToOptions | RedirectToOptions>(options: T) {
   if (options.query && typeof options.url === 'string') {
-    options.url = setQuery(options.url, options.query);
-    options.query = undefined;
+    const _options = { ...options };
+    _options.url = setQuery(options.url, options.query);
+    _options.query = undefined;
+    return _options;
   }
   return options;
 }
