@@ -195,12 +195,12 @@ export function useRouter(options: UseRouterOptions = {}) {
   }
 
   /** 路由跳转 */
-  function navigate(options: UniNamespace.NavigateToOptions): Promise<any> {
+  function navigate(options: NavigateToOptions): Promise<any> {
     return trySwitchTab(tryTabBar, navigateTo, options);
   }
 
   /** 路由重定向 */
-  function redirect(options: UniNamespace.RedirectToOptions): Promise<any> {
+  function redirect(options: RedirectToOptions): Promise<any> {
     return trySwitchTab(tryTabBar, redirectTo, options);
   }
 
