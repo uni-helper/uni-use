@@ -2,7 +2,7 @@ import type { RequiredOnly } from '../types';
 import type { AppJson } from '@dcloudio/uni-cli-shared';
 import { computed, ref } from 'vue';
 import { tryOnBackPress } from '../tryOnBackPress';
-import { pathResolve } from '../utils';
+import { getParams, pathResolve, setParams } from '../utils';
 
 /** 获取当前页面栈信息 */
 const pages = ref<Page.PageInstance[]>([]);
@@ -11,6 +11,8 @@ const pageLength = computed(() => pages.value.length); // 使用 computed 可触
 /** 获取当前页信息 */
 // at is not supported
 const current = computed(() => pages.value?.[pageLength.value - 1]);
+/** 获取当前页params信息 */
+const currentParams = computed(() => getParams(current.value.route || ''));
 /** 获取前一页信息 */
 const prev = computed(() =>
   pageLength.value > 1 ? pages.value[pageLength.value - 2] : pages.value?.[pageLength.value - 1],
@@ -85,16 +87,34 @@ function switchTab(options: UniNamespace.SwitchTabOptions): Promise<any> {
     uni.switchTab(warpPromiseOptions(options, resolve, reject));
   });
 }
+interface NavigateToOptions extends UniNamespace.NavigateToOptions {
+  params?: Record<string, any>;
+}
 
-function navigateTo(options: UniNamespace.NavigateToOptions) {
+interface RedirectToOptions extends UniNamespace.RedirectToOptions {
+  params?: Record<string, any>;
+}
+
+/**
+ * 处理 options.params
+ * @param options
+ */
+function handleParams<T extends NavigateToOptions | RedirectToOptions>(options: T) {
+  if (options.params && typeof options.url === 'string') {
+    options.url = setParams(options.url, options.params);
+    delete options.params;
+  }
+  return options;
+}
+function navigateTo(options: NavigateToOptions) {
   return new Promise((resolve, reject) => {
-    uni.navigateTo(warpPromiseOptions(options, resolve, reject));
+    uni.navigateTo(warpPromiseOptions(handleParams(options), resolve, reject));
   });
 }
 
-function redirectTo(options: UniNamespace.RedirectToOptions) {
+function redirectTo(options: RedirectToOptions) {
   return new Promise((resolve, reject) => {
-    uni.redirectTo(warpPromiseOptions(options, resolve, reject));
+    uni.redirectTo(warpPromiseOptions(handleParams(options), resolve, reject));
   });
 }
 
@@ -193,6 +213,8 @@ export function useRouter(options: UseRouterOptions = {}) {
     page: current,
     /** 获取当前页路由信息 */
     currentUrl,
+    /** 获取当前页params信息 */
+    currentParams,
     /** @deprecated 弃用，请使用 currentUrl */
     route: currentUrl,
     /** 获取前一页信息 */

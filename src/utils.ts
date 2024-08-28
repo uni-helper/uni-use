@@ -63,3 +63,60 @@ export function sleep(ms = 0) {
 export function isThenable(promise: any) {
   return typeof promise.then === 'function';
 }
+
+/**
+ * 获取 ? 后面的参数
+ * @param url - 可选的 URL 字符串，如果不提供则使用当前页面的 URL
+ * @returns 返回解析后的查询参数对象
+ */
+export function getParams<T extends Record<string, any>>(url?: string): T {
+  const _url = url || window.location.href;
+  const [, search] = _url.split('?');
+  if (search?.length) {
+    const paramsList = search.split('&');
+    const params = {} as T;
+    for (let index = 0; index < paramsList.length; index++) {
+      const item = paramsList[index];
+      if (!item) {
+        continue; // 检查每个参数对是否有效
+      }
+      const [key, value] = item.split('=');
+      if (key && value !== undefined && value !== '') {
+        // 将键值对添加到 params 对象中，并解码值
+        params[key as keyof T] = decodeURIComponent(value) as T[keyof T];
+      }
+    }
+    return params;
+  }
+  return {} as T;
+}
+
+/**
+ * 封装带有查询参数的 URL
+ * @param baseUrl - 基础 URL
+ * @param params - 要附加到 URL 的查询参数对象
+ * @returns 返回附加了查询参数的完整 URL
+ */
+export function setParams(baseUrl: string, params: Record<string, any>): string {
+  if (!Object.keys(params).length) {
+    return baseUrl;
+  }
+
+  let parameters = '';
+
+  for (const key in params) {
+    if (params[key] === undefined || params[key] === null || params[key] === '') {
+      continue;
+    } // 检查每个参数值是否有效
+    parameters += `${key}=${encodeURIComponent(params[key])}&`;
+  }
+
+  // 移除末尾多余的 '&' 并构建最终的 URL
+  parameters = parameters.replace(/&$/, '');
+  if (!parameters.length) {
+    return baseUrl;
+  }
+  return (/\?$/.test(baseUrl))
+    ? baseUrl + parameters
+    : baseUrl.replace(/\/?$/, '?') + parameters;
+}
