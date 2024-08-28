@@ -8,7 +8,7 @@
 
 ```ts
 import { useRouter } from '@uni-helper/uni-use';
-import { ref, watchEffect } from 'vue';
+import { computed, ref, watchEffect } from 'vue';
 import { tabBar } from '@/pages.json';
 
 const router = useRouter({
@@ -48,14 +48,14 @@ router.reLaunch({ url: '/pages/auth/login' });
 router.back();
 
 // 当前当前页路由参数
-const currentParams = router.currentParams;
+const id = computed(() => currentParams.value.id);
 
 // 使用当前当前页路由参数获取数据
 const data = ref();
 
 watchEffect(async () => {
   const response = await fetch(
-    `https://example.com/${currentParams.value.id}`
+    `https://example.com/${id}`
   );
   data.value = await response.json();
 });
