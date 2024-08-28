@@ -3,7 +3,7 @@ import type { AppJson } from '@dcloudio/uni-cli-shared';
 import { computed, ref } from 'vue';
 import { tryOnBackPress } from '../tryOnBackPress';
 import { tryOnLoad } from '../tryOnLoad';
-import { pathResolve, setParams } from '../utils';
+import { pathResolve, setQuery } from '../utils';
 
 /** 获取当前页面栈信息 */
 const pages = ref<Page.PageInstance[]>([]);
@@ -87,33 +87,33 @@ function switchTab(options: UniNamespace.SwitchTabOptions): Promise<any> {
   });
 }
 interface NavigateToOptions extends UniNamespace.NavigateToOptions {
-  params?: Record<string, any>;
+  query?: Record<string, any>;
 }
 
 interface RedirectToOptions extends UniNamespace.RedirectToOptions {
-  params?: Record<string, any>;
+  query?: Record<string, any>;
 }
 
 /**
- * 处理 options.params
+ * 处理 options.query
  * @param options
  */
-function handleParams<T extends NavigateToOptions | RedirectToOptions>(options: T) {
-  if (options.params && typeof options.url === 'string') {
-    options.url = setParams(options.url, options.params);
-    options.params = undefined;
+function handleQuery<T extends NavigateToOptions | RedirectToOptions>(options: T) {
+  if (options.query && typeof options.url === 'string') {
+    options.url = setQuery(options.url, options.query);
+    options.query = undefined;
   }
   return options;
 }
 function navigateTo(options: NavigateToOptions) {
   return new Promise((resolve, reject) => {
-    uni.navigateTo(warpPromiseOptions(handleParams(options), resolve, reject));
+    uni.navigateTo(warpPromiseOptions(handleQuery(options), resolve, reject));
   });
 }
 
 function redirectTo(options: RedirectToOptions) {
   return new Promise((resolve, reject) => {
-    uni.redirectTo(warpPromiseOptions(handleParams(options), resolve, reject));
+    uni.redirectTo(warpPromiseOptions(handleQuery(options), resolve, reject));
   });
 }
 
@@ -193,10 +193,10 @@ export function useRouter(options: UseRouterOptions = {}) {
     tabBarList = options.tabBarList;
   }
 
-  const currentParams = ref<Record<string, any>>({});
+  const currentQuery = ref<Record<string, any>>({});
 
   tryOnLoad((options) => {
-    currentParams.value = options ?? {};
+    currentQuery.value = options ?? {};
   });
 
   /** 路由跳转 */
@@ -218,8 +218,8 @@ export function useRouter(options: UseRouterOptions = {}) {
     page: current,
     /** 获取当前页路由信息 */
     currentUrl,
-    /** 获取当前页params信息 */
-    currentParams,
+    /** 获取当前页query信息 */
+    currentQuery,
     /** @deprecated 弃用，请使用 currentUrl */
     route: currentUrl,
     /** 获取前一页信息 */

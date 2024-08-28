@@ -67,21 +67,21 @@ export function isThenable(promise: any) {
 /**
  * 封装带有查询参数的 URL
  * @param baseUrl - 基础 URL
- * @param params - 要附加到 URL 的查询参数对象
+ * @param query - 要附加到 URL 的查询参数对象
  * @returns 返回附加了查询参数的完整 URL
  */
-export function setParams(baseUrl: string, params: Record<string, any>): string {
-  if (!Object.keys(params).length) {
+export function setQuery(baseUrl: string, query: Record<string, any>): string {
+  if (!Object.keys(query).length) {
     return baseUrl;
   }
 
   let parameters = '';
 
-  for (const key in params) {
-    if (params[key] === undefined || params[key] === null || params[key] === '') {
+  for (const key in query) {
+    if (query[key] === undefined || query[key] === null || query[key] === '') {
       continue;
     } // 检查每个参数值是否有效
-    parameters += `${key}=${encodeURIComponent(params[key])}&`;
+    parameters += `${key}=${encodeURIComponent(query[key])}&`;
   }
 
   // 移除末尾多余的 '&' 并构建最终的 URL

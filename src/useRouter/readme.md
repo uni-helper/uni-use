@@ -33,13 +33,13 @@ router.switchTab({ url: '/pages/tabbar/tabbar1' });
 // 当 tryTabBar = true 时，会自动判断 tabBar 页面进行跳转
 router.navigate({ url: '/pages/topics/index' });
 // 携带参数
-router.navigate({ url: '/pages/topics/index', params: { foo: 1 } });
+router.navigate({ url: '/pages/topics/index', query: { foo: 1 } });
 
 // 路由重定向，参数和 uniapp 的一致
 // 当 tryTabBar = true 时，会自动判断 tabBar 页面进行重定向
 router.redirect({ url: '/pages/auth/login' });
 // 携带参数
-router.navigate({ url: '/pages/auth/login', params: { bar: 'bar' } });
+router.navigate({ url: '/pages/auth/login', query: { bar: 'bar' } });
 
 // 路由重定向，并清空当前页面栈
 router.reLaunch({ url: '/pages/auth/login' });
@@ -48,7 +48,7 @@ router.reLaunch({ url: '/pages/auth/login' });
 router.back();
 
 // 当前当前页路由参数
-const id = computed(() => currentParams.value.id);
+const id = computed(() => router.currentQuery.value.id);
 
 // 使用当前当前页路由参数获取数据
 const data = ref();
