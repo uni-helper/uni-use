@@ -63,3 +63,33 @@ export function sleep(ms = 0) {
 export function isThenable(promise: any) {
   return typeof promise.then === 'function';
 }
+
+/**
+ * 封装带有查询参数的 URL
+ * @param baseUrl - 基础 URL
+ * @param params - 要附加到 URL 的查询参数对象
+ * @returns 返回附加了查询参数的完整 URL
+ */
+export function setParams(baseUrl: string, params: Record<string, any>): string {
+  if (!Object.keys(params).length) {
+    return baseUrl;
+  }
+
+  let parameters = '';
+
+  for (const key in params) {
+    if (params[key] === undefined || params[key] === null || params[key] === '') {
+      continue;
+    } // 检查每个参数值是否有效
+    parameters += `${key}=${encodeURIComponent(params[key])}&`;
+  }
+
+  // 移除末尾多余的 '&' 并构建最终的 URL
+  parameters = parameters.replace(/&$/, '');
+  if (!parameters.length) {
+    return baseUrl;
+  }
+  return (/\?$/.test(baseUrl))
+    ? baseUrl + parameters
+    : baseUrl.replace(/\/?$/, '?') + parameters;
+}
