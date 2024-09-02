@@ -5,13 +5,6 @@ import { computed, ref } from 'vue';
 
 export interface UsePageScrollOptions {
   /**
-   * 是否开启 onPageScroll 监听，默认为 false
-   *
-   * @default false
-   * @see https://github.com/dcloudio/uni-app/issues/3099 让页面被正则捕获从而开启监听
-   */
-  onPageScroll?: boolean;
-  /**
    * 滚动到指定选择器
    *
    * @see https://uniapp.dcloud.net.cn/api/ui/scroll?id=pagescrollto
@@ -48,10 +41,16 @@ export function usePageScroll(options: UsePageScrollOptions = {}) {
     },
   });
 
-  options.onPageScroll
-  && onPageScroll((e) => {
+  onPageScroll((e) => {
     _scrollTop.value = e.scrollTop;
   });
+
+  /**
+   * 回到顶部
+   */
+  function backTop() {
+    _scrollTop.value = 0;
+  }
 
   watchWithFilter(
     () => resolveUnref(scrollToSelector),
@@ -69,5 +68,6 @@ export function usePageScroll(options: UsePageScrollOptions = {}) {
   return {
     scrollTop,
     scrollToSelector,
+    backTop,
   };
 }
