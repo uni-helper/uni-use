@@ -1,7 +1,7 @@
 import type { MaybeRef } from '../types';
 import { onPageScroll } from '@dcloudio/uni-app';
 import { resolveUnref, watchWithFilter } from '@vueuse/core';
-import { computed, ref } from 'vue';
+import { computed, isRef, ref } from 'vue';
 
 export interface UsePageScrollOptions {
   /**
@@ -32,7 +32,7 @@ export interface UsePageScrollOptions {
  * @see https://uniapp.dcloud.net.cn/tutorial/page.html#onpagescroll
  */
 export function usePageScroll(options: UsePageScrollOptions) {
-  const { duration = 300, scrollToSelector } = options;
+  const { duration = 300 } = options;
 
   const _scrollTop = ref(0);
   const scrollTop = computed({
@@ -51,8 +51,12 @@ export function usePageScroll(options: UsePageScrollOptions) {
     _scrollTop.value = e.scrollTop;
   });
 
+  const scrollToSelector = isRef(options?.scrollToSelector)
+    ? options.scrollToSelector
+    : ref(options?.scrollToSelector || '');
+
   watchWithFilter(
-    () => resolveUnref(scrollToSelector),
+    () => scrollToSelector.value,
     (newValue) => {
       uni.pageScrollTo({
         selector: newValue,
