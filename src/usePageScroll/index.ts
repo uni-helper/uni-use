@@ -5,12 +5,11 @@ import { computed, ref } from 'vue';
 
 export interface UsePageScrollOptions {
   /**
-   * 是否开启 onPageScroll 监听，默认为 false
-   *
-   * @default false
+   * 此选项不可缺！
+   * uniapp 必须在页面内检测到 onPageScroll 关键词才会注册事件。
    * @see https://github.com/dcloudio/uni-app/issues/3099 让页面被正则捕获从而开启监听
    */
-  onPageScroll?: boolean;
+  onPageScroll: boolean;
   /**
    * 滚动到指定选择器
    *
@@ -32,7 +31,7 @@ export interface UsePageScrollOptions {
  * @param options 配置项
  * @see https://uniapp.dcloud.net.cn/tutorial/page.html#onpagescroll
  */
-export function usePageScroll(options: UsePageScrollOptions = {}) {
+export function usePageScroll(options: UsePageScrollOptions) {
   const { duration = 300, scrollToSelector } = options;
 
   const _scrollTop = ref(0);
