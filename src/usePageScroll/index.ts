@@ -9,7 +9,7 @@ export interface UsePageScrollOptions {
    * uniapp 必须在页面内检测到 onPageScroll 关键词才会注册事件。
    * @see https://github.com/dcloudio/uni-app/issues/3099 让页面被正则捕获从而开启监听
    */
-  onPageScroll: boolean;
+  onPageScroll: any;
   /**
    * 滚动到指定选择器
    *
@@ -47,8 +47,7 @@ export function usePageScroll(options: UsePageScrollOptions) {
     },
   });
 
-  options.onPageScroll
-  && onPageScroll((e) => {
+  onPageScroll((e) => {
     _scrollTop.value = e.scrollTop;
   });
 
