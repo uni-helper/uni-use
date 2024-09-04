@@ -21,7 +21,7 @@ const currentUrl = computed(() => current.value?.route || '/');
 /** 获取前一页路由信息 */
 const prevUrl = computed(() => prev.value?.route);
 
-let tabBarList: TabBarItem[] = [];
+let tabBarUrls: string[] = [];
 
 let isAddInterceptors = false;
 let isBindBackPress = false;
@@ -124,7 +124,7 @@ function trySwitchTab<FN extends typeof navigateTo | typeof redirectTo>(
   }
 
   // 未设置 tabBarList，先尝试 switchTab，报错再尝试跳转
-  if (tabBarList.length === 0) {
+  if (tabBarUrls.length === 0) {
     return switchTab(options).catch(() => forward(options));
   }
 
@@ -141,8 +141,8 @@ function trySwitchTab<FN extends typeof navigateTo | typeof redirectTo>(
 
 function isTabBarPath(path: string) {
   const target = pathResolve(path);
-  const tabbar = tabBarList.find(t => `/${t.pagePath}` === target);
-  return !!tabbar;
+  const tabbar = tabBarUrls.find(url => url === target || `${url}/` === target);
+  return tabbar !== undefined;
 }
 
 type UniTabBarItem = Exclude<AppJson['tabBar'], undefined>['list'][number];
@@ -156,8 +156,13 @@ export interface UseRouterOptions {
    * @default true
    */
   tryTabBar?: boolean;
-  /** pages.json 里的 tabBar list 配置 tryTabBar 开启时，会判断跳转页面 全局配置，仅需要配置一次 */
-  tabBarList?: TabBarItem[];
+  /**
+   * 全局配置，仅需要配置一次
+   * 配置 tryTabBar 开启时，会判断跳转页面
+   *
+   * 可填入 pages.json 里的 tabBar list 或仅 tabbar 的 url 数组
+   */
+  tabBarList?: Array<TabBarItem | string>;
 }
 
 /**
@@ -171,7 +176,16 @@ export function useRouter(options: UseRouterOptions = {}) {
   const { tryTabBar = true } = options;
 
   if (options.tabBarList) {
-    tabBarList = options.tabBarList;
+    const urls: string[] = [];
+    for (const item of options.tabBarList) {
+      if (typeof item === 'string') {
+        urls.push(item);
+      }
+      else {
+        urls.push(item.pagePath);
+      }
+    }
+    tabBarUrls = urls.filter(url => !!url);
   }
 
   /** 路由跳转 */
