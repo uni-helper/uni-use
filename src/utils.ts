@@ -1,3 +1,5 @@
+import { useRouter } from './useRouter';
+
 /**
  * 判断一个值是否为字符串类型
  *
@@ -27,21 +29,75 @@ export function noop() { }
 /**
  * 解析路径
  *
- * @param target 目标路径
- * @param current 当前路径，默认为当前页面路由
+ * @param target 目标路径（不含domain）
+ * @param current 当前路径（不含domain），默认为当前页面路由
  * @returns 解析后的路径
  * @throws 当当前路径未定义且无法找到时，抛出错误
  */
 export function pathResolve(target: string, current?: string) {
-  if (!current) {
-    const pages = getCurrentPages();
-    current = pages.length > 0 ? pages[pages.length - 1].route : undefined;
+  // 如果目标路径已经是绝对路径，则直接返回
+  if (target.startsWith('/')) {
+    return target;
   }
 
+  // 如果当前路径未定义，则从路由中获取当前路径
+  if (!current) {
+    const { currentUrl } = useRouter();
+    current = currentUrl.value;
+  }
+
+  // 如果当前路径未定义，则抛出错误
   if (!current) {
     throw new Error('The current path is undefined and cannot be found.');
   }
-  return new URL(target, new URL(current, 'http://no-exists.com')).pathname;
+
+  // 如果目标路径为空，则直接返回当前路径
+  if (!target) {
+    return current;
+  }
+
+  // 如果目标路径以 ./ 开头，则递归调用 pathResolve 函数，将当前路径作为新的当前路径
+  if (target.startsWith('./')) {
+    return pathResolve(target.slice(2), current);
+  }
+
+  // 获取当前路径的页面路径
+  let currentPaths: string[] = [];
+  if (current.endsWith('/')) {
+    currentPaths = current.split('/').filter(part => part !== '' && part !== '.');
+  }
+  else {
+    currentPaths = current.split('/');
+    currentPaths.pop(); // 去除最后的页面路径
+    currentPaths = currentPaths.filter(part => part !== '' && part !== '.');
+  }
+
+  // 获取目标路径的页面路径和页面
+  let targetPaths: string[] = [];
+  let targetPage = '';
+  if (target.endsWith('/')) {
+    targetPaths = target.split('/').filter(part => part !== '' && part !== '.');
+  }
+  else {
+    targetPaths = target.split('/');
+    targetPage = targetPaths.pop() || ''; // 去除最后的页面路径
+    targetPaths = targetPaths.filter(part => part !== '' && part !== '.');
+  }
+
+  // 合并路径
+  const paths = [...currentPaths, ...targetPaths];
+  const finalPaths: string[] = [];
+  for (const p of paths) {
+    if (p === '..') {
+      finalPaths.pop();
+    }
+    else {
+      finalPaths.push(p);
+    }
+  }
+
+  // 返回最终路径
+  return `/${finalPaths.join('/')}/${targetPage}`;
 }
 
 /**
