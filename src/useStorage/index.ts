@@ -1,7 +1,7 @@
 import type { MaybeComputedRef } from '../types';
 import type { ConfigurableEventFilter, ConfigurableFlush, RemovableRef, WatchPausableReturn } from '@vueuse/core';
 import type { Ref } from 'vue';
-import { pausableWatch, resolveUnref, tryOnMounted, tryOnScopeDispose, watchWithFilter } from '@vueuse/core';
+import { pausableWatch, resolveUnref, tryOnMounted, tryOnScopeDispose } from '@vueuse/core';
 import { ref, shallowRef } from 'vue';
 import { useInterceptor } from '../useInterceptor';
 
