@@ -1,6 +1,6 @@
 import type { MaybeRef } from '../types';
 import { onPageScroll } from '@dcloudio/uni-app';
-import { watchWithFilter } from '@vueuse/core';
+import { pausableWatch } from '@vueuse/core';
 import { computed, isRef, ref } from 'vue';
 
 export interface UsePageScrollOptions {
@@ -34,42 +34,60 @@ export interface UsePageScrollOptions {
 export function usePageScroll(options: UsePageScrollOptions) {
   const { duration = 300 } = options;
 
-  const _scrollTop = ref(0);
-  const scrollTop = computed({
-    get() {
-      return _scrollTop.value;
-    },
-    set(val) {
-      uni.pageScrollTo({
-        scrollTop: val,
-        duration,
-      });
-    },
+  const _top = ref(0);
+  const top = computed({
+    get: () => _top.value,
+    set: val => toTop(val),
   });
 
   onPageScroll((e) => {
-    _scrollTop.value = e.scrollTop;
+    _top.value = e.scrollTop;
   });
 
-  const scrollToSelector = isRef(options?.scrollToSelector)
+  const selector = isRef(options?.scrollToSelector)
     ? options.scrollToSelector
     : ref(options?.scrollToSelector || '');
 
-  watchWithFilter(
-    () => scrollToSelector.value,
-    (newValue) => {
-      uni.pageScrollTo({
-        selector: newValue,
+  const watcher = pausableWatch(selector, newValue => toSelector(newValue));
+
+  async function toTop(px: number = 0) {
+    _top.value = px;
+
+    return await uni.pageScrollTo({
+      scrollTop: px,
+      duration,
+    });
+  }
+
+  async function toSelector(Selector: string) {
+    try {
+      watcher.pause();
+
+      selector.value = Selector;
+
+      return await uni.pageScrollTo({
+        selector: Selector,
         duration,
       });
-    },
-    {
-      eventFilter: e => e !== undefined,
-    },
-  );
+    }
+    finally {
+      watcher.resume();
+    }
+  }
 
   return {
-    scrollTop,
-    scrollToSelector,
+    /** @deprecated 有歧义，弃用，请使用 top */
+    scrollTop: top,
+    /** @deprecated 有歧义，弃用，请使用 selector */
+    scrollToSelector: selector,
+
+    /** 滚动条当前 top */
+    top,
+    /** 最后一次跳转的元素选择器 */
+    selector,
+    /** 滚动至指定 top */
+    toTop,
+    /** 滚动到指定 selector */
+    toSelector,
   };
 }
