@@ -175,3 +175,6 @@ dist_ssg
 
 # Android
 *.keystore
+
+# Vitepress
+cache
