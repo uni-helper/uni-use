@@ -33,7 +33,7 @@ export default defineConfig({
           },
           ...files.map(file => ({
             text: file,
-            link: `/${file}/readme.md`,
+            link: `/${file}`,
           })),
         ],
       },
