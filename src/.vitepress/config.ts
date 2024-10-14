@@ -25,7 +25,7 @@ export default defineConfig({
 
     sidebar: [
       {
-        text: 'Api',
+        text: 'API',
         items: [
           {
             text: '函数列表',

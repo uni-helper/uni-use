@@ -14,13 +14,16 @@ hero:
       link: /start
     - theme: alt
       text: API 集合
-      link: /api-examples
+      link: /api/
 
 features:
-  - title: Feature A
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - title: Feature B
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - title: Feature C
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
+  - icon: 🎛
+    title: 功能丰富
+    details: 提供了丰富的功能，封装了 uni-app 中常用的功能。
+  - icon: 💚
+    title: 开箱即用
+    details: 开箱即用的支持了 uni-app Vue3 的 Composition API。
+  - icon: 🦾
+    title: 功能丰富
+    details: 所有函数都支持 TS 类型推导，无需手动标注类型
 ---
