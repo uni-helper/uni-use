@@ -11,10 +11,10 @@ hero:
   actions:
     - theme: brand
       text: 开始
-      link: /start
+      link: /guide/
     - theme: alt
       text: API 集合
-      link: /api/
+      link: /apis/
 
 features:
   - icon: 🎛

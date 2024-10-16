@@ -6,7 +6,8 @@ const files = await fg('*', {
   cwd: './src',
   ignore: [
     'public',
-    'api',
+    'apis',
+    'guide',
   ],
 });
 
@@ -19,25 +20,54 @@ export default defineConfig({
     logo: '/logo.png',
 
     nav: [
-      { text: '指南', link: '/' },
-      { text: 'API', link: '/api' },
+      { text: '指南', link: '/guide/' },
+      { text: 'API', link: '/apis/' },
+      { text: 'ChangeLog', link: 'https://github.com/uni-helper/uni-use/blob/main/CHANGELOG.md' },
     ],
 
-    sidebar: [
-      {
-        text: 'API',
-        items: [
-          {
-            text: '函数列表',
-            link: '/api',
-          },
-          ...files.map(file => ({
+    sidebar: {
+      '/guide/': [
+        {
+          text: '指南',
+          items: [
+            {
+              text: '开始',
+              link: '/guide/',
+            },
+            {
+              text: '注意事项',
+              link: '/guide/notice/',
+            },
+            {
+              text: '更新日志',
+              link: 'https://github.com/uni-helper/uni-use/blob/main/CHANGELOG.md',
+            },
+            {
+              text: '所有函数',
+              link: '/apis/',
+            },
+          ],
+        },
+      ],
+      '/': [
+        {
+          text: 'All Functions',
+          items: [
+            {
+              text: '函数列表',
+              link: '/apis/',
+            },
+          ],
+        },
+        {
+          text: 'API',
+          items: files.map(file => ({
             text: file,
-            link: `/${file}/index.md`,
+            link: `/${file}/`,
           })),
-        ],
-      },
-    ],
+        },
+      ],
+    },
 
     socialLinks: [
       { icon: 'github', link: 'https://github.com/uni-helper/uni-use' },
