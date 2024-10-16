@@ -60,7 +60,10 @@
     "prepare": "is-ci || simple-git-hooks",
     "prepublishOnly": "pnpm run build",
     "release": "pnpm install && pnpm run lint && bumpp",
-    "test": "vitest"
+    "test": "vitest",
+    "docs:dev": "vitepress dev src",
+    "docs:build": "vitepress build src",
+    "docs:preview": "vitepress preview src"
   },
   "peerDependencies": {
     "@vueuse/core": "^9.0.0 || ^10.0.0",
@@ -91,6 +94,7 @@
     "commitizen": "^4.3.0",
     "concurrently": "^8.2.2",
     "eslint": "^8.56.0",
+    "fast-glob": "^3.3.2",
     "is-ci": "^3.0.1",
     "lint-staged": "^15.2.0",
     "markdownlint-cli": "^0.38.0",
@@ -102,6 +106,7 @@
     "tsx": "^4.7.0",
     "typescript": "^5.3.3",
     "unbuild": "^2.0.0",
+    "vitepress": "^1.4.0",
     "vitest": "^1.4.0"
   },
   "publishConfig": {
