@@ -18,6 +18,10 @@ export default defineConfig({
   lang: 'zh-CN',
   themeConfig: {
     logo: '/logo.png',
+    editLink: {
+      pattern: 'https://github.com/uni-helper/uni-use/tree/main/src/:path',
+      text: '为这个页面提供建议',
+    },
     footer: {
       message: 'Released under the MIT License.',
       copyright: 'Copyright © 2022-PRESENT uni-helper and uni-helper contributors',
