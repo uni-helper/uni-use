@@ -18,6 +18,10 @@ export default defineConfig({
   lang: 'zh-CN',
   themeConfig: {
     logo: '/logo.png',
+    footer: {
+      message: 'Released under the MIT License.',
+      copyright: 'Copyright © 2022-PRESENT uni-helper and uni-helper contributors',
+    },
 
     nav: [
       { text: '指南', link: '/guide/' },
