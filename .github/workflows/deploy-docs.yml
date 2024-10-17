@@ -33,7 +33,7 @@ jobs:
         with:
           fetch-depth: 0 # Not needed if lastUpdated is not enabled
       - uses: pnpm/action-setup@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
           cache: pnpm
@@ -41,7 +41,7 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v4
       - name: Install dependencies
-        run: pnpm ci # or pnpm install / yarn install / bun install
+        run: pnpm install # or pnpm install / yarn install / bun install
       - name: Build with VitePress
         run: pnpm run docs:build # or pnpm docs:build / yarn docs:build / bun run docs:build
       - name: Upload artifact
