@@ -14,6 +14,7 @@ export default async () => {
     title: 'UniUse',
     description: 'uni-app (vue3) 组合式工具集。',
     lang: 'zh-CN',
+    base: '/uni-use/',
     srcDir: '.',
     srcExclude: ['!(docs|src)/**'],
     rewrites: {
