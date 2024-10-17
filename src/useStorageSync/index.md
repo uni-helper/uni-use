@@ -7,8 +7,8 @@ UNIAPP官网文档: <https://uniapp.dcloud.net.cn/api/storage/storage.html>
 **注意：**
 
 - 这是同步操作，赋值后会立即写入storage，直到写入结束前会一直阻塞线程
-- 如果需要非阻塞，请使用[`useStorage`](../useStorage/readme.md)
-- 如无须使用 uni 原生的 storage 操作，建议使用异步 [`useStorage`](../useStorage/readme.md)
+- 如果需要非阻塞，请使用[`useStorage`](../useStorage/index.md)
+- 如无须使用 uni 原生的 storage 操作，建议使用异步 [`useStorage`](../useStorage/index.md)
 
 ```typescript
 import { useStorageSync } from '@uni-helper/uni-use';

@@ -61,9 +61,9 @@
     "prepublishOnly": "pnpm run build",
     "release": "pnpm install && pnpm run lint && bumpp",
     "test": "vitest",
-    "docs:dev": "vitepress dev src",
-    "docs:build": "vitepress build src",
-    "docs:preview": "vitepress preview src"
+    "docs:dev": "vitepress dev",
+    "docs:build": "vitepress build",
+    "docs:preview": "vitepress preview"
   },
   "peerDependencies": {
     "@vueuse/core": "^9.0.0 || ^10.0.0",

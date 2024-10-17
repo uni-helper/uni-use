@@ -39,7 +39,7 @@ npm install @uni-helper/uni-use @vueuse/core@9
 
 ## 使用
 
-详情请看 [`uni-use`函数列表](./src/apis/index.md)
+详情请看 [`uni-use`函数列表](./src/index.md)
 
 ## 其它
 

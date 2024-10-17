@@ -30,7 +30,7 @@ tryOnLoad(() => {
 });
 ```
 
-其它详情请查看所有 [API](../apis/index.md)。
+其它详情请查看所有 [API](/apis.md)。
 
 ### 和 `unplugin-auto-import` 结合使用
 

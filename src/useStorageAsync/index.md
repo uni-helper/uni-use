@@ -10,7 +10,7 @@ UNIAPP官网文档: <https://uniapp.dcloud.net.cn/api/storage/storage.html>
 
 - 这是异步操作，赋值后，ref 的值会生效，但并不会马上写入storage
 - 和 uni 的原生 getStorageSync 混用的情况下，有可能会导致 getStorageSync 读取不到值。
-- 如需和 uni 的原生 storage 操作混用，或需要同步操作，请使用[`useStorageSync`](../useStorageSync/readme.md)
+- 如需和 uni 的原生 storage 操作混用，或需要同步操作，请使用[`useStorageSync`](../useStorageSync/index.md)
 
 ```typescript
 import { useStorageAsync } from '@uni-helper/uni-use';

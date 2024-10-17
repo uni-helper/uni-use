@@ -8,7 +8,7 @@ UNIAPP官网文档: <https://uniapp.dcloud.net.cn/api/storage/storage.html>
 
 **注意，这是异步操作，赋值后并不会马上写入storage**
 
-**如果需要同步操作，请使用[`useStorageSync`](../useStorageSync/readme.md)**
+**如果需要同步操作，请使用[`useStorageSync`](../useStorageSync/index.md)**
 
 ```typescript
 import { useStorage } from '@uni-helper/uni-use';

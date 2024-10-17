@@ -1,21 +1,27 @@
+import { dirname, join } from 'node:path';
 import fg from 'fast-glob';
 import { defineConfig } from 'vitepress';
 
-const files = await fg('*', {
-  onlyDirectories: true,
-  cwd: './src',
-  ignore: [
-    'public',
-    'apis',
-    'guide',
-  ],
+const files = await fg('**/*.md', {
+  cwd: join(__dirname, '..', 'src'),
 });
+
+const dirs = [...new Set(files.map(f => dirname(f)).filter(d => d !== '.' && d !== '..'))];
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   title: 'UniUse',
   description: 'uni-app (vue3) 组合式工具集。',
   lang: 'zh-CN',
+  srcDir: '.',
+  srcExclude: ['!(docs|src)/**'],
+  rewrites: {
+    'docs/:name.md': ':name.md',
+    'docs/:doc/:name.md': ':doc/:name.md',
+    'src/index.md': 'apis.md',
+    'src/:pkg/:name.md': ':pkg/:name.md',
+  },
+
   themeConfig: {
     logo: '/logo.png',
 
@@ -36,7 +42,7 @@ export default defineConfig({
             },
             {
               text: '注意事项',
-              link: '/guide/notice/',
+              link: '/guide/notice',
             },
             {
               text: '更新日志',
@@ -61,9 +67,9 @@ export default defineConfig({
         },
         {
           text: 'API',
-          items: files.map(file => ({
-            text: file,
-            link: `/${file}/`,
+          items: dirs.map(dir => ({
+            text: dir,
+            link: `/${dir}/`,
           })),
         },
       ],
@@ -132,4 +138,5 @@ export default defineConfig({
       { icon: 'github', link: 'https://github.com/uni-helper/uni-use' },
     ],
   },
+
 });

@@ -1,31 +1,39 @@
----
-layout: home
+# 函数列表
 
-hero:
-  name: UniUse
-  text: uni-app 组合式工具集
-  tagline: 为 uni-app 量身打造的组合式工具集
-  image:
-    src: /logo.png
-    alt: UniUse
-  actions:
-    - theme: brand
-      text: 开始
-      link: /guide/
-    - theme: alt
-      text: API 集合
-      link: /apis/
-
-features:
-  - icon: 🎛
-    title: 功能丰富
-    details: 提供了丰富的功能，封装了 uni-app 中常用的功能。
-  - icon: 💚
-    title: 开箱即用
-    details: 开箱即用的支持了 uni-app Vue3 的 Composition API。
-  - icon: 🦾
-    title: 类型安全
-    details: 所有函数都支持 TS 类型推导，无需手动标注类型
----
-
-<HomeTeam />
+- [tryOnBackPress](./tryOnBackPress/index.md)
+- [tryOnHide](./tryOnHide/index.md)
+- [tryOnInit](./tryOnInit/index.md)
+- [tryOnLoad](./tryOnLoad/index.md)
+- [tryOnReady](./tryOnReady/index.md)
+- [tryOnScopeDispose](./tryOnScopeDispose/index.md)
+- [tryOnShow](./tryOnShow/index.md)
+- [tryOnUnload](./tryOnUnload/index.md)
+- [useActionSheet](./useActionSheet/index.md)
+- [useClipboardData](./useClipboardData/index.md)
+- [useDownloadFile](./useDownloadFile/index.md)
+- [useGlobalData](./useGlobalData/index.md)
+- [useInterceptor](./useInterceptor/index.md)
+- [useLoading](./useLoading/index.md)
+- [useModal](./useModal/index.md)
+- [useNetwork](./useNetwork/index.md)
+- [useOnline](./useOnline/index.md)
+- [usePage](./usePage/index.md)
+- [usePages](./usePages/index.md)
+- [usePageScroll](./usePageScroll/index.md)
+- [usePreferredDark](./usePreferredDark/index.md)
+- [usePreferredLanguage](./usePreferredLanguage/index.md)
+- [usePrevPage](./usePrevPage/index.md)
+- [usePrevRoute](./usePrevRoute/index.md)
+- [useProvider](./useProvider/index.md)
+- [useRequest](./useRequest/index.md)
+- [useRoute](./useRoute/index.md)
+- [useRouter](./useRouter/index.md)
+- [useScanCode](./useScanCode/index.md)
+- [useScreenBrightness](./useScreenBrightness/index.md)
+- [useSelectorQuery](./useSelectorQuery/index.md)
+- [useSocket](./useSocket/index.md)
+- [useStorage](./useStorage/index.md)
+- [useStorageSync](./useStorageSync/index.md)
+- [useToast](./useToast/index.md)
+- [useUploadFile](./useUploadFile/index.md)
+- [useVisible](./useVisible/index.md)
