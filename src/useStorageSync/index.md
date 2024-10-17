@@ -1,4 +1,4 @@
-# useStorageSync (废弃，请使用 useStorage)
+# useStorageSync
 
 `uni-app` 关于 `同步 storage 操作` 的封装。
 
