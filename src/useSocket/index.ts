@@ -1,5 +1,5 @@
-import type { MaybeComputedRef } from '../types';
 import type { ComputedRef, Ref } from 'vue';
+import type { MaybeComputedRef } from '../types';
 import { type Fn, resolveRef, tryOnScopeDispose, useIntervalFn } from '@vueuse/core';
 import { computed, ref, watch } from 'vue';
 import { tryOnUnload } from '../tryOnUnload';

@@ -2,6 +2,7 @@ import { tryOnScopeDispose } from '../tryOnScopeDispose';
 import { isThenable } from '../utils';
 
 type FunctionKeys<T> = {
+  // eslint-disable-next-line ts/no-unsafe-function-type
   [K in keyof T]: T[K] extends Function ? K : never;
 }[keyof T];
 

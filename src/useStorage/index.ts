@@ -1,6 +1,6 @@
-import type { MaybeComputedRef } from '../types';
 import type { ConfigurableEventFilter, ConfigurableFlush, RemovableRef, WatchPausableReturn } from '@vueuse/core';
 import type { Ref } from 'vue';
+import type { MaybeComputedRef } from '../types';
 import { pausableWatch, resolveUnref, tryOnMounted, tryOnScopeDispose } from '@vueuse/core';
 import { ref, shallowRef } from 'vue';
 import { useInterceptor } from '../useInterceptor';
@@ -333,71 +333,83 @@ export function useStorage<T extends DataType>(
 }
 
 function listenDataChange<T>(data: Data<T>) {
-  useInterceptor('setStorage', { invoke: (args) => {
-    if (args[0].key !== data.key) {
-      return false;
-    }
-    // 非主动更新
-    if (!data.isUpdating) {
-      data.isUpdating = true;
+  useInterceptor('setStorage', {
+    invoke: (args) => {
+      if (args[0].key !== data.key) {
+        return false;
+      }
+      // 非主动更新
+      if (!data.isUpdating) {
+        data.isUpdating = true;
 
-      const raw = (typeof args[0].data !== 'string' && args[0].data != null)
-        ? JSON.stringify(args[0].data)
-        : args[0].data;
+        const raw = (typeof args[0].data !== 'string' && args[0].data != null)
+          ? JSON.stringify(args[0].data)
+          : args[0].data;
 
-      data.updateByRaw(raw);
+        data.updateByRaw(raw);
 
-      data.isUpdating = false;
-    }
-  } });
-  useInterceptor('removeStorage', { invoke: (args) => {
-    if (args[0].key !== data.key) {
-      return false;
-    }
-    // 非主动更新
-    if (!data.isUpdating) {
-      data.isUpdating = true;
-      data.value = undefined as unknown as T;
-      data.isUpdating = false;
-    }
-  } });
-  useInterceptor('clearStorage', { complete: () => {
-    data.isUpdating = true;
-    data.value = undefined as unknown as T;
-    data.isUpdating = false;
-  } });
-
-  useInterceptor('setStorageSync', { invoke: (args) => {
-    if (args[0] !== data.key) {
-      return false;
-    }
-    // 非主动更新
-    if (!data.isUpdating) {
-      data.isUpdating = true;
-
-      const raw = (typeof args[1] !== 'string' && args[1] != null)
-        ? JSON.stringify(args[1])
-        : args[1];
-
-      data.updateByRaw(raw);
-
-      data.isUpdating = false;
-    }
-  } });
-  useInterceptor('removeStorageSync', { invoke: (args) => {
-    if (args[0] !== data.key) {
-      return false;
-    }
-    // 非主动更新
-    if (!data.isUpdating) {
+        data.isUpdating = false;
+      }
+    },
+  });
+  useInterceptor('removeStorage', {
+    invoke: (args) => {
+      if (args[0].key !== data.key) {
+        return false;
+      }
+      // 非主动更新
+      if (!data.isUpdating) {
+        data.isUpdating = true;
+        data.value = undefined as unknown as T;
+        data.isUpdating = false;
+      }
+    },
+  });
+  useInterceptor('clearStorage', {
+    complete: () => {
       data.isUpdating = true;
       data.value = undefined as unknown as T;
       data.isUpdating = false;
-    }
-  } });
-  useInterceptor('clearStorageSync', { complete: () => {
-    data.isUpdating = true;
-    data.value = undefined as unknown as T;
-    data.isUpdating = false;
-  } });
+    },
+  });
+
+  useInterceptor('setStorageSync', {
+    invoke: (args) => {
+      if (args[0] !== data.key) {
+        return false;
+      }
+      // 非主动更新
+      if (!data.isUpdating) {
+        data.isUpdating = true;
+
+        const raw = (typeof args[1] !== 'string' && args[1] != null)
+          ? JSON.stringify(args[1])
+          : args[1];
+
+        data.updateByRaw(raw);
+
+        data.isUpdating = false;
+      }
+    },
+  });
+  useInterceptor('removeStorageSync', {
+    invoke: (args) => {
+      if (args[0] !== data.key) {
+        return false;
+      }
+      // 非主动更新
+      if (!data.isUpdating) {
+        data.isUpdating = true;
+        data.value = undefined as unknown as T;
+        data.isUpdating = false;
+      }
+    },
+  });
+  useInterceptor('clearStorageSync', {
+    complete: () => {
+      data.isUpdating = true;
+      data.value = undefined as unknown as T;
+      data.isUpdating = false;
+    },
+  });
 }

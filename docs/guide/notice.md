@@ -17,8 +17,8 @@
 对于 `vite + vue3` 项目，请先设置 `build.target` 为 `ES6`。
 
 ```typescript
-import { defineConfig } from 'vite';
 import uni from '@dcloudio/vite-plugin-uni';
+import { defineConfig } from 'vite';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -30,9 +30,9 @@ export default defineConfig({
     exclude: ['vue-demi'],
   },
   plugins: [
-    ...,
+    // ...,
     uni(),
-    ...,
+    // ...,
   ],
 });
 ```

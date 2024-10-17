@@ -20,5 +20,4 @@ token.value = 'authorization-token';
 
 // 读取
 console.log(token.value); // authorization-token
-
 ```

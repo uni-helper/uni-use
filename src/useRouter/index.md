@@ -5,8 +5,8 @@
 ## 使用方式
 
 ```ts
-import { useRouter } from '@uni-helper/uni-use';
 import { tabBar } from '@/pages.json';
+import { useRouter } from '@uni-helper/uni-use';
 
 const router = useRouter({
   /**

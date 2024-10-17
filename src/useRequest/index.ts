@@ -1,5 +1,5 @@
 import { until } from '@vueuse/core';
-import { type Ref, type ShallowRef, ref, shallowRef } from 'vue';
+import { type Ref, ref, type ShallowRef, shallowRef } from 'vue';
 import { isString, noop } from '../utils';
 
 /** 对标 @vueuse/core v10.7.1 useAxios */

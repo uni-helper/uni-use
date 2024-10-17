@@ -37,10 +37,10 @@ tryOnLoad(() => {
 ```typescript
 // vite.config.ts
 import { fileURLToPath } from 'node:url';
-import { defineConfig } from 'vitest/config';
-import autoImport from 'unplugin-auto-import/vite';
-import { uniuseAutoImports } from '@uni-helper/uni-use';
 import uni from '@dcloudio/vite-plugin-uni';
+import { uniuseAutoImports } from '@uni-helper/uni-use';
+import autoImport from 'unplugin-auto-import/vite';
+import { defineConfig } from 'vitest/config';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -50,7 +50,7 @@ export default defineConfig({
         uniuseAutoImports(),
       ],
     }),
-    uni({ ... }),
+    uni({ /* ... */ }),
   ],
 });
 ```

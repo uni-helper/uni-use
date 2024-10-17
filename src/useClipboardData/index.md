@@ -26,5 +26,9 @@ const clipboardData = useClipboardData('', { showToast: false });
 ```typescript
 import { useClipboardData } from '@uni-helper/uni-use';
 
-const clipboardData = useClipboardData('', { onError: (error) => { ... } });
+const clipboardData = useClipboardData('', {
+  onError: (error) => {
+    console.log(error);
+  }
+});
 ```

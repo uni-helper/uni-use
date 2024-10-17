@@ -1,5 +1,5 @@
-import type { MaybeComputedRef } from '../types';
 import type { ConfigurableEventFilter, ConfigurableFlush, RemovableRef } from '@vueuse/core';
+import type { MaybeComputedRef } from '../types';
 import { resolveUnref, watchWithFilter } from '@vueuse/core';
 import { ref, shallowRef } from 'vue';
 import { isFunction } from '../utils';

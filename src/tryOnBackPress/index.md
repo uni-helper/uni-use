@@ -5,20 +5,17 @@
 前两个参数和 `onBackPress` 完全一致。
 
 ```typescript
-import { tryOnBackPress } from '@uni-helper/uni-use'
+import { tryOnBackPress } from '@uni-helper/uni-use';
 
 tryOnBackPress((e) => {
-
-  if(e.from === 'navigateBack') {
+  if (e.from === 'navigateBack') {
     // do somthing
   }
 
-  if(e.from === 'backbutton'){
+  if (e.from === 'backbutton') {
     // do something
   }
-},
-null,
-{
+}, null, {
   retry: 5, // optional
   interval: 100, // optional
 });

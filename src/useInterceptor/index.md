@@ -10,7 +10,7 @@ const event = 'request';
 // 设置拦截器
 const stop = useInterceptor(event, {
   invoke: (args) => {
-    args[0].url = 'https://www.example.com/' + args[0].url;
+    args[0].url = `https://www.example.com/${args[0].url}`;
   },
   success: (response) => {
     console.log('interceptor-success', response);

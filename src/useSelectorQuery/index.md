@@ -5,8 +5,8 @@
 ```typescript
 import { useSelectorQuery } from '@uni-helper/uni-use';
 
-const { select, getBoundingClientRect, getFields, getScrollOffset, getContext } =
-  useSelectorQuery();
+const { select, getBoundingClientRect, getFields, getScrollOffset, getContext }
+  = useSelectorQuery();
 
 // 获取 NodeRef
 const node = select('#id');

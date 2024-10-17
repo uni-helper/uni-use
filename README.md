@@ -60,8 +60,8 @@ npm install @uni-helper/uni-use @vueuse/core@9
 对于 `vite + vue3` 项目，请先设置 `build.target` 为 `ES6`。
 
 ```typescript
-import { defineConfig } from 'vite';
 import uni from '@dcloudio/vite-plugin-uni';
+import { defineConfig } from 'vite';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -73,9 +73,9 @@ export default defineConfig({
     exclude: ['vue-demi'],
   },
   plugins: [
-    ...,
+    // ...,
     uni(),
-    ...,
+    // ...,
   ],
 });
 ```
@@ -107,10 +107,10 @@ export function createApp() {
 ```typescript
 // vite.config.ts
 import { fileURLToPath } from 'node:url';
-import { defineConfig } from 'vitest/config';
-import autoImport from 'unplugin-auto-import/vite';
-import { uniuseAutoImports } from '@uni-helper/uni-use';
 import uni from '@dcloudio/vite-plugin-uni';
+import { uniuseAutoImports } from '@uni-helper/uni-use';
+import autoImport from 'unplugin-auto-import/vite';
+import { defineConfig } from 'vitest/config';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -120,10 +120,9 @@ export default defineConfig({
         uniuseAutoImports(),
       ],
     }),
-    uni({ ... }),
+    uni({ /* ... */ }),
   ],
 });
-
 ```
 
 ### EventBus

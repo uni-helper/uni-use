@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { useStorage } from '.';
 import { useSetup } from '../../test';
 import { sleep } from '../utils';
-import { useStorage } from '.';
 
 describe('useStorage', () => {
   const getItemSpy = vi.spyOn(uni, 'getStorage');

@@ -1,5 +1,5 @@
-import type { RequiredOnly } from '../types';
 import type { AppJson } from '@dcloudio/uni-cli-shared';
+import type { RequiredOnly } from '../types';
 import { computed, ref } from 'vue';
 import { tryOnBackPress } from '../tryOnBackPress';
 import { pathResolve } from '../utils';

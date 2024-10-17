@@ -1,6 +1,6 @@
-import type { MaybeComputedRef } from '../types';
 import type { ConfigurableEventFilter, ConfigurableFlush } from '@vueuse/core';
 import type { Ref } from 'vue';
+import type { MaybeComputedRef } from '../types';
 import { watchWithFilter } from '@vueuse/core';
 import { ref } from 'vue';
 import { useInterceptor } from '../useInterceptor';

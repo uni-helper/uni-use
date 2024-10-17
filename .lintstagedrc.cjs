@@ -1,8 +1,7 @@
 module.exports = {
-  '*.md': 'markdownlint --fix --ignore-path=.gitignore',
-  './src/*.{js,cjs,mjs,ts,cts,mts}': () => [
-    'tsc --noEmit',
-    'eslint --fix --cache',
-    'publint',
+  '*.{js,cjs,mjs,ts,cts,mts,md}': () => [
+    'pnpm check:types',
+    'pnpm lint:eslint',
+    'pnpm lint:publint',
   ],
 };

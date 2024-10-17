@@ -18,5 +18,9 @@ screenBrightness.value = 0;
 ```typescript
 import { useScreenBrightness } from '@uni-helper/uni-use';
 
-const screenBrightness = useScreenBrightness('', { onError: (error) => { ... } });
+const screenBrightness = useScreenBrightness('', {
+  onError: (error) => {
+    console.log(error);
+  }
+});
 ```
