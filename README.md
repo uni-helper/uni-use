@@ -135,7 +135,7 @@ export default defineConfig({
 
 ## 资源
 
-- [改动日志](https://github.com/uni-helper/uni-use/tree/main/CHANGELOG.md)
+- [改动日志](/CHANGELOG.md)
 
 ## 致谢
 

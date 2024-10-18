@@ -16,7 +16,7 @@ export default async () => {
     lang: 'zh-CN',
     base: '/uni-use/',
     srcDir: '.',
-    srcExclude: ['!(docs|src)/**'],
+    // srcExclude: ['!(docs|src)/**'],
     rewrites: {
       'docs/:name.md': ':name.md',
       'docs/:doc/:name.md': ':doc/:name.md',
@@ -30,7 +30,7 @@ export default async () => {
       nav: [
         { text: '指南', link: '/guide/' },
         { text: 'API', link: '/apis/' },
-        { text: 'ChangeLog', link: 'https://github.com/uni-helper/uni-use/blob/main/CHANGELOG.md' },
+        { text: 'ChangeLog', link: '/CHANGELOG.md' },
       ],
 
       sidebar: {
@@ -48,7 +48,7 @@ export default async () => {
               },
               {
                 text: '更新日志',
-                link: 'https://github.com/uni-helper/uni-use/blob/main/CHANGELOG.md',
+                link: '/CHANGELOG.md',
               },
               {
                 text: '所有函数',
