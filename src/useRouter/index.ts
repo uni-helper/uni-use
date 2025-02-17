@@ -1,5 +1,6 @@
 import type { AppJson } from '@dcloudio/uni-cli-shared';
 import type { RequiredOnly } from '../types';
+import qs from 'fast-querystring';
 import { computed, ref } from 'vue';
 import { tryOnBackPress } from '../tryOnBackPress';
 import { pathResolve } from '../utils';
@@ -79,34 +80,71 @@ function warpPromiseOptions<T = any>(
   };
 }
 
+type LocationUrl = string | HBuilderX.PageURIString;
+type LocationQueryRaw = Record<string, unknown>;
+
+interface QueryOptions {
+  url: LocationUrl;
+  query?: LocationQueryRaw;
+}
+
+type SwitchTabOptions = UniNamespace.SwitchTabOptions;
+type NavigateToOptions = UniNamespace.NavigateToOptions & QueryOptions;
+type RedirectToOptions = UniNamespace.RedirectToOptions & QueryOptions;
+type ReLaunchOptions = UniNamespace.ReLaunchOptions & QueryOptions;
+type NavigateBackOptions = UniNamespace.NavigateBackOptions;
+
+function buildUrl(url: LocationUrl, query?: LocationQueryRaw) {
+  if (!query) {
+    return url;
+  }
+
+  const serializedQuery = qs.stringify(query);
+
+  if (!serializedQuery) {
+    return url;
+  }
+
+  return url.includes('?') ? `${url}&${serializedQuery}` : `${url}?${serializedQuery}`;
+}
+
+function buildOptions<T extends QueryOptions>(options: T) {
+  const { url, query, ...opts } = options;
+
+  return {
+    ...opts,
+    url: buildUrl(url, query),
+  };
+}
+
 /** 切换 tabbar 页面 */
-function switchTab(options: UniNamespace.SwitchTabOptions): Promise<any> {
+function switchTab(options: SwitchTabOptions): Promise<any> {
   return new Promise((resolve, reject) => {
     uni.switchTab(warpPromiseOptions(options, resolve, reject));
   });
 }
 
-function navigateTo(options: UniNamespace.NavigateToOptions) {
+function navigateTo(options: NavigateToOptions) {
   return new Promise((resolve, reject) => {
-    uni.navigateTo(warpPromiseOptions(options, resolve, reject));
+    uni.navigateTo(warpPromiseOptions(buildOptions(options), resolve, reject));
   });
 }
 
-function redirectTo(options: UniNamespace.RedirectToOptions) {
+function redirectTo(options: RedirectToOptions) {
   return new Promise((resolve, reject) => {
-    uni.redirectTo(warpPromiseOptions(options, resolve, reject));
+    uni.redirectTo(warpPromiseOptions(buildOptions(options), resolve, reject));
   });
 }
 
 /** 重定向，并清空当前页面栈 */
-function reLaunch(options: UniNamespace.ReLaunchOptions): Promise<any> {
+function reLaunch(options: ReLaunchOptions): Promise<any> {
   return new Promise((resolve, reject) => {
-    uni.reLaunch(warpPromiseOptions(options, resolve, reject));
+    uni.reLaunch(warpPromiseOptions(buildOptions(options), resolve, reject));
   });
 }
 
 /** 后退 */
-function back(options?: UniNamespace.NavigateBackOptions): Promise<any> {
+function back(options?: NavigateBackOptions): Promise<any> {
   return new Promise((resolve, reject) => {
     uni.navigateBack(warpPromiseOptions(options || {}, resolve, reject));
   });
@@ -189,12 +227,12 @@ export function useRouter(options: UseRouterOptions = {}) {
   }
 
   /** 路由跳转 */
-  function navigate(options: UniNamespace.NavigateToOptions): Promise<any> {
+  function navigate(options: NavigateToOptions): Promise<any> {
     return trySwitchTab(tryTabBar, navigateTo, options);
   }
 
   /** 路由重定向 */
-  function redirect(options: UniNamespace.RedirectToOptions): Promise<any> {
+  function redirect(options: RedirectToOptions): Promise<any> {
     return trySwitchTab(tryTabBar, redirectTo, options);
   }
 

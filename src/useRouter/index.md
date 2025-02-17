@@ -39,4 +39,10 @@ router.reLaunch({ url: '/pages/auth/login' });
 
 // 后退
 router.back();
+
+// 支持携带 query 参数（navigate、redirect、reLaunch）
+// 参数值最终都会被序列化为 string 类型，并且中文字符会被 URL 编码，请注意处理！
+// 仅简单参数推荐使用该方式，复杂参数请使用 https://uniapp.dcloud.net.cn/api/router.html#event-channel 或者其他方式。
+router.navigate({ url: '/pages/topics/index', query: { a: 1, b: 2 } }); // => /pages/topics/index?a=1&b=2
+router.navigate({ url: '/pages/topics/index?c=1', query: { a: 1, b: 2 } }); // => /pages/topics/index?c=1&a=1&b=2
 ```
