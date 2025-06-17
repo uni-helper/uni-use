@@ -88,7 +88,7 @@ export function useRequest<T = any>(
 export function useRequest<T = any>(
   ...args: any[]
 ): OverallUseRequestReturn<T> & PromiseLike<OverallUseRequestReturn<T>> {
-  let url: string = '';
+  let url: string | undefined;
 
   const tmpArgs = [...args]; // copy
   if (tmpArgs.length > 0 && isString(tmpArgs[0])) {
