@@ -39,7 +39,7 @@ npm install @uni-helper/uni-use @vueuse/core@9
 
 ## 使用
 
-详情请看 [`uni-use`函数列表](./src/index.md)
+详情请看 [uni-use 函数列表](https://uni-helper.github.io/uni-use/apis.html)
 
 ## 其它
 
@@ -135,7 +135,7 @@ export default defineConfig({
 
 ## 资源
 
-- [改动日志](/CHANGELOG.md)
+- [改动日志](https://uni-helper.github.io/uni-use/CHANGELOG.html)
 
 ## 致谢
 
