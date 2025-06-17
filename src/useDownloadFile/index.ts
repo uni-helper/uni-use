@@ -193,9 +193,9 @@ export function useDownloadFile<T = any>(
         const result
           // @ts-expect-error no types
           = r?.data
-          ?? ({
-            tempFilePath: r?.tempFilePath,
-          } as unknown as T);
+            ?? ({
+              tempFilePath: r?.tempFilePath,
+            } as unknown as T);
         data.value = result;
         onSuccess(result);
       },

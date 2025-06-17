@@ -83,14 +83,14 @@ export default defineConfig({
 然后在 `src/main.ts` 或 `src/main.js` 处自行添加 polyfill。以下是使用 [core-js](https://github.com/zloirock/core-js) 的示例（需要自行安装 `core-js`），你也可以使用 [es-shims](https://github.com/es-shims)。
 
 ```typescript
-import 'core-js/actual/array/iterator';
-import 'core-js/actual/promise';
-import 'core-js/actual/object/assign';
-import 'core-js/actual/promise/finally';
 // 你可以根据需要自行添加额外的 polyfills
 // import 'core-js/actual/object/values'
 import { createSSRApp } from 'vue';
 import App from './App.vue';
+import 'core-js/actual/array/iterator';
+import 'core-js/actual/promise';
+import 'core-js/actual/object/assign';
+import 'core-js/actual/promise/finally';
 
 export function createApp() {
   const app = createSSRApp(App);
