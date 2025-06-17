@@ -76,33 +76,32 @@ export interface UseRequestOptions<T = any> {
 
 export function useRequest<T = any>(
   url: string,
-  config?: UniApp.RequestOptions,
+  config?: Partial<UniApp.RequestOptions>,
   options?: UseRequestOptions,
 ): StrictUseRequestReturn<T> & PromiseLike<StrictUseRequestReturn<T>>;
 export function useRequest<T = any>(
   config?: UniApp.RequestOptions,
+  options?: UseRequestOptions,
 ): EasyUseRequestReturn<T> & PromiseLike<EasyUseRequestReturn<T>>;
 
 /** uni.request 的封装 */
 export function useRequest<T = any>(
   ...args: any[]
 ): OverallUseRequestReturn<T> & PromiseLike<OverallUseRequestReturn<T>> {
-  const url: string | undefined = typeof args[0] === 'string' ? args[0] : undefined;
-  const argsPlaceholder = isString(url) ? 1 : 0;
-  const defaultOptions: UseRequestOptions<T> = {
-    immediate: !!argsPlaceholder,
+  let url: string = '';
+
+  const tmpArgs = [...args]; // copy
+  if (tmpArgs.length > 0 && isString(tmpArgs[0])) {
+    // 取出 tmpArgs[0] 作为 url
+    url = tmpArgs.shift();
+  }
+
+  const defaultConfig: Partial<UniApp.RequestOptions> = { ...(tmpArgs[0] ?? {}) };
+  const options: UseRequestOptions<T> = {
+    immediate: !!url,
     shallow: true,
+    ...(tmpArgs[1] ?? {}),
   };
-  let defaultConfig: Partial<UniApp.RequestOptions> = {};
-  let options: UseRequestOptions<T> = defaultOptions;
-
-  if (args.length > 0 + argsPlaceholder) {
-    defaultConfig = args[0 + argsPlaceholder];
-  }
-
-  if (args.length === 3) {
-    options = args[0 + argsPlaceholder];
-  }
 
   const {
     initialData,
