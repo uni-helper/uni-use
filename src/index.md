@@ -25,6 +25,7 @@
 - [usePrevPage](./usePrevPage/index.md)
 - [usePrevRoute](./usePrevRoute/index.md)
 - [useProvider](./useProvider/index.md)
+- [useQuery](./useQuery/index.md)
 - [useRequest](./useRequest/index.md)
 - [useRoute](./useRoute/index.md)
 - [useRouter](./useRouter/index.md)
