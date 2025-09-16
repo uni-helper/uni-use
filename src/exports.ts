@@ -23,6 +23,7 @@ export * from './usePreferredLanguage';
 export * from './usePrevPage';
 export * from './usePrevRoute';
 export * from './useProvider';
+export * from './useQuery';
 export * from './useRequest';
 export * from './useRoute';
 export * from './useRouter';
