@@ -2,8 +2,6 @@ import type { MaybeRefOrGetter } from 'vue';
 import { computed, ref, toValue } from 'vue';
 import { tryOnLoad } from '../tryOnLoad';
 
-export type AnyObject = Record<string, any>;
-
 export interface UseQueryOptions {
   /**
    * 是否自动解析 JSON 字符串
@@ -29,28 +27,32 @@ export function tryParseJson(value: any): any {
     return value;
   }
 
-  try {
-    // 首先尝试直接解析
-    return JSON.parse(trimmed);
-  }
-  catch {
+  const isJsonLike = (s: string) =>
+    (s.startsWith('{') && s.endsWith('}')) || (s.startsWith('[') && s.endsWith(']'));
+
+  // 仅在看起来是对象/数组时才解析，避免把 '123'、'true' 等原始类型字符串强转
+  if (isJsonLike(trimmed)) {
     try {
-      // 如果直接解析失败，尝试先进行 URL 解码再解析
-      const decoded = decodeURIComponent(trimmed);
-      // 检查解码后是否看起来像 JSON
-      if (
-        (decoded.startsWith('{') && decoded.endsWith('}'))
-        || (decoded.startsWith('[') && decoded.endsWith(']'))
-      ) {
-        return JSON.parse(decoded);
-      }
-      return value;
+      return JSON.parse(trimmed);
     }
     catch {
-      // 如果都解析失败，返回原始字符串
-      return value;
+      /* ignore */
     }
   }
+
+  // 尝试 URL 解码（把 + 视为空格），再进行解析
+  try {
+    const decoded = decodeURIComponent(trimmed.replace(/\+/g, '%20')).trim();
+    if (isJsonLike(decoded)) {
+      return JSON.parse(decoded);
+    }
+  }
+  catch {
+    /* ignore */
+  }
+
+  // 都不匹配则返回原始值
+  return value;
 }
 
 /**
@@ -59,14 +61,14 @@ export function tryParseJson(value: any): any {
  * @param options 选项
  * @returns 处理后的参数对象
  */
-function processParams(params: AnyObject, options: UseQueryOptions): AnyObject {
+function processParams(params: Record<string, any>, options: UseQueryOptions): Record<string, any> {
   const { parseJson = true } = options;
 
   if (!parseJson) {
     return params;
   }
 
-  const processed: AnyObject = {};
+  const processed: Record<string, any> = {};
 
   for (const [key, value] of Object.entries(params)) {
     processed[key] = tryParseJson(value);
@@ -83,14 +85,14 @@ function processParams(params: AnyObject, options: UseQueryOptions): AnyObject {
  * @returns 包含 query 对象和 value 的响应式数据
  */
 export function useQuery(key?: MaybeRefOrGetter<string>, options: UseQueryOptions = {}) {
-  const query = ref<AnyObject>({});
+  const query = ref<Record<string, any>>({});
 
   tryOnLoad((q) => {
     const rawParams = q || {};
     query.value = processParams(rawParams, options);
   });
 
-  const value = computed(() => (key ? query.value[toValue(key)] : null));
+  const value = computed(() => (key != null ? query.value[toValue(key)] : null));
 
   return { query, value };
 }
