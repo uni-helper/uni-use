@@ -133,6 +133,12 @@ export default defineConfig({
 
 `@uni-helper/uni-use` 本身使用 [TypeScript](https://www.typescriptlang.org/) 开发，拥有类型提示。
 
+## 贡献者
+
+<a href="https://github.com/uni-helper/uni-use/graphs/contributors">
+  <img alt="Contributors" src="https://contrib.rocks/image?repo=uni-helper/uni-use" />
+</a>
+
 ## 资源
 
 - [改动日志](https://uni-helper.github.io/uni-use/CHANGELOG.html)
