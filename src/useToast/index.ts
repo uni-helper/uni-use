@@ -1,5 +1,5 @@
 import type { MaybeComputedRef } from '../types';
-import { resolveUnref } from '@vueuse/core';
+import { toValue } from 'vue';
 
 export interface UniShowToastOptions extends UniApp.ShowToastOptions {}
 export type ShowToastOptions = MaybeComputedRef<UniShowToastOptions>;
@@ -23,8 +23,8 @@ export function useToast(options?: UseToastOptions) {
   return function showToast(newOptions?: ShowToastOptions) {
     uni.showToast(
       {
-        ...resolveUnref(options),
-        ...resolveUnref(newOptions),
+        ...toValue(options),
+        ...toValue(newOptions),
       },
     );
     /**

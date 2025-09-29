@@ -1,7 +1,7 @@
 import type { ConfigurableEventFilter, ConfigurableFlush, RemovableRef } from '@vueuse/core';
 import type { MaybeComputedRef } from '../types';
-import { resolveUnref, watchWithFilter } from '@vueuse/core';
-import { ref, shallowRef } from 'vue';
+import { watchWithFilter } from '@vueuse/core';
+import { ref, shallowRef, toValue } from 'vue';
 import { isFunction } from '../utils';
 
 export interface UseGlobalDataOptions<T extends object | undefined>
@@ -58,7 +58,7 @@ export function useGlobalData<T extends object | undefined>(
 
   const app = ref(getApp());
 
-  const rawInit: T = resolveUnref(initialValue);
+  const rawInit: T = toValue(initialValue);
 
   const data = (shallow ? shallowRef : ref)(initialValue) as RemovableRef<T>;
 

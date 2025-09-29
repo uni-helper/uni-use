@@ -1,6 +1,5 @@
 import type { MaybeComputedRef } from '../types';
-import { resolveUnref } from '@vueuse/core';
-import { reactive } from 'vue';
+import { reactive, toValue } from 'vue';
 
 export interface UniShowActionSheetOptions extends Omit<UniApp.ShowActionSheetOptions, 'itemList'> {
   /** 文字数组 */
@@ -24,8 +23,8 @@ export function useActionSheet(options?: UseActionSheetOptions) {
     return uni.showActionSheet(
       reactive({
         itemList: [],
-        ...resolveUnref(options),
-        ...resolveUnref(newOptions),
+        ...toValue(options),
+        ...toValue(newOptions),
       }),
     );
   };

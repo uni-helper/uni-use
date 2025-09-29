@@ -1,6 +1,6 @@
 import type { ComputedRef, Ref } from 'vue';
 import type { MaybeComputedRef } from '../types';
-import { type Fn, resolveRef, tryOnScopeDispose, useIntervalFn } from '@vueuse/core';
+import { type Fn, toRef, tryOnScopeDispose, useIntervalFn } from '@vueuse/core';
 import { computed, ref, watch } from 'vue';
 import { tryOnUnload } from '../tryOnUnload';
 
@@ -190,7 +190,7 @@ export function useSocket<Data = any>(
   const isConnecting = computed(() => status.value === 'CONNECTING');
   const isClosed = computed(() => status.value === 'CLOSED');
   const taskRef = ref<SocketTask | undefined>();
-  const urlRef = resolveRef(url);
+  const urlRef = toRef(url);
 
   let heartbeatPause: Fn | undefined;
   let heartbeatResume: Fn | undefined;

@@ -1,8 +1,8 @@
 import type { ConfigurableEventFilter, ConfigurableFlush, RemovableRef, WatchPausableReturn } from '@vueuse/core';
 import type { Ref } from 'vue';
 import type { MaybeComputedRef } from '../types';
-import { pausableWatch, resolveUnref, tryOnMounted, tryOnScopeDispose } from '@vueuse/core';
-import { ref, shallowRef } from 'vue';
+import { pausableWatch, tryOnMounted, tryOnScopeDispose } from '@vueuse/core';
+import { ref, shallowRef, toValue } from 'vue';
 import { useInterceptor } from '../useInterceptor';
 
 export type UniStorageLike = Pick<Uni, 'getStorage' | 'setStorage' | 'removeStorage'>;
@@ -186,7 +186,7 @@ export function useStorage<T extends DataType>(
     storage = uni as UniStorageLike,
   } = options;
 
-  const rawInit = resolveUnref(initialValue) as T;
+  const rawInit = toValue(initialValue) as T;
 
   const type = guessSerializerType<T>(rawInit);
 

@@ -1,6 +1,5 @@
 import type { MaybeComputedRef } from '../types';
-import { resolveUnref } from '@vueuse/core';
-import { reactive } from 'vue';
+import { reactive, toValue } from 'vue';
 
 export interface UniShowLoadingOptions extends UniApp.ShowLoadingOptions {}
 export type ShowLoadingOptions = MaybeComputedRef<UniShowLoadingOptions>;
@@ -21,8 +20,8 @@ export function useLoading(options?: UseLoadingOptions) {
   function showLoading(newOptions?: ShowLoadingOptions) {
     uni.showLoading(
       reactive({
-        ...resolveUnref(options),
-        ...resolveUnref(newOptions),
+        ...toValue(options),
+        ...toValue(newOptions),
       }),
     );
     return hideLoading;

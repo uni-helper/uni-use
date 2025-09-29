@@ -1,6 +1,5 @@
 import type { MaybeComputedRef } from '../types';
-import { resolveUnref } from '@vueuse/core';
-import { reactive } from 'vue';
+import { reactive, toValue } from 'vue';
 
 export interface UniScanCodeOptions extends UniApp.ScanCodeOptions {}
 export type ScanCodeOptions = MaybeComputedRef<UniScanCodeOptions>;
@@ -20,8 +19,8 @@ export function useScanCode(options?: UseScanCodeOptions) {
   return function scanCode(newOptions?: ScanCodeOptions) {
     return uni.scanCode(
       reactive({
-        ...resolveUnref(options),
-        ...resolveUnref(newOptions),
+        ...toValue(options),
+        ...toValue(newOptions),
       }),
     );
   };
