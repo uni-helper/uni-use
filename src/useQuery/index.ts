@@ -1,5 +1,5 @@
 import type { MaybeRefOrGetter } from 'vue';
-import { computed, ref, toValue } from 'vue';
+import { computed, ref, unref } from 'vue';
 import { tryOnLoad } from '../tryOnLoad';
 
 export interface UseQueryOptions {
@@ -92,7 +92,13 @@ export function useQuery(key?: MaybeRefOrGetter<string>, options: UseQueryOption
     query.value = processParams(rawParams, options);
   });
 
-  const value = computed(() => (key != null ? query.value[toValue(key)] : null));
+  const keyStr = key == null
+    ? null
+    : typeof key === 'function'
+      ? key()
+      : unref(key);
+
+  const value = computed(() => (keyStr != null ? query.value[keyStr] : null));
 
   return { query, value };
 }
