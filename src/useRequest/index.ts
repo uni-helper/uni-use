@@ -1,6 +1,5 @@
-import { until } from '@vueuse/core';
-import { type Ref, ref, type ShallowRef, shallowRef } from 'vue';
-import { isString, noop } from '../utils';
+import { isRef, type Ref, ref, type ShallowRef, shallowRef, watch } from 'vue';
+import { isString, noop, once } from '../utils';
 
 /** 对标 @vueuse/core v10.7.1 useAxios */
 
@@ -39,11 +38,11 @@ export interface StrictUseRequestReturn<T> extends UseRequestReturn<T> {
   execute: (
     url?: string | UniApp.RequestOptions,
     config?: UniApp.RequestOptions,
-  ) => PromiseLike<StrictUseRequestReturn<T>>;
+  ) => Promise<StrictUseRequestReturn<T>>;
 }
 export interface EasyUseRequestReturn<T> extends UseRequestReturn<T> {
   /** 手动开始下载 */
-  execute: (url: string, config?: UniApp.RequestOptions) => PromiseLike<EasyUseRequestReturn<T>>;
+  execute: (url: string, config?: UniApp.RequestOptions) => Promise<EasyUseRequestReturn<T>>;
 }
 export type OverallUseRequestReturn<T> = StrictUseRequestReturn<T> | EasyUseRequestReturn<T>;
 
@@ -75,33 +74,41 @@ export interface UseRequestOptions<T = any> {
 }
 
 export function useRequest<T = any>(
-  url: string,
+  url: string | Ref<string>,
   config?: Partial<UniApp.RequestOptions>,
   options?: UseRequestOptions,
-): StrictUseRequestReturn<T> & PromiseLike<StrictUseRequestReturn<T>>;
+): StrictUseRequestReturn<T> & Promise<StrictUseRequestReturn<T>>;
 export function useRequest<T = any>(
   config?: UniApp.RequestOptions,
   options?: UseRequestOptions,
-): EasyUseRequestReturn<T> & PromiseLike<EasyUseRequestReturn<T>>;
+): EasyUseRequestReturn<T> & Promise<EasyUseRequestReturn<T>>;
 
 /** uni.request 的封装 */
 export function useRequest<T = any>(
   ...args: any[]
-): OverallUseRequestReturn<T> & PromiseLike<OverallUseRequestReturn<T>> {
-  let url: string | undefined;
+): OverallUseRequestReturn<T> & Promise<OverallUseRequestReturn<T>> {
+  let urlRef = ref<string | undefined>();
 
   const tmpArgs = [...args]; // copy
-  if (tmpArgs.length > 0 && isString(tmpArgs[0])) {
-    // 取出 tmpArgs[0] 作为 url
-    url = tmpArgs.shift();
+  if (tmpArgs.length > 0) {
+    if (isString(tmpArgs[0])) {
+      urlRef.value = tmpArgs.shift(); // 取出 tmpArgs[0] 作为 url
+    }
+    else if (isRef(tmpArgs[0]) && isString(tmpArgs[0].value)) {
+      urlRef = shallowRef(tmpArgs.shift());
+    }
   }
 
   const defaultConfig: Partial<UniApp.RequestOptions> = { ...(tmpArgs[0] ?? {}) };
   const options: UseRequestOptions<T> = {
-    immediate: !!url,
+    immediate: !!urlRef.value,
     shallow: true,
     ...(tmpArgs[1] ?? {}),
   };
+
+  if (!urlRef.value) {
+    urlRef.value = defaultConfig.url;
+  }
 
   const {
     initialData,
@@ -143,18 +150,22 @@ export function useRequest<T = any>(
     }
   };
 
-  const promise = {
-    then: (...args) => waitUntilFinished().then(...args),
-    catch: (...args) => waitUntilFinished().catch(...args),
-  } as Promise<OverallUseRequestReturn<T>>;
+  let resolve = (_: any) => {};
+  let reject = (_: any) => {};
+  const promise = new Promise((resolv, rej) => {
+    resolve = resolv;
+    reject = rej;
+  });
 
   let executeCounter = 0;
-  const execute: OverallUseRequestReturn<T>['execute'] = (
-    executeUrl: string | UniApp.RequestOptions | undefined = url,
+  const execute = ((
+    executeUrl?: string | UniApp.RequestOptions,
     config: Partial<UniApp.RequestOptions> = {},
   ) => {
     error.value = undefined;
-    const _url = typeof executeUrl === 'string' ? executeUrl : url ?? config.url;
+    const _url = typeof executeUrl === 'string'
+      ? executeUrl
+      : urlRef.value ?? config.url;
 
     if (_url === undefined) {
       error.value = {
@@ -176,6 +187,16 @@ export function useRequest<T = any>(
       ...(typeof executeUrl === 'object' ? executeUrl : config),
       url: _url,
     };
+
+    // 解决 uni.request complete 未触发问题
+    const completeOnce = once((r) => {
+      _config.complete?.(r);
+      onFinish(r);
+      if (currentExecuteCounter === executeCounter) {
+        loading(false);
+      }
+    });
+
     task.value = uni.request({
       ..._config,
       success: (r) => {
@@ -187,23 +208,23 @@ export function useRequest<T = any>(
         const result = r.data as unknown as T;
         data.value = result;
         onSuccess(result);
+
+        completeOnce(r);
       },
       fail: (e) => {
         _config.fail?.(e);
         error.value = e;
         onError(e);
+
+        completeOnce(e);
       },
       complete: (r) => {
-        _config.complete?.(r);
-        onFinish(r);
-        if (currentExecuteCounter === executeCounter) {
-          loading(false);
-        }
+        completeOnce(r);
       },
     });
     return promise;
-  };
-  if (immediate && url) {
+  }) as OverallUseRequestReturn<T>['execute'];
+  if (immediate && !!urlRef.value) {
     (execute as StrictUseRequestReturn<T>['execute'])();
   }
 
@@ -221,16 +242,18 @@ export function useRequest<T = any>(
     execute,
   } as OverallUseRequestReturn<T>;
 
-  function waitUntilFinished() {
-    return new Promise<OverallUseRequestReturn<T>>((resolve, reject) => {
-      until(isFinished)
-        .toBe(true)
-        .then(() => (error.value ? reject(error.value) : resolve(result)));
-    });
-  }
+  watch(isFinished, (finished) => {
+    if (finished) {
+      error.value ? reject(error.value) : resolve(result);
+    }
+  });
 
-  return {
+  const mixed = {
     ...result,
-    ...promise,
-  };
+    then: promise.then.bind(promise),
+    catch: promise.catch.bind(promise),
+    finally: promise.finally.bind(promise),
+  } as OverallUseRequestReturn<T> & Promise<OverallUseRequestReturn<T>>;
+
+  return mixed;
 }
