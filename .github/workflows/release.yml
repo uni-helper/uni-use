@@ -72,7 +72,6 @@ jobs:
       - name: 安装 PNPM
         uses: pnpm/action-setup@v4
         with:
-          version: latest
           run_install: false
 
       - name: 配置 pnpm store 目录
