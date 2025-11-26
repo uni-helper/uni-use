@@ -125,14 +125,14 @@ export function isThenable(promise: any) {
  * @param fn 需要包装的原始函数
  * @returns 返回一个新的函数，该函数只会执行一次原始函数，后续调用将返回第一次执行的结果
  */
-export function once<F extends (...args: any[]) => any>(fn: F): F {
+export function once<F extends (...args: any[]) => any>(fn: F, ctx: unknown = null): F {
   let res: any;
   let f: typeof fn | undefined = fn;
 
   // 返回包装后的函数，确保原始函数只执行一次
   return ((...args) => {
     if (f) {
-      res = f(...args);
+      res = f.apply(ctx, args);
       f = undefined; // 执行一次就设为 undefined
     }
     return res;

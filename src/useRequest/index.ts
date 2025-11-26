@@ -189,7 +189,7 @@ export function useRequest<T = any>(
     };
 
     // 解决 uni.request complete 未触发问题
-    const completeOnce = once((r) => {
+    const complete = once((r) => {
       _config.complete?.(r);
       onFinish(r);
       if (currentExecuteCounter === executeCounter) {
@@ -209,18 +209,16 @@ export function useRequest<T = any>(
         data.value = result;
         onSuccess(result);
 
-        completeOnce(r);
+        complete(r);
       },
       fail: (e) => {
         _config.fail?.(e);
         error.value = e;
         onError(e);
 
-        completeOnce(e);
+        complete(e);
       },
-      complete: (r) => {
-        completeOnce(r);
-      },
+      complete,
     });
     return promise;
   }) as OverallUseRequestReturn<T>['execute'];
