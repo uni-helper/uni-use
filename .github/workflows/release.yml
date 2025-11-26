@@ -217,6 +217,5 @@ jobs:
         id: release_tag
         uses: ncipollo/release-action@v1
         with:
-          artifacts: 'dist/**/*,package.json,LICENSE,README.md'
           bodyFile: changelog.md
           tag: ${{ steps.get_tags.outputs.current_tag }}
