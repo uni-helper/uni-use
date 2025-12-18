@@ -88,7 +88,7 @@ jobs:
             ${{ runner.os }}-pnpm-store-
 
       - name: 启用 corepack
-        run: corepack enable
+        run: npm install -g -f npm@latest corepack@latest && corepack enable
 
       - name: 安装依赖
         run: pnpm i --frozen-lockfile
@@ -210,8 +210,6 @@ jobs:
 
       - name: 发布 npm 包
         run: pnpm publish --access public --no-git-checks
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: 引用 changelog.md 创建发版
         id: release_tag
