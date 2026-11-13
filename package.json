@@ -1,7 +1,7 @@
 {
   "name": "@uni-helper/uni-use",
   "type": "module",
-  "version": "0.19.17",
+  "version": "0.20.0",
   "packageManager": "pnpm@12.18.0",
   "devEngines": {
     "runtime": {
