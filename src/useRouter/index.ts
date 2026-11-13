@@ -1,115 +1,118 @@
-import type { AppJson } from '@dcloudio/uni-cli-shared';
-import type { RequiredOnly } from '../types';
-import { computed, ref } from 'vue';
-import { tryOnBackPress } from '../tryOnBackPress';
-import { pathResolve } from '../utils';
+import type { AppJson } from '@dcloudio/uni-cli-shared'
+import type { ComputedRef, Ref } from 'vue'
+import type { RequiredOnly } from '../types'
+import { computed, ref } from 'vue'
+import { tryOnBackPress } from '../tryOnBackPress'
+import { pathResolve } from '../utils'
 
 /** 获取当前页面栈信息 */
-const pages = ref<Page.PageInstance[]>([]);
-const pageLength = computed(() => pages.value.length); // 使用 computed 可触发依赖项更新
+const pages = ref<Page.PageInstance[]>([])
+const pageLength = computed(() => pages.value.length) // 使用 computed 可触发依赖项更新
 
 /** 获取当前页信息 */
 // at is not supported
-const current = computed(() => pages.value?.[pageLength.value - 1]);
+const current = computed(() => pages.value?.[pageLength.value - 1])
 /** 获取前一页信息 */
 const prev = computed(() =>
-  pageLength.value > 1 ? pages.value[pageLength.value - 2] : pages.value?.[pageLength.value - 1],
-);
+  pageLength.value > 1
+    ? pages.value[pageLength.value - 2]
+    : pages.value?.[pageLength.value - 1],
+)
 
 /** 获取当前页路由信息 */
-const currentUrl = computed(() => current.value?.route || '/');
+const currentUrl = computed(() => current.value?.route || '/')
 /** 获取前一页路由信息 */
-const prevUrl = computed(() => prev.value?.route);
+const prevUrl = computed(() => prev.value?.route)
 
-let tabBarUrls: string[] = [];
+let tabBarUrls: string[] = []
 
-let isAddInterceptors = false;
-let isBindBackPress = false;
+let isAddInterceptors = false
+let isBindBackPress = false
 
-function initIfNotInited() {
+function initIfNotInited(): void {
   // 默认路由的拦截
   if (!isAddInterceptors) {
-    isAddInterceptors = true;
+    isAddInterceptors = true
 
-    uni.addInterceptor('navigateTo', { complete: refreshCurrentPages });
-    uni.addInterceptor('redirectTo', { complete: refreshCurrentPages });
-    uni.addInterceptor('reLaunch', { complete: refreshCurrentPages });
-    uni.addInterceptor('switchTab', { complete: refreshCurrentPages });
-    uni.addInterceptor('navigateBack', { complete: refreshCurrentPages });
+    uni.addInterceptor('navigateTo', { complete: refreshCurrentPages })
+    uni.addInterceptor('redirectTo', { complete: refreshCurrentPages })
+    uni.addInterceptor('reLaunch', { complete: refreshCurrentPages })
+    uni.addInterceptor('switchTab', { complete: refreshCurrentPages })
+    uni.addInterceptor('navigateBack', { complete: refreshCurrentPages })
   }
 
   //  对实体按键 / 顶部导航栏返回按钮进行监听
   if (!isBindBackPress) {
-    isBindBackPress = true;
+    isBindBackPress = true
 
     tryOnBackPress((e) => {
       if (e.from === 'navigateBack') {
-        return;
+        return
       }
-      refreshCurrentPages();
+      refreshCurrentPages()
     }).catch(() => {
-      isBindBackPress = false;
-    });
+      isBindBackPress = false
+    })
   }
 
   // 每次 init 都更新一次
-  refreshCurrentPages();
+  refreshCurrentPages()
 }
 
-function refreshCurrentPages() {
-  pages.value = getCurrentPages();
+function refreshCurrentPages(): void {
+  pages.value = getCurrentPages()
 }
 
 function warpPromiseOptions<T = any>(
   opts: T,
   resolve: (res: any) => any,
   reject: (err: any) => any,
-) {
-  let { fail, success, complete } = opts as any;
+): T & { success: (res: any) => any, fail: (err: any) => any, complete: any } {
+  let { fail, success, complete } = opts as any
 
-  fail = fail || ((err: any) => err);
-  success = success || ((res: any) => res);
-  complete = complete || (() => {});
+  fail = fail || ((err: any) => err)
+  success = success || ((res: any) => res)
+  complete = complete || (() => {})
 
   return {
     ...opts,
     success: (res: any) => resolve(success(res)),
     fail: (err: any) => reject(fail(err)),
     complete,
-  };
+  }
 }
 
 /** 切换 tabbar 页面 */
 function switchTab(options: UniNamespace.SwitchTabOptions): Promise<any> {
   return new Promise((resolve, reject) => {
-    uni.switchTab(warpPromiseOptions(options, resolve, reject));
-  });
+    uni.switchTab(warpPromiseOptions(options, resolve, reject))
+  })
 }
 
-function navigateTo(options: UniNamespace.NavigateToOptions) {
+function navigateTo(options: UniNamespace.NavigateToOptions): Promise<any> {
   return new Promise((resolve, reject) => {
-    uni.navigateTo(warpPromiseOptions(options, resolve, reject));
-  });
+    uni.navigateTo(warpPromiseOptions(options, resolve, reject))
+  })
 }
 
-function redirectTo(options: UniNamespace.RedirectToOptions) {
+function redirectTo(options: UniNamespace.RedirectToOptions): Promise<any> {
   return new Promise((resolve, reject) => {
-    uni.redirectTo(warpPromiseOptions(options, resolve, reject));
-  });
+    uni.redirectTo(warpPromiseOptions(options, resolve, reject))
+  })
 }
 
 /** 重定向，并清空当前页面栈 */
 function reLaunch(options: UniNamespace.ReLaunchOptions): Promise<any> {
   return new Promise((resolve, reject) => {
-    uni.reLaunch(warpPromiseOptions(options, resolve, reject));
-  });
+    uni.reLaunch(warpPromiseOptions(options, resolve, reject))
+  })
 }
 
 /** 后退 */
 function back(options?: UniNamespace.NavigateBackOptions): Promise<any> {
   return new Promise((resolve, reject) => {
-    uni.navigateBack(warpPromiseOptions(options || {}, resolve, reject));
-  });
+    uni.navigateBack(warpPromiseOptions(options || {}, resolve, reject))
+  })
 }
 
 /** 路由跳转 `tryTabBar = true` 时，自动判断是否 tabbar 页面 */
@@ -120,34 +123,40 @@ function trySwitchTab<FN extends typeof navigateTo | typeof redirectTo>(
 ): Promise<any> {
   // 不尝试 tabbar 页面，直接跳转
   if (!tryTabBar) {
-    return forward(options);
+    return forward(options)
   }
 
   // 未设置 tabBarList，先尝试 switchTab，报错再尝试跳转
   if (tabBarUrls.length === 0) {
-    return switchTab(options).catch(() => forward(options));
+    return switchTab(options).catch(() => forward(options))
   }
 
-  const url = typeof options.url === 'string' ? options.url : options.url.toString();
+  const url = typeof options.url === 'string'
+    ? options.url
+    : options.url.toString()
 
   // 如果是 tabBar 页面，则直接 switchTab
   if (isTabBarPath(url)) {
-    return switchTab(options);
+    return switchTab(options)
   }
 
   // 不是 tabBar，直接跳转
-  return forward(options);
+  return forward(options)
 }
 
-function isTabBarPath(path: string) {
-  const target = pathResolve(path);
-  const tabbar = tabBarUrls.find(url => url === target || `${url}/` === target);
-  return tabbar !== undefined;
+/** 去掉前导斜杠、结尾斜杠和查询串，pages.json 的 pagePath 和解析后的路由就能直接比 */
+function normalizePath(path: string): string {
+  return path.split('?')[0].replace(/^\//, '').replace(/\/$/, '')
 }
 
-type UniTabBarItem = Exclude<AppJson['tabBar'], undefined>['list'][number];
+function isTabBarPath(path: string): boolean {
+  const target = normalizePath(pathResolve(path))
+  return tabBarUrls.some(url => normalizePath(url) === target)
+}
 
-type TabBarItem = RequiredOnly<UniTabBarItem, 'pagePath'>;
+type UniTabBarItem = Exclude<AppJson['tabBar'], undefined>['list'][number]
+
+type TabBarItem = RequiredOnly<UniTabBarItem, 'pagePath'>
 
 export interface UseRouterOptions {
   /**
@@ -155,14 +164,46 @@ export interface UseRouterOptions {
    *
    * @default true
    */
-  tryTabBar?: boolean;
+  tryTabBar?: boolean
   /**
    * 全局配置，仅需要配置一次
    * 配置 tryTabBar 开启时，会判断跳转页面
    *
    * 可填入 pages.json 里的 tabBar list 或仅 tabbar 的 url 数组
    */
-  tabBarList?: Array<TabBarItem | string>;
+  tabBarList?: Array<TabBarItem | string>
+}
+
+/** `useRouter` 的返回值 */
+export interface UseRouterReturn {
+  /** 获取当前页面栈信息 */
+  pages: Ref<Page.PageInstance[]>
+  /** 获取当前页信息 */
+  current: ComputedRef<Page.PageInstance | undefined>
+  /** @deprecated 弃用，请使用 current */
+  page: ComputedRef<Page.PageInstance | undefined>
+  /** 获取当前页路由信息 */
+  currentUrl: ComputedRef<string>
+  /** @deprecated 弃用，请使用 currentUrl */
+  route: ComputedRef<string>
+  /** 获取前一页信息 */
+  prev: ComputedRef<Page.PageInstance | undefined>
+  /** @deprecated 弃用，请使用 prev */
+  prevPage: ComputedRef<Page.PageInstance | undefined>
+  /** 获取前一页路由信息 */
+  prevUrl: ComputedRef<string | undefined>
+  /** @deprecated 弃用，请使用 prevUrl */
+  prevRoute: ComputedRef<string | undefined>
+  /** 切换 tabbar 页面 */
+  switchTab: (options: UniNamespace.SwitchTabOptions) => Promise<any>
+  /** 路由跳转 */
+  navigate: (options: UniNamespace.NavigateToOptions) => Promise<any>
+  /** 路由重定向 */
+  redirect: (options: UniNamespace.RedirectToOptions) => Promise<any>
+  /** 重定向，并清空当前页面栈 */
+  reLaunch: (options: UniNamespace.ReLaunchOptions) => Promise<any>
+  /** 后退 */
+  back: (options?: UniNamespace.NavigateBackOptions) => Promise<any>
 }
 
 /**
@@ -170,32 +211,32 @@ export interface UseRouterOptions {
  *
  * UNIAPP 官方文档 @see https://uniapp.dcloud.net.cn/api/router.html
  */
-export function useRouter(options: UseRouterOptions = {}) {
-  initIfNotInited();
+export function useRouter(options: UseRouterOptions = {}): UseRouterReturn {
+  initIfNotInited()
 
-  const { tryTabBar = true } = options;
+  const { tryTabBar = true } = options
 
   if (options.tabBarList) {
-    const urls: string[] = [];
+    const urls: string[] = []
     for (const item of options.tabBarList) {
       if (typeof item === 'string') {
-        urls.push(item);
+        urls.push(item)
       }
       else {
-        urls.push(item.pagePath);
+        urls.push(item.pagePath)
       }
     }
-    tabBarUrls = urls.filter(url => !!url);
+    tabBarUrls = urls.filter(url => !!url)
   }
 
   /** 路由跳转 */
   function navigate(options: UniNamespace.NavigateToOptions): Promise<any> {
-    return trySwitchTab(tryTabBar, navigateTo, options);
+    return trySwitchTab(tryTabBar, navigateTo, options)
   }
 
   /** 路由重定向 */
   function redirect(options: UniNamespace.RedirectToOptions): Promise<any> {
-    return trySwitchTab(tryTabBar, redirectTo, options);
+    return trySwitchTab(tryTabBar, redirectTo, options)
   }
 
   return {
@@ -227,5 +268,5 @@ export function useRouter(options: UseRouterOptions = {}) {
     reLaunch,
     /** 后退 */
     back,
-  };
+  }
 }

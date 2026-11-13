@@ -1,13 +1,22 @@
-import type { MaybeRefOrGetter } from 'vue';
-import { computed, ref, unref } from 'vue';
-import { tryOnLoad } from '../tryOnLoad';
+import type { ComputedRef, MaybeRefOrGetter, Ref } from 'vue'
+import { computed, ref } from 'vue'
+import { tryOnLoad } from '../tryOnLoad'
+import { unrefValue } from '../utils'
+
+/** `useQuery` 的返回值 */
+export interface UseQueryReturn {
+  /** 页面参数，键值对形式 */
+  query: Ref<Record<string, any>>
+  /** 指定 key 时的参数值 */
+  value: ComputedRef<any>
+}
 
 export interface UseQueryOptions {
   /**
    * 是否自动解析 JSON 字符串
    * @default true
    */
-  parseJson?: boolean;
+  parseJson?: boolean
 }
 
 /**
@@ -17,23 +26,23 @@ export interface UseQueryOptions {
  */
 export function tryParseJson(value: any): any {
   if (typeof value !== 'string') {
-    return value;
+    return value
   }
 
   // 去除首尾空白字符
-  const trimmed = value.trim();
+  const trimmed = value.trim()
 
   if (!trimmed) {
-    return value;
+    return value
   }
 
-  const isJsonLike = (s: string) =>
-    (s.startsWith('{') && s.endsWith('}')) || (s.startsWith('[') && s.endsWith(']'));
+  const isJsonLike = (s: string): boolean =>
+    (s.startsWith('{') && s.endsWith('}')) || (s.startsWith('[') && s.endsWith(']'))
 
   // 仅在看起来是对象/数组时才解析，避免把 '123'、'true' 等原始类型字符串强转
   if (isJsonLike(trimmed)) {
     try {
-      return JSON.parse(trimmed);
+      return JSON.parse(trimmed)
     }
     catch {
       /* ignore */
@@ -42,9 +51,9 @@ export function tryParseJson(value: any): any {
 
   // 尝试 URL 解码（把 + 视为空格），再进行解析
   try {
-    const decoded = decodeURIComponent(trimmed.replace(/\+/g, '%20')).trim();
+    const decoded = decodeURIComponent(trimmed.replace(/\+/g, '%20')).trim()
     if (isJsonLike(decoded)) {
-      return JSON.parse(decoded);
+      return JSON.parse(decoded)
     }
   }
   catch {
@@ -52,7 +61,7 @@ export function tryParseJson(value: any): any {
   }
 
   // 都不匹配则返回原始值
-  return value;
+  return value
 }
 
 /**
@@ -62,19 +71,19 @@ export function tryParseJson(value: any): any {
  * @returns 处理后的参数对象
  */
 function processParams(params: Record<string, any>, options: UseQueryOptions): Record<string, any> {
-  const { parseJson = true } = options;
+  const { parseJson = true } = options
 
   if (!parseJson) {
-    return params;
+    return params
   }
 
-  const processed: Record<string, any> = {};
+  const processed: Record<string, any> = {}
 
   for (const [key, value] of Object.entries(params)) {
-    processed[key] = tryParseJson(value);
+    processed[key] = tryParseJson(value)
   }
 
-  return processed;
+  return processed
 }
 
 /**
@@ -84,21 +93,23 @@ function processParams(params: Record<string, any>, options: UseQueryOptions): R
  * @param options 选项配置
  * @returns 包含 query 对象和 value 的响应式数据
  */
-export function useQuery(key?: MaybeRefOrGetter<string>, options: UseQueryOptions = {}) {
-  const query = ref<Record<string, any>>({});
+export function useQuery(key?: MaybeRefOrGetter<string>, options: UseQueryOptions = {}): UseQueryReturn {
+  const query = ref<Record<string, any>>({})
 
   tryOnLoad((q) => {
-    const rawParams = q || {};
-    query.value = processParams(rawParams, options);
-  });
+    const rawParams = q || {}
+    query.value = processParams(rawParams, options)
+  })
 
-  const keyStr = key == null
-    ? null
-    : typeof key === 'function'
-      ? key()
-      : unref(key);
+  const value = computed(() => {
+    if (key == null) {
+      return null
+    }
+    const keyValue = unrefValue(key)
+    return keyValue != null
+      ? query.value[keyValue]
+      : null
+  })
 
-  const value = computed(() => (keyStr != null ? query.value[keyStr] : null));
-
-  return { query, value };
+  return { query, value }
 }

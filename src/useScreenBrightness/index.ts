@@ -1,27 +1,26 @@
-import type { ConfigurableEventFilter, ConfigurableFlush } from '@vueuse/core';
-import type { Ref } from 'vue';
-import type { MaybeComputedRef } from '../types';
-import { watchWithFilter } from '@vueuse/core';
-import { ref } from 'vue';
-import { useInterceptor } from '../useInterceptor';
+import type { Ref } from 'vue'
+import type { ConfigurableEventFilter, ConfigurableFlush, MaybeComputedRef } from '../types'
+import { ref } from 'vue'
+import { useInterceptor } from '../useInterceptor'
+import { watchWithFilter } from '../utils'
 
-function getScreenBrightness() {
+function getScreenBrightness(): Promise<number> {
   return new Promise<number>((resolve, reject) => {
     uni.getScreenBrightness({
       success: ({ value }) => resolve(value),
       fail: error => reject(error),
-    });
-  });
+    })
+  })
 }
 
-function setScreenBrightness(value: number) {
+function setScreenBrightness(value: number): Promise<void> {
   return new Promise<void>((resolve, reject) => {
     uni.setScreenBrightness({
       value,
       success: () => resolve(),
       fail: error => reject(error),
-    });
-  });
+    })
+  })
 }
 
 export interface UseScreenBrightnessOptions extends ConfigurableEventFilter, ConfigurableFlush {
@@ -30,13 +29,13 @@ export interface UseScreenBrightnessOptions extends ConfigurableEventFilter, Con
    *
    * @default true
    */
-  listenToScreenBrightnessChanges?: boolean;
+  listenToScreenBrightnessChanges?: boolean
   /**
    * 错误回调
    *
    * 默认用 `console.error` 打印错误
    */
-  onError?: (error: unknown) => void;
+  onError?: (error: unknown) => void
 }
 
 /**
@@ -47,43 +46,53 @@ export interface UseScreenBrightnessOptions extends ConfigurableEventFilter, Con
 export function useScreenBrightness(
   initialValue: MaybeComputedRef<number>,
   options: UseScreenBrightnessOptions = {},
-) {
+): Ref<number> {
   const {
     listenToScreenBrightnessChanges = true,
     onError = error => console.error(error),
     flush = 'pre',
     eventFilter,
-  } = options;
+  } = options
 
-  const data = ref(initialValue) as Ref<number>;
+  const data = ref(initialValue) as Ref<number>
 
-  async function read() {
+  /** 最近一次从系统读到的亮度，写回时跳过它 */
+  let lastRead: number | undefined
+
+  async function read(): Promise<void> {
     try {
-      data.value = await getScreenBrightness();
+      const value = await getScreenBrightness()
+      lastRead = value
+      data.value = value
     }
     catch (error) {
-      onError(error);
+      onError(error)
     }
   }
 
-  read();
+  read()
 
   if (listenToScreenBrightnessChanges) {
-    useInterceptor('setScreenBrightness', { complete: () => setTimeout(() => read(), 0) });
+    useInterceptor('setScreenBrightness', {
+      complete: () => setTimeout(read, 0),
+    })
   }
 
   watchWithFilter(
     data,
     async () => {
+      if (data.value === lastRead) {
+        return
+      }
       try {
-        await setScreenBrightness(data.value);
+        await setScreenBrightness(data.value)
       }
       catch (error) {
-        onError(error);
+        onError(error)
       }
     },
     { flush, eventFilter },
-  );
+  )
 
-  return data;
+  return data
 }

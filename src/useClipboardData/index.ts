@@ -1,11 +1,10 @@
-import type { ConfigurableEventFilter, ConfigurableFlush } from '@vueuse/core';
-import type { Ref } from 'vue';
-import type { MaybeComputedRef } from '../types';
-import { watchWithFilter } from '@vueuse/core';
-import { ref } from 'vue';
-import { useInterceptor } from '../useInterceptor';
+import type { Ref } from 'vue'
+import type { ConfigurableEventFilter, ConfigurableFlush, MaybeComputedRef } from '../types'
+import { ref } from 'vue'
+import { useInterceptor } from '../useInterceptor'
+import { watchWithFilter } from '../utils'
 
-function getClipboardData(showToast = true) {
+function getClipboardData(showToast = true): Promise<string> {
   return new Promise<string>((resolve, reject) => {
     uni.getClipboardData({
       showToast,
@@ -13,17 +12,17 @@ function getClipboardData(showToast = true) {
       fail: error => reject(error),
       complete: () => {
         if (!showToast) {
-          uni.hideToast();
+          uni.hideToast()
         }
       },
-    });
+    })
     if (!showToast) {
-      uni.hideToast();
+      uni.hideToast()
     }
-  });
+  })
 }
 
-function setClipboardData(data: string, showToast = true) {
+function setClipboardData(data: string, showToast = true): Promise<string> {
   return new Promise<string>((resolve, reject) => {
     uni.setClipboardData({
       data,
@@ -32,14 +31,14 @@ function setClipboardData(data: string, showToast = true) {
       fail: error => reject(error),
       complete: () => {
         if (!showToast) {
-          uni.hideToast();
+          uni.hideToast()
         }
       },
-    });
+    })
     if (!showToast) {
-      uni.hideToast();
+      uni.hideToast()
     }
-  });
+  })
 }
 
 export interface UseClipboardDataOptions extends ConfigurableEventFilter, ConfigurableFlush {
@@ -48,19 +47,19 @@ export interface UseClipboardDataOptions extends ConfigurableEventFilter, Config
    *
    * @default true
    */
-  showToast?: boolean;
+  showToast?: boolean
   /**
    * 是否监听 setClipboardData 引起的剪切板变化
    *
    * @default true
    */
-  listenToClipboardDataChanges?: boolean;
+  listenToClipboardDataChanges?: boolean
   /**
    * 错误回调
    *
    * 默认用 `console.error` 打印错误
    */
-  onError?: (error: unknown) => void;
+  onError?: (error: unknown) => void
 }
 
 /**
@@ -71,44 +70,54 @@ export interface UseClipboardDataOptions extends ConfigurableEventFilter, Config
 export function useClipboardData(
   initialValue: MaybeComputedRef<string>,
   options: UseClipboardDataOptions = {},
-) {
+): Ref<string> {
   const {
     showToast = true,
     listenToClipboardDataChanges = true,
     onError = error => console.error(error),
     flush = 'pre',
     eventFilter,
-  } = options;
+  } = options
 
-  const data = ref(initialValue) as Ref<string>;
+  const data = ref(initialValue) as Ref<string>
 
-  async function read() {
+  /** 最近一次从剪切板读到的值，写回时跳过它，避免一进页面就覆盖剪切板 */
+  let lastRead: string | undefined
+
+  async function read(): Promise<void> {
     try {
-      data.value = await getClipboardData(showToast);
+      const value = await getClipboardData(showToast)
+      lastRead = value
+      data.value = value
     }
     catch (error) {
-      onError(error);
+      onError(error)
     }
   }
 
-  read();
+  read()
 
   if (listenToClipboardDataChanges) {
-    useInterceptor('setClipboardData', { complete: () => setTimeout(() => read(), 0) });
+    useInterceptor('setClipboardData', {
+      complete: () => setTimeout(read, 0),
+    })
   }
 
   watchWithFilter(
     data,
     async () => {
+      if (data.value === lastRead) {
+        return
+      }
       try {
-        await setClipboardData(data.value);
+        await setClipboardData(data.value, showToast)
       }
       catch (error) {
-        onError(error);
+        onError(error)
       }
     },
     { flush, eventFilter },
-  );
+  )
 
-  return data;
+  return data
 }
