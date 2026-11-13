@@ -2,12 +2,24 @@
   "name": "@uni-helper/uni-use",
   "type": "module",
   "version": "0.19.17",
-  "packageManager": "pnpm@8.14.1",
+  "packageManager": "pnpm@12.18.0",
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": "26",
+      "onFail": "warn"
+    },
+    "packageManager": {
+      "name": "pnpm",
+      "version": "12.18.0",
+      "onFail": "warn"
+    }
+  },
   "description": "uni-app (vue3) 组合式工具集",
   "author": {
     "name": "ModyQyW",
-    "email": "wurui-dev@foxmail.com",
-    "url": "https://modyqyw.github.io"
+    "email": "wurui.dev@gmail.com",
+    "url": "https://modyqyw.top"
   },
   "license": "MIT",
   "homepage": "https://github.com/uni-helper/uni-use#readme",
@@ -40,7 +52,7 @@
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
+  "types": "./dist/index.d.mts",
   "files": [
     "dist"
   ],
@@ -48,24 +60,24 @@
     "node": ">=18"
   },
   "scripts": {
-    "build": "unbuild",
-    "check:deps": "taze -f",
-    "check:types": "tsc --noEmit",
-    "commit": "git-cz",
-    "dev": "unbuild --stub",
-    "lint": "pnpm build && conc \"pnpm:check:types\" \"pnpm:lint:eslint\" \"pnpm:lint:publint\"",
-    "lint:eslint": "eslint . --fix --cache",
-    "lint:publint": "publint",
-    "prepare": "is-ci || simple-git-hooks",
+    "build": "tsdown",
+    "typecheck": "tsc --noEmit",
+    "dev": "tsdown --watch",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "prepublishOnly": "pnpm run build",
-    "release": "pnpm install && pnpm run lint && bumpp",
+    "release": "bumpp",
     "test": "vitest",
-    "docs:dev": "vitepress dev",
-    "docs:build": "vitepress build",
-    "docs:preview": "vitepress preview"
+    "docs:dev": "pnpm -C docs run dev",
+    "docs:build": "pnpm -C docs run build",
+    "docs:preview": "pnpm -C docs run preview",
+    "play:mp-weixin": "npm -C playground run dev:mp-weixin",
+    "build:mp-weixin": "npm -C playground run build:mp-weixin",
+    "play:h5": "npm -C playground run dev:h5",
+    "build:h5": "npm -C playground run build:h5"
   },
   "peerDependencies": {
-    "typescript": "^4.5.0 || ^5.0.0",
+    "typescript": "^5.0.0 || ^6.0.0",
     "vue": "^3.2.47"
   },
   "peerDependenciesMeta": {
@@ -74,43 +86,25 @@
     }
   },
   "dependencies": {
-    "@dcloudio/types": "^3.4.7",
-    "@dcloudio/uni-app": "^3.0.0-3090920231225001",
-    "@vueuse/core": "^9.13.0"
+    "@dcloudio/types": "catalog:",
+    "@dcloudio/uni-app": "catalog:"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^3.8.0",
-    "@commitlint/cli": "^18.4.4",
-    "@commitlint/config-conventional": "^18.4.4",
-    "@commitlint/prompt": "^18.4.4",
-    "@dcloudio/uni-cli-shared": "^3.0.0-3090920231225001",
-    "@dcloudio/vite-plugin-uni": "3.0.0-3090920231225001",
-    "@tsconfig/node18": "^18.2.2",
-    "@types/node": "^20.11.0",
-    "@typescript-eslint/eslint-plugin": "^8.9.0",
-    "@typescript-eslint/parser": "^8.9.0",
-    "bumpp": "^9.2.1",
-    "commitizen": "^4.3.0",
-    "concurrently": "^8.2.2",
-    "eslint": "^9.12.0",
-    "fast-glob": "^3.3.2",
-    "is-ci": "^3.0.1",
-    "lint-staged": "^15.2.0",
-    "prettier": "^3.2.2",
-    "publint": "^0.2.7",
-    "simple-git-hooks": "^2.9.0",
-    "taze": "^0.13.1",
-    "ts-node": "^10.9.2",
-    "tsx": "^4.7.0",
-    "typescript": "^5.3.3",
-    "unbuild": "^2.0.0",
-    "vite": "^4.0.0",
-    "vitepress": "^1.4.0",
-    "vitest": "^1.4.0",
-    "vue": "^3.4"
-  },
-  "publishConfig": {
-    "access": "public",
-    "registry": "https://registry.npmjs.org/"
+    "@dcloudio/uni-app": "catalog:",
+    "@dcloudio/uni-cli-shared": "catalog:",
+    "@dcloudio/uni-h5": "catalog:",
+    "@dcloudio/uni-h5-vue": "catalog:",
+    "@dcloudio/vite-plugin-uni": "catalog:",
+    "@tsconfig/node26": "catalog:",
+    "@types/node": "catalog:",
+    "@uni-helper/eslint-config": "catalog:",
+    "bumpp": "catalog:",
+    "eslint": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vitepress": "catalog:",
+    "vitest": "catalog:",
+    "vue": "catalog:"
   }
 }

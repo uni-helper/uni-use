@@ -1,14 +1,23 @@
 {
-  "extends": "@tsconfig/node18",
+  "extends": "@tsconfig/node26",
   "compilerOptions": {
     "target": "ESNext",
     "lib": ["ESNext", "DOM"],
-    "baseUrl": ".",
     "module": "ESNext",
-    "moduleResolution": "Node",
+    "moduleResolution": "Bundler",
     "resolveJsonModule": true,
-    "typeRoots": ["types"]
+    "types": ["node", "@dcloudio/types"],
+    "strict": true
   },
-  "include": ["**/*.js", "**/*.cjs", "**/*.mjs", "**/*.ts", "**/*.cts", "**/*.mts"],
-  "exclude": ["**/node_modules", "**/dist", "playground"]
+  "include": ["src/**/*.ts", "test/**/*.ts", "*.ts"],
+  "exclude": [
+    "**/dist/**",
+    "**/node_modules/**",
+    "**/client/**",
+    "**/playground/**",
+    "**/examples/**",
+    "**/fixtures/**",
+    "**/interactive/**",
+    "**/test/dts/**"
+  ]
 }

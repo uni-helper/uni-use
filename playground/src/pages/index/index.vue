@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { useClipboardData } from '@uni-helper/uni-use';
-import { ref, watchEffect } from 'vue';
+import { useClipboardData } from '@uni-helper/uni-use'
+import { ref, watchEffect } from 'vue'
 
-const title = ref('Hello');
+const title = ref('Hello')
 
-const clipboardData = useClipboardData('');
+const clipboardData = useClipboardData('')
 watchEffect(() => {
-  console.log('clipboardData', clipboardData.value);
-});
+  console.log('clipboardData', clipboardData.value)
+})
 function onUpdateClipboardData() {
-  clipboardData.value = Math.random().toFixed(2).toString();
+  clipboardData.value = Math.random().toFixed(2).toString()
 }
 </script>
 

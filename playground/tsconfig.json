@@ -5,7 +5,7 @@
     "lib": ["esnext", "dom"],
     "useDefineForClassFields": true,
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "Bundler",
     "paths": {
       "@/*": ["./src/*"]
     },
@@ -13,7 +13,8 @@
     "types": ["vite/client", "@dcloudio/types"],
     "strict": true,
     "sourceMap": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "skipLibCheck": true
   },
   "vueCompilerOptions": {
     "experimentalRuntimeMode": "runtime-uni-app",
