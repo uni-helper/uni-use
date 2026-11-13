@@ -6,7 +6,7 @@ hero:
   text: uni-app 组合式工具集
   tagline: 为 uni-app 量身打造的组合式工具集
   image:
-    src: /logo.png
+    src: /logo.svg
     alt: UniUse
   actions:
     - theme: brand
@@ -14,18 +14,17 @@ hero:
       link: /guide/
     - theme: alt
       text: API 集合
-      link: /apis
+      link: /api/
 
 features:
   - icon: 🎛
     title: 功能丰富
-    details: 提供了丰富的功能，封装了 uni-app 中常用的功能。
+    details: 封装了 uni-app 中常用的能力。
   - icon: 💚
     title: 开箱即用
-    details: 开箱即用的支持了 uni-app Vue3 的 Composition API。
+    details: 开箱即用地支持 uni-app Vue3 的 Composition API。
   - icon: 🦾
     title: 类型安全
-    details: 所有函数都支持 TS 类型推导，无需手动标注类型
+    details: 所有函数都支持 TS 类型推导，无需手动标注类型。
 ---
 
-<HomeTeam />
