@@ -1,22 +1,26 @@
-import type { ComputedRef, Ref } from 'vue';
-import type { MaybeComputedRef } from '../types';
-import { type Fn, resolveRef, tryOnScopeDispose, useIntervalFn } from '@vueuse/core';
-import { computed, ref, watch } from 'vue';
-import { tryOnUnload } from '../tryOnUnload';
+import type { ComputedRef, Ref } from 'vue'
+import type { Fn, MaybeComputedRef } from '../types'
+import { computed, ref, shallowRef, watch } from 'vue'
+import { tryOnScopeDispose } from '../tryOnScopeDispose'
+import { tryOnUnload } from '../tryOnUnload'
+import { toValueRef, useIntervalFn } from '../utils'
 
 /** 对标 @vueuse/core v10.7.1 useWebSocket */
 
-export type SocketTask = UniApp.SocketTask;
+export type SocketTask = UniApp.SocketTask
 
-export type SocketStatus = 'OPEN' | 'CONNECTING' | 'CLOSED';
+/** 断线期间最多缓存多少条待发消息 */
+const MAX_BUFFERED_DATA = 100
 
-const DEFAULT_PING_MESSAGE = 'ping';
+export type SocketStatus = 'OPEN' | 'CONNECTING' | 'CLOSED'
+
+const DEFAULT_PING_MESSAGE = 'ping'
 
 export interface UseSocketOptions {
-  onConnected?: (task: SocketTask, result: UniApp.OnSocketOpenCallbackResult) => void;
-  onClosed?: (task: SocketTask, result: UniApp.OnSocketCloseOptions) => void;
-  onError?: (task: SocketTask, error: UniApp.GeneralCallbackResult) => void;
-  onMessage?: (task: SocketTask, result: UniApp.OnSocketMessageCallbackResult) => void;
+  onConnected?: (task: SocketTask, result: UniApp.OnSocketOpenCallbackResult) => void
+  onClosed?: (task: SocketTask, result: UniApp.OnSocketCloseOptions) => void
+  onError?: (task: SocketTask, error: UniApp.GeneralCallbackResult) => void
+  onMessage?: (task: SocketTask, result: UniApp.OnSocketMessageCallbackResult) => void
 
   /**
    * 是否每过 x 毫秒发送一次心跳信号
@@ -31,22 +35,22 @@ export interface UseSocketOptions {
        *
        * @default 'ping'
        */
-      message?: string | ArrayBuffer;
+      message?: string | ArrayBuffer
 
       /**
        * 毫秒级时间间隔
        *
        * @default 1000
        */
-      interval?: number;
+      interval?: number
 
       /**
        * 毫秒级心跳信号响应超时时间
        *
        * @default 1000
        */
-      pongTimeout?: number;
-    };
+      pongTimeout?: number
+    }
 
   /**
    * 是否允许自动重连
@@ -63,83 +67,83 @@ export interface UseSocketOptions {
        *
        * @default -1
        */
-      retries?: number | (() => boolean);
+      retries?: number | (() => boolean)
 
       /**
        * 毫秒级重连延迟
        *
        * @default 1000
        */
-      delay?: number;
+      delay?: number
 
       /** 到达最大重连次数时触发 */
-      onFailed?: Fn;
-    };
+      onFailed?: Fn
+    }
 
   /**
    * 是否自动打开连接
    *
    * @default true
    */
-  immediate?: boolean;
+  immediate?: boolean
 
   /**
    * 是否自动关闭连接
    *
    * @default true
    */
-  autoClose?: boolean;
+  autoClose?: boolean
 
   /**
    * 是否多实例
    *
    * @default false
    */
-  multiple?: boolean;
+  multiple?: boolean
 
   /** 头部 */
-  headers?: Record<string, any>;
+  headers?: Record<string, any>
 
   /**
    * 请求方法
    *
    * @default 'GET'
    */
-  method?: 'OPTIONS' | 'GET' | 'HEAD' | 'POST' | 'PUT' | 'DELETE' | 'TRACE' | 'CONNECT';
+  method?: 'OPTIONS' | 'GET' | 'HEAD' | 'POST' | 'PUT' | 'DELETE' | 'TRACE' | 'CONNECT'
 
   /**
    * 一个或多个子协议字符串的列表
    *
    * @default [ ]
    */
-  protocols?: string[];
+  protocols?: string[]
 }
 
 export interface UseSocketReturn<T> {
   /** websocket 收到的最新数据的引用，可以观察到对传入信息的响应 */
-  data: Ref<T | null>;
+  data: Ref<T | null>
 
   /** 当前 websocket 状态，只能是 OPEN、CONNECTING 和 CLOSED 之一 */
-  status: Ref<SocketStatus>;
+  status: Ref<SocketStatus>
 
   /** 当前 websocket 是否处于 OPEN 状态 */
-  isOpen: ComputedRef<boolean>;
+  isOpen: ComputedRef<boolean>
 
   /** 当前 websocket 是否处于 CONNECTING 状态 */
-  isConnecting: ComputedRef<boolean>;
+  isConnecting: ComputedRef<boolean>
 
   /** 当前 websocket 是否处于 CLOSED 状态 */
-  isClosed: ComputedRef<boolean>;
+  isClosed: ComputedRef<boolean>
 
   /** 关闭 websocket 连接 */
-  close: SocketTask['close'];
+  close: SocketTask['close']
 
   /**
    * 打开 websocket 连接
    *
    * 如果存在已打开的 websocket 连接，会先关闭它再打开一个新的连接
    */
-  open: Fn;
+  open: Fn
 
   /**
    * 发送数据
@@ -147,17 +151,17 @@ export interface UseSocketReturn<T> {
    * @param data
    * @param useBuffer 当 websocket 连接尚未打开时，是否把数据存储在 buffer 中并在连接打开时发送它们。默认为 true。
    */
-  send: (data: string | ArrayBuffer, useBuffer?: boolean) => boolean;
+  send: (data: string | ArrayBuffer, useBuffer?: boolean) => boolean
 
   /** SocketTask 实例引用 */
-  task: Ref<SocketTask | undefined>;
+  task: Ref<SocketTask | undefined>
 }
 
 function resolveNestedOptions<T>(options: T | true): T {
   if (options === true) {
-    return {} as T;
+    return {} as T
   }
-  return options;
+  return options
 }
 
 /**
@@ -182,67 +186,84 @@ export function useSocket<Data = any>(
     headers,
     method = 'GET',
     protocols = [],
-  } = options;
+  } = options
 
-  const data: Ref<Data | null> = ref(null);
-  const status = ref<SocketStatus>('CLOSED');
-  const isOpen = computed(() => status.value === 'OPEN');
-  const isConnecting = computed(() => status.value === 'CONNECTING');
-  const isClosed = computed(() => status.value === 'CLOSED');
-  const taskRef = ref<SocketTask | undefined>();
-  const urlRef = resolveRef(url);
+  const data: Ref<Data | null> = ref(null)
+  const status = ref<SocketStatus>('CLOSED')
+  const isOpen = computed(() => status.value === 'OPEN')
+  const isConnecting = computed(() => status.value === 'CONNECTING')
+  const isClosed = computed(() => status.value === 'CLOSED')
+  // shallowRef：task 是平台句柄，不能被 Vue 包成响应式代理，否则身份判断永远不相等
+  const taskRef = shallowRef<SocketTask | undefined>()
+  const urlRef = toValueRef(url)
 
-  let heartbeatPause: Fn | undefined;
-  let heartbeatResume: Fn | undefined;
+  let heartbeatPause: Fn | undefined
+  let heartbeatResume: Fn | undefined
 
-  let explicitlyClosed = false;
-  let retried = 0;
+  let explicitlyClosed = false
+  let retried = 0
 
-  let bufferedData: (string | ArrayBuffer)[] = [];
+  let bufferedData: (string | ArrayBuffer)[] = []
 
-  let pongTimeoutWait: ReturnType<typeof setTimeout> | undefined;
+  let pongTimeoutWait: ReturnType<typeof setTimeout> | undefined
+  let retryTimeout: ReturnType<typeof setTimeout> | undefined
 
-  const _sendBuffer = () => {
+  const _sendBuffer = (): void => {
     if (bufferedData.length > 0 && taskRef.value && status.value === 'OPEN') {
       for (const buffer of bufferedData) {
-        taskRef.value.send({ data: buffer });
+        taskRef.value.send({ data: buffer })
       }
-      bufferedData = [];
+      bufferedData = []
     }
-  };
+  }
 
-  const resetHeartbeat = () => {
-    clearTimeout(pongTimeoutWait);
-    pongTimeoutWait = undefined;
-  };
+  const resetHeartbeat = (): void => {
+    clearTimeout(pongTimeoutWait)
+    pongTimeoutWait = undefined
+  }
+
+  const resetRetry = (): void => {
+    if (retryTimeout != null) {
+      clearTimeout(retryTimeout)
+      retryTimeout = undefined
+    }
+  }
 
   // 1000 表示正常关闭
   // https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent/code
   // https://uniapp.dcloud.net.cn/api/request/socket-task.html#sockettask-close
   const close: SocketTask['close'] = ({ code = 1000, reason } = {}) => {
+    resetRetry()
     if (!taskRef.value) {
-      return;
+      return
     }
-    explicitlyClosed = true;
-    heartbeatPause?.();
-    taskRef.value.close({ code, reason });
-  };
+    explicitlyClosed = true
+    resetHeartbeat()
+    heartbeatPause?.()
+    taskRef.value.close({ code, reason })
+    // 立刻丢掉引用，旧 task 的 onClose 就不会再改状态或触发重连
+    taskRef.value = undefined
+  }
 
-  const send = (data: string | ArrayBuffer, useBuffer = true) => {
+  const send = (data: string | ArrayBuffer, useBuffer = true): boolean => {
     if (!taskRef.value || status.value !== 'OPEN') {
       if (useBuffer) {
-        bufferedData.push(data);
+        bufferedData.push(data)
+        // 断线期间只保留最近的消息，避免内存一直涨
+        if (bufferedData.length > MAX_BUFFERED_DATA) {
+          bufferedData.shift()
+        }
       }
-      return false;
+      return false
     }
-    _sendBuffer();
-    taskRef.value.send({ data });
-    return true;
-  };
+    _sendBuffer()
+    taskRef.value.send({ data })
+    return true
+  }
 
-  const _init = () => {
+  const _init = (): void => {
     if (explicitlyClosed || urlRef.value === undefined) {
-      return;
+      return
     }
 
     const task = uni.connectSocket({
@@ -254,91 +275,107 @@ export function useSocket<Data = any>(
       complete: () => {
         // just for correct types
       },
-    } as UniApp.ConnectSocketOption) as unknown as UniApp.SocketTask;
-    taskRef.value = task;
-    status.value = 'CONNECTING';
+    } as UniApp.ConnectSocketOption) as unknown as UniApp.SocketTask
+    taskRef.value = task
+    status.value = 'CONNECTING'
 
     task.onOpen((result) => {
-      status.value = 'OPEN';
-      onConnected?.(task, result);
-      heartbeatResume?.();
-      _sendBuffer();
-    });
+      if (taskRef.value !== task) {
+        return
+      }
+      status.value = 'OPEN'
+      // 连上就清零，长连接里偶发断线不该把重试额度用光
+      retried = 0
+      onConnected?.(task, result)
+      heartbeatResume?.()
+      _sendBuffer()
+    })
 
     task.onClose((result) => {
-      status.value = 'CLOSED';
-      taskRef.value = undefined;
-      onClosed?.(task, result);
-      if (!explicitlyClosed && autoReconnect) {
-        const { retries = -1, delay = 1000, onFailed } = resolveNestedOptions(autoReconnect);
-        retried += 1;
-        if (typeof retries === 'number' && (retries < 0 || retried < retries)) {
-          setTimeout(_init, delay);
-        }
-        else if (typeof retries === 'function' && retries()) {
-          setTimeout(_init, delay);
-        }
-        else { onFailed?.(); }
+      if (taskRef.value === task) {
+        status.value = 'CLOSED'
+        taskRef.value = undefined
       }
-    });
+      resetHeartbeat()
+      heartbeatPause?.()
+      onClosed?.(task, result)
+
+      // 已经换成别的连接了就不重连，避免同时开两条
+      if (explicitlyClosed || !autoReconnect || (taskRef.value != null && taskRef.value !== task)) {
+        return
+      }
+      const { retries = -1, delay = 1000, onFailed } = resolveNestedOptions(autoReconnect)
+      retried += 1
+      if (typeof retries === 'number' && (retries < 0 || retried < retries)) {
+        retryTimeout = setTimeout(_init, delay)
+      }
+      else if (typeof retries === 'function' && retries()) {
+        retryTimeout = setTimeout(_init, delay)
+      }
+      else { onFailed?.() }
+    })
 
     task.onError((error) => {
-      onError?.(task, error);
-    });
+      onError?.(task, error)
+    })
 
     task.onMessage((result) => {
+      if (taskRef.value !== task) {
+        return
+      }
       if (heartbeat) {
-        resetHeartbeat();
-        const { message = DEFAULT_PING_MESSAGE } = resolveNestedOptions(heartbeat);
+        resetHeartbeat()
+        const { message = DEFAULT_PING_MESSAGE } = resolveNestedOptions(heartbeat)
         if (result.data === message) {
-          return;
+          return
         }
       }
-      data.value = result.data;
-      onMessage?.(task, result);
-    });
-  };
+      data.value = result.data
+      onMessage?.(task, result)
+    })
+  }
 
   if (heartbeat) {
     const {
       message = DEFAULT_PING_MESSAGE,
       interval = 1000,
       pongTimeout = 1000,
-    } = resolveNestedOptions(heartbeat);
+    } = resolveNestedOptions(heartbeat)
 
     const { pause, resume } = useIntervalFn(
       () => {
-        send(message, false);
+        send(message, false)
         if (pongTimeoutWait != null) {
-          return;
+          return
         }
         pongTimeoutWait = setTimeout(() => {
           // 明确关闭连接以避免重试
-          close({});
-        }, pongTimeout);
+          close({})
+        }, pongTimeout)
       },
       interval,
       { immediate: false },
-    );
+    )
 
-    heartbeatPause = pause;
-    heartbeatResume = resume;
+    heartbeatPause = pause
+    heartbeatResume = resume
   }
 
   if (autoClose) {
-    tryOnUnload(() => close({}));
-    tryOnScopeDispose(() => close({}));
+    tryOnUnload(() => close({}))
+    tryOnScopeDispose(() => close({}))
   }
 
-  const open = () => {
-    close({});
-    explicitlyClosed = false;
-    retried = 0;
-    _init();
-  };
+  const open = (): void => {
+    resetRetry()
+    close({})
+    explicitlyClosed = false
+    retried = 0
+    _init()
+  }
 
   if (immediate) {
-    watch(urlRef, open, { immediate: true });
+    watch(urlRef, open, { immediate: true })
   }
 
   return {
@@ -351,5 +388,5 @@ export function useSocket<Data = any>(
     send,
     open,
     task: taskRef,
-  };
+  }
 }
