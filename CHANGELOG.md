@@ -1,10 +1,140 @@
 # 改动日志
 
+## 0.20.0 (2026-11-13)
+
+本版本包含破坏性更新。升级前，先读「破坏性更新」一节。
+
+### 破坏性更新
+
+- build!: 移除 `@vueuse/core` 依赖。项目用到 `@vueuse/core` 时，必须自行安装。
+- build!: TypeScript 的 peer 范围改为 `^5.0.0 || ^6.0.0`。不再支持 TypeScript 4.5。
+- feat!: `useRequest`、`useDownloadFile`、`useUploadFile` 的 `data` 改用 `initialData` 初始化。升级前，首次请求完成前 `data` 是 `undefined`。
+- feat!: `useSocket` 的 `task` 在 `close()` 后变为 `undefined`。升级前，`task` 保留已关闭的连接。
+- feat!: `useSocket` 断线时最多缓存 100 条待发消息。超出上限时，丢弃最早的消息。
+
+### 新功能
+
+- feat: `useRequest`、`useDownloadFile`、`useUploadFile` 的返回值支持 `finally`。
+- feat: `useQuery` 的 `key` 支持 `ref`。`key` 变化后，`value` 跟着变化。
+- feat: `useRouter` 的 `tabBarList` 支持 `pages.json` 的 `pagePath` 格式。路径没有前导斜杠时也能命中。
+- feat: `useStorage` 在组件卸载时写入待写入的修改。100ms 防抖内的最后一次修改不再丢失。
+- feat: `useSocket` 连接成功后重置重试计数。长连接的偶发断线不再耗尽重试次数。
+
+### 修复
+
+- fix: 修复重复调用 `execute()` 时 `await` 返回上一次结果的问题。涉及 `useRequest`、`useDownloadFile`、`useUploadFile`。
+- fix: 修复 `useClipboardData` 读取剪切板后立即写回的问题。页面加载时会出现多余的 toast。
+- fix: 修复 `useScreenBrightness` 读取亮度后立即写回的问题。页面加载时会多一次系统写入。
+- fix: 修复 `useStorage` 在外部修改 storage 后重复写入的问题。
+- fix: 修复 `useSocket` 更换 `url` 后旧连接的回调仍修改状态的问题。修复前状态变为 `CLOSED`，并额外创建一条连接。
+- fix: 修复 `useStorage` 为每个 key 注册 6 个拦截器的问题。key 增多后，每次 storage 调用都遍历全部拦截器。
+- fix: 修复 `tryOnBackPress` 注释提到不存在的 `onError` 选项的问题。
+
+### 构建
+
+- build: 构建工具从 `unbuild` 改为 `tsdown`。
+- build: 移除 `commitlint`、`commitizen`、`lint-staged`、`simple-git-hooks`、`is-ci`、`tsx`、`ts-node`、`publint`、`taze`、`prettier`。
+- build: 依赖版本统一由 pnpm catalog 管理。
+- build: 开发环境改用 Node 26、pnpm 12、TypeScript 6、ESLint 10、Vite 5、Vitest 3。
+- build: `types` 字段指向 `dist/index.d.mts`。
+
+### 文档与测试
+
+- docs: 文档站移入 `docs/`。API 页面改为 `/api/<函数名>`。
+- docs: 文档站的链接去掉 `.html` 后缀。
+- test: 测试移入 `test/`。测试文件从 5 个增加到 11 个。
+
+## 0.19.17 (2025-11-26)
+
+- fix: `useRequest` 的 `url` 支持 `ref`，补充对应测试用例（#52）
+
+## 0.19.16 (2025-11-26)
+
+- fix: 补上 `vue-demi`，修复依赖缺失导致的报错（#60）
+- fix: 补充 `toValue` 的兼容实现，修复其未定义的问题
+
+## 0.19.15 (2025-09-16)
+
+- feat: 新增 `useQuery`
+- feat: `useRouter` 的 `tabBarList` 选项支持字符串数组
+- fix: `useRequest` 传参长度为 3 时 `options` 失效，`url` 默认值改为 `undefined`（#52）
+- fix: 切换页面后侧边栏链接不更新
+- docs: 文档站迁移到 VitePress，部署到 GitHub Pages
+
+## 0.19.14 (2024-09-04)
+
+- fix: `pathResolve` 对相对路径的解析
+- fix: 移除无用导入
+
+## 0.19.13 (2024-09-03)
+
+- fix: `useSelectorQuery` 的 `scrollToSelector` 可能为 `undefined`
+- fix: `usePageScroll` 的 `onPageScroll` 参数类型与必填处理
+- perf: `useToast` 去掉不必要的响应式声明
+- fix: 修正 `useInterceptor` 的测试用例
+
+## 0.19.12 (2024-06-26)
+
+- fix: 路由堆栈超出上限时的跳转回退（#41）
+
+## 0.19.11 (2024-06-14)
+
+- fix: 补上 `usePageScroll` 的导出
+- fix: `useInterceptor` 适配 uni-app 的 Promise 化行为，仅在返回 `undefined` 时转成 Promise
+- fix: 优化对 storage 变更的监听
+
+## 0.19.10 (2024-03-14)
+
+- fix: 避免重复调用拦截器，支持注册多个拦截器
+- fix: 补全 `useInterceptor` 的类型
+
+## 0.19.9 (2024-03-13)
+
+- feat: `useInterceptor` 支持同步方法
+- feat: 新增 `tryOnScopeDispose`
+- fix: 监听同步 storage 方法的变化，修正 `UniStorageLike` 类型
+- fix: 全局注册 `uni`
+- fix: `useStorage` 在生命周期内无法正常响应
+
+## 0.19.8 (2024-03-06)
+
+- fix: 修正 `try` 的语义与实现
+- fix: 避免重复绑定返回按钮
+
+## 0.19.7 (2024-03-04)
+
+- fix: `key` 不存在时 `useStorage` 初始化报错
+- feat: 补充测试用例
+
+## 0.19.6 (2024-01-17)
+
+- feat: 自动导入函数改名为 `uniuseAutoImports`，`UniUseAutoImports` 标记为废弃
+
+## 0.19.5 (2024-01-17)
+
+- fix: 降低 `@vueuse/core` 版本，避开 uni-app 的 vue-demi 问题
+
+## 0.19.4 (2024-01-17)
+
+- fix: 修正错误的 import
+
+## 0.19.3 (2024-01-17)
+
+- fix: 修复 `uni is not defined`
+
+## 0.19.2 (2024-01-17)
+
+- fix: 修复 `getCurrentPages is not defined`
+
+## 0.19.1 (2024-01-17)
+
+- 仅版本号变更，无代码改动
+
 ## 0.19.0 (2024-01-17)
 
 - fix: 重构 `useStorage` / `useStorageSync`，使其更贴合 `uniapp` 的使用习惯
 - feat: 强化 `useRouter`，增加功能。
-- feat: 增加 `uniUseAutoImports` 函数。
+- feat: 增加 `uniuseAutoImports` 函数。
 - feat: 增加 `tryOnBackPress` 函数
 
 ## 0.18.0 (2023-01-15)
@@ -41,6 +171,10 @@
 ## 0.14.0 (2023-07-28)
 
 - feat: 新增 `useSelectorQuery`，感谢 [edwinhuish](https://github.com/edwinhuish) 在 [#23](https://github.com/uni-helper/uni-use/pull/23) 的贡献！
+
+## 0.13.1 (2023-05-28)
+
+- docs: 更新 README
 
 ## 0.13.0 (2023-05-05)
 
