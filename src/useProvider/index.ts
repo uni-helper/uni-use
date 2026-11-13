@@ -1,10 +1,10 @@
-import type { MaybeComputedRef } from '../types';
-import { resolveUnref } from '@vueuse/core';
-import { reactive } from 'vue';
+import type { MaybeComputedRef } from '../types'
+import { reactive } from 'vue'
+import { unrefValue } from '../utils'
 
 export interface UniGetProviderOptions extends UniApp.GetProviderOptions {}
-export type GetProviderOptions = MaybeComputedRef<UniGetProviderOptions>;
-export type UseProviderOptions = GetProviderOptions;
+export type GetProviderOptions = MaybeComputedRef<UniGetProviderOptions>
+export type UseProviderOptions = GetProviderOptions
 
 /**
  * 返回一个方法，调用后获取服务供应商
@@ -21,9 +21,9 @@ export function useProvider(options?: UseProviderOptions) {
     return uni.getProvider(
       reactive({
         service: 'oauth',
-        ...resolveUnref(options),
-        ...resolveUnref(newOptions),
+        ...unrefValue(options),
+        ...unrefValue(newOptions),
       }),
-    );
-  };
+    )
+  }
 }

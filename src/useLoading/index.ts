@@ -1,13 +1,21 @@
-import type { MaybeComputedRef } from '../types';
-import { resolveUnref } from '@vueuse/core';
-import { reactive } from 'vue';
+import type { MaybeComputedRef } from '../types'
+import { reactive } from 'vue'
+import { unrefValue } from '../utils'
 
 export interface UniShowLoadingOptions extends UniApp.ShowLoadingOptions {}
-export type ShowLoadingOptions = MaybeComputedRef<UniShowLoadingOptions>;
-export type UseLoadingOptions = ShowLoadingOptions;
+export type ShowLoadingOptions = MaybeComputedRef<UniShowLoadingOptions>
+export type UseLoadingOptions = ShowLoadingOptions
 
-function hideLoading() {
-  return uni.hideLoading();
+/** `useLoading` 的返回值 */
+export interface UseLoadingReturn {
+  /** 显示加载提示框，返回隐藏它的方法 */
+  showLoading: (newOptions?: ShowLoadingOptions) => () => void
+  /** 隐藏加载提示框 */
+  hideLoading: () => void
+}
+
+function hideLoading(): void {
+  return uni.hideLoading()
 }
 
 /**
@@ -17,15 +25,15 @@ function hideLoading() {
  *
  * https://uniapp.dcloud.net.cn/api/ui/prompt.html#showloading
  */
-export function useLoading(options?: UseLoadingOptions) {
-  function showLoading(newOptions?: ShowLoadingOptions) {
+export function useLoading(options?: UseLoadingOptions): UseLoadingReturn {
+  function showLoading(newOptions?: ShowLoadingOptions): () => void {
     uni.showLoading(
       reactive({
-        ...resolveUnref(options),
-        ...resolveUnref(newOptions),
+        ...unrefValue(options),
+        ...unrefValue(newOptions),
       }),
-    );
-    return hideLoading;
+    )
+    return hideLoading
   }
 
   return {
@@ -42,5 +50,5 @@ export function useLoading(options?: UseLoadingOptions) {
      * https://uniapp.dcloud.net.cn/api/ui/prompt.html#hideloading
      */
     hideLoading,
-  };
+  }
 }

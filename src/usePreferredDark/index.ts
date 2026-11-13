@@ -1,5 +1,6 @@
-import { tryOnScopeDispose } from '@vueuse/core';
-import { readonly, ref } from 'vue';
+import type { Ref } from 'vue'
+import { readonly, ref } from 'vue'
+import { tryOnScopeDispose } from '../tryOnScopeDispose'
 
 /**
  * 响应式的暗黑主题偏好
@@ -8,15 +9,15 @@ import { readonly, ref } from 'vue';
  *
  * https://uniapp.dcloud.net.cn/tutorial/darkmode.html
  */
-export function usePreferredDark() {
-  const prefersDark = ref(uni.getSystemInfoSync().osTheme === 'dark');
+export function usePreferredDark(): Readonly<Ref<boolean>> {
+  const prefersDark = ref(uni.getSystemInfoSync().osTheme === 'dark')
 
-  const callback = ({ theme }: UniApp.OnThemeChangeCallbackResult) => {
-    prefersDark.value = theme === 'dark';
-  };
-  uni.onThemeChange(callback);
-  const stop = () => uni.offThemeChange(callback);
-  tryOnScopeDispose(stop);
+  const callback = ({ theme }: UniApp.OnThemeChangeCallbackResult): void => {
+    prefersDark.value = theme === 'dark'
+  }
+  uni.onThemeChange(callback)
+  const stop = (): void => uni.offThemeChange(callback)
+  tryOnScopeDispose(stop)
 
-  return readonly(prefersDark);
+  return readonly(prefersDark)
 }

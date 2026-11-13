@@ -1,18 +1,19 @@
-import { ref } from 'vue';
-import { tryOnHide } from '../tryOnHide';
-import { tryOnShow } from '../tryOnShow';
+import type { Ref } from 'vue'
+import { ref } from 'vue'
+import { tryOnHide } from '../tryOnHide'
+import { tryOnShow } from '../tryOnShow'
 
 /** 获取当前页面是否可见 */
-export function useVisible() {
-  const isVisible = ref(true);
+export function useVisible(): Ref<boolean> {
+  const isVisible = ref(true)
 
   tryOnShow(() => {
-    isVisible.value = true;
-  });
+    isVisible.value = true
+  })
 
   tryOnHide(() => {
-    isVisible.value = false;
-  });
+    isVisible.value = false
+  })
 
-  return isVisible;
+  return isVisible
 }

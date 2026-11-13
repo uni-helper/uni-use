@@ -1,11 +1,11 @@
-import type { TryOptions } from '../types';
-import { onHide } from '@dcloudio/uni-app';
-import { getCurrentInstance } from 'vue';
-import { sleep } from '../utils';
+import type { TryOptions } from '../types'
+import { onHide } from '@dcloudio/uni-app'
+import { getCurrentInstance } from 'vue'
+import { sleep } from '../utils'
 
-type OnHideParameters = Parameters<typeof onHide>;
+type OnHideParameters = Parameters<typeof onHide>
 
-export type TryOnHideOptions = TryOptions;
+export type TryOnHideOptions = TryOptions
 
 /**
  * 尝试获取组件生命周期，并调用 onHide
@@ -16,32 +16,32 @@ export async function tryOnHide(
   hook: OnHideParameters[0],
   target?: OnHideParameters[1],
   options: TryOnHideOptions = {},
-) {
+): Promise<void> {
   const {
     retry = 3,
     interval = 500,
     runFinally = true,
-  } = options;
+  } = options
 
-  function tryBind() {
-    const instance = (target || getCurrentInstance()) as OnHideParameters[1] | undefined;
+  function tryBind(): boolean {
+    const instance = (target || getCurrentInstance()) as OnHideParameters[1] | undefined
     if (instance) {
-      onHide(hook, instance);
-      return true;
+      onHide(hook, instance)
+      return true
     }
 
-    return false;
+    return false
   }
   for (let circle = 1; circle <= retry; circle++) {
     if (tryBind()) {
-      return;
+      return
     }
-    await sleep(interval);
+    await sleep(interval)
   }
 
   if (runFinally) {
-    return onHide(hook);
+    return onHide(hook)
   }
 
-  throw new Error('Binding onHide failed, maximum number of attempts exceeded.');
+  throw new Error('Binding onHide failed, maximum number of attempts exceeded.')
 }

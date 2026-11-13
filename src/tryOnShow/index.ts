@@ -1,11 +1,11 @@
-import type { TryOptions } from '../types';
-import { onShow } from '@dcloudio/uni-app';
-import { getCurrentInstance } from 'vue';
-import { sleep } from '../utils';
+import type { TryOptions } from '../types'
+import { onShow } from '@dcloudio/uni-app'
+import { getCurrentInstance } from 'vue'
+import { sleep } from '../utils'
 
-type OnShowParameters = Parameters<typeof onShow>;
+type OnShowParameters = Parameters<typeof onShow>
 
-export type TryOnShowOptions = TryOptions;
+export type TryOnShowOptions = TryOptions
 
 /**
  * 尝试获取组件生命周期，并调用 onShow
@@ -16,32 +16,32 @@ export async function tryOnShow(
   hook: OnShowParameters[0],
   target?: OnShowParameters[1],
   options: TryOnShowOptions = {},
-) {
+): Promise<void> {
   const {
     retry = 3,
     interval = 500,
     runFinally = true,
-  } = options;
+  } = options
 
-  function tryBind() {
-    const instance = (target || getCurrentInstance()) as OnShowParameters[1] | undefined;
+  function tryBind(): boolean {
+    const instance = (target || getCurrentInstance()) as OnShowParameters[1] | undefined
     if (instance) {
-      onShow(hook, instance);
-      return true;
+      onShow(hook, instance)
+      return true
     }
 
-    return false;
+    return false
   }
   for (let circle = 1; circle <= retry; circle++) {
     if (tryBind()) {
-      return;
+      return
     }
-    await sleep(interval);
+    await sleep(interval)
   }
 
   if (runFinally) {
-    return onShow(hook);
+    return onShow(hook)
   }
 
-  throw new Error('Binding onShow failed, maximum number of attempts exceeded.');
+  throw new Error('Binding onShow failed, maximum number of attempts exceeded.')
 }

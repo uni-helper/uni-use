@@ -1,11 +1,11 @@
-import type { TryOptions } from '../types';
-import { onLoad } from '@dcloudio/uni-app';
-import { getCurrentInstance } from 'vue';
-import { sleep } from '../utils';
+import type { TryOptions } from '../types'
+import { onLoad } from '@dcloudio/uni-app'
+import { getCurrentInstance } from 'vue'
+import { sleep } from '../utils'
 
-type OnLoadParameters = Parameters<typeof onLoad>;
+type OnLoadParameters = Parameters<typeof onLoad>
 
-export type TryOnLoadOptions = TryOptions;
+export type TryOnLoadOptions = TryOptions
 
 /**
  * 尝试获取组件生命周期，并调用 onLoad
@@ -16,32 +16,32 @@ export async function tryOnLoad(
   hook: OnLoadParameters[0],
   target?: OnLoadParameters[1],
   options: TryOnLoadOptions = {},
-) {
+): Promise<void> {
   const {
     retry = 3,
     interval = 500,
     runFinally = true,
-  } = options;
+  } = options
 
-  function tryBind() {
-    const instance = (target || getCurrentInstance()) as OnLoadParameters[1] | undefined;
+  function tryBind(): boolean {
+    const instance = (target || getCurrentInstance()) as OnLoadParameters[1] | undefined
     if (instance) {
-      onLoad(hook, instance);
-      return true;
+      onLoad(hook, instance)
+      return true
     }
 
-    return false;
+    return false
   }
   for (let circle = 1; circle <= retry; circle++) {
     if (tryBind()) {
-      return;
+      return
     }
-    await sleep(interval);
+    await sleep(interval)
   }
 
   if (runFinally) {
-    return onLoad(hook);
+    return onLoad(hook)
   }
 
-  throw new Error('Binding onLoad failed, maximum number of attempts exceeded.');
+  throw new Error('Binding onLoad failed, maximum number of attempts exceeded.')
 }

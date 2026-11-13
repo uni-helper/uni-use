@@ -1,10 +1,10 @@
-import type { MaybeComputedRef } from '../types';
-import { resolveUnref } from '@vueuse/core';
-import { reactive } from 'vue';
+import type { MaybeComputedRef } from '../types'
+import { reactive } from 'vue'
+import { unrefValue } from '../utils'
 
 export interface UniScanCodeOptions extends UniApp.ScanCodeOptions {}
-export type ScanCodeOptions = MaybeComputedRef<UniScanCodeOptions>;
-export type UseScanCodeOptions = ScanCodeOptions;
+export type ScanCodeOptions = MaybeComputedRef<UniScanCodeOptions>
+export type UseScanCodeOptions = ScanCodeOptions
 
 /**
  * 返回一个方法，调用后调起客户端扫码界面
@@ -20,9 +20,9 @@ export function useScanCode(options?: UseScanCodeOptions) {
   return function scanCode(newOptions?: ScanCodeOptions) {
     return uni.scanCode(
       reactive({
-        ...resolveUnref(options),
-        ...resolveUnref(newOptions),
+        ...unrefValue(options),
+        ...unrefValue(newOptions),
       }),
-    );
-  };
+    )
+  }
 }

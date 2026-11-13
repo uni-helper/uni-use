@@ -1,8 +1,6 @@
-import type { ConfigurableEventFilter, ConfigurableFlush, RemovableRef } from '@vueuse/core';
-import type { MaybeComputedRef } from '../types';
-import { resolveUnref, watchWithFilter } from '@vueuse/core';
-import { ref, shallowRef } from 'vue';
-import { isFunction } from '../utils';
+import type { ConfigurableEventFilter, ConfigurableFlush, MaybeComputedRef, RemovableRef } from '../types'
+import { ref, shallowRef } from 'vue'
+import { isFunction, unrefValue, watchWithFilter } from '../utils'
 
 export interface UseGlobalDataOptions<T extends object | undefined>
   extends ConfigurableEventFilter,
@@ -12,7 +10,7 @@ export interface UseGlobalDataOptions<T extends object | undefined>
    *
    * @default true
    */
-  writeDefaults?: boolean;
+  writeDefaults?: boolean
   /**
    * 是否合并默认值和已有值
    *
@@ -22,19 +20,19 @@ export interface UseGlobalDataOptions<T extends object | undefined>
    *
    * @default false
    */
-  mergeDefaults?: boolean | ((nextValue: T, prevValue: T) => T);
+  mergeDefaults?: boolean | ((nextValue: T, prevValue: T) => T)
   /**
    * 是否使用 shallowRef
    *
    * @default false
    */
-  shallow?: boolean;
+  shallow?: boolean
   /**
    * 是否监听深层变化
    *
    * @default true
    */
-  deep?: boolean;
+  deep?: boolean
 }
 
 /**
@@ -46,7 +44,7 @@ export interface UseGlobalDataOptions<T extends object | undefined>
 export function useGlobalData<T extends object | undefined>(
   initialValue: MaybeComputedRef<T>,
   options: UseGlobalDataOptions<T> = {},
-) {
+): RemovableRef<T> {
   const {
     writeDefaults = true,
     mergeDefaults = false,
@@ -54,41 +52,44 @@ export function useGlobalData<T extends object | undefined>(
     deep = true,
     flush = 'pre',
     eventFilter,
-  } = options;
+  } = options
 
-  const app = ref(getApp());
+  const app = ref(getApp())
 
-  const rawInit: T = resolveUnref(initialValue);
+  const rawInit: T = unrefValue(initialValue)
 
-  const data = (shallow ? shallowRef : ref)(initialValue) as RemovableRef<T>;
+  const data = (shallow ? shallowRef : ref)(initialValue) as RemovableRef<T>
 
   watchWithFilter(data, () => (app.value.globalData = data.value ?? undefined), {
     flush,
     deep,
     eventFilter,
-  });
+  })
 
-  function read() {
+  function read(): any {
     // 读取已有值
-    const rawValue = app.value.globalData;
+    const rawValue = app.value.globalData
     if (rawValue == null) {
       if (writeDefaults && rawInit !== null) {
-        app.value.globalData = rawInit;
+        app.value.globalData = rawInit
       }
-      return rawInit;
+      return rawInit
     }
     else if (mergeDefaults) {
-      const value = rawValue as T;
+      const value = rawValue as T
       return isFunction(mergeDefaults)
         ? mergeDefaults(value, rawInit)
-        : { ...(rawInit as any), ...value };
+        : {
+            ...(rawInit as any),
+            ...value,
+          }
     }
     else {
-      return rawValue;
+      return rawValue
     }
   }
 
-  data.value = read();
+  data.value = read()
 
-  return data;
+  return data
 }

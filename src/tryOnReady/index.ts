@@ -1,11 +1,11 @@
-import type { TryOptions } from '../types';
-import { onReady } from '@dcloudio/uni-app';
-import { getCurrentInstance } from 'vue';
-import { sleep } from '../utils';
+import type { TryOptions } from '../types'
+import { onReady } from '@dcloudio/uni-app'
+import { getCurrentInstance } from 'vue'
+import { sleep } from '../utils'
 
-type OnReadyParameters = Parameters<typeof onReady>;
+type OnReadyParameters = Parameters<typeof onReady>
 
-export type TryOnReadyOptions = TryOptions;
+export type TryOnReadyOptions = TryOptions
 
 /**
  * 尝试获取组件生命周期，并调用 onReady
@@ -16,32 +16,32 @@ export async function tryOnReady(
   hook: OnReadyParameters[0],
   target?: OnReadyParameters[1],
   options: TryOnReadyOptions = {},
-) {
+): Promise<void> {
   const {
     retry = 3,
     interval = 500,
     runFinally = true,
-  } = options;
+  } = options
 
-  function tryBind() {
-    const instance = (target || getCurrentInstance()) as OnReadyParameters[1] | undefined;
+  function tryBind(): boolean {
+    const instance = (target || getCurrentInstance()) as OnReadyParameters[1] | undefined
     if (instance) {
-      onReady(hook, instance);
-      return true;
+      onReady(hook, instance)
+      return true
     }
 
-    return false;
+    return false
   }
   for (let circle = 1; circle <= retry; circle++) {
     if (tryBind()) {
-      return;
+      return
     }
-    await sleep(interval);
+    await sleep(interval)
   }
 
   if (runFinally) {
-    return onReady(hook);
+    return onReady(hook)
   }
 
-  throw new Error('Binding onReady failed, maximum number of attempts exceeded.');
+  throw new Error('Binding onReady failed, maximum number of attempts exceeded.')
 }

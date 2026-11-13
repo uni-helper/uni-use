@@ -1,6 +1,6 @@
-import { onBackPress } from '@dcloudio/uni-app';
-import { getCurrentInstance } from 'vue';
-import { sleep } from '../utils';
+import { onBackPress } from '@dcloudio/uni-app'
+import { getCurrentInstance } from 'vue'
+import { sleep } from '../utils'
 
 export interface TryOnBackPressOptions {
   /**
@@ -8,44 +8,44 @@ export interface TryOnBackPressOptions {
    *
    * @default 3
    */
-  retry?: number;
+  retry?: number
   /**
    * 尝试间隔时长，单位 ms
    *
    * @default 500
    */
-  interval?: number;
+  interval?: number
 }
 
-type OnBackPressParameters = Parameters<typeof onBackPress>;
+type OnBackPressParameters = Parameters<typeof onBackPress>
 
-/** 尝试绑定 onBackPress 超出尝试次数将调用 onError */
+/** 尝试绑定 onBackPress，超出尝试次数将抛出异常 */
 export async function tryOnBackPress(
   hook: OnBackPressParameters[0],
   target?: OnBackPressParameters[1],
   options: TryOnBackPressOptions = {},
-) {
+): Promise<void> {
   const {
     retry = 3,
     interval = 500,
-  } = options;
+  } = options
 
-  function tryBind() {
-    const instance = (target || getCurrentInstance()) as OnBackPressParameters[1] | undefined;
+  function tryBind(): boolean {
+    const instance = (target || getCurrentInstance()) as OnBackPressParameters[1] | undefined
     if (instance) {
-      onBackPress(hook, instance);
-      return true;
+      onBackPress(hook, instance)
+      return true
     }
 
-    return false;
+    return false
   }
 
   for (let circle = 1; circle <= retry; circle++) {
     if (tryBind()) {
-      return;
+      return
     }
-    await sleep(interval);
+    await sleep(interval)
   }
 
-  throw new Error('Binding onBackPress failed, maximum number of attempts exceeded.');
+  throw new Error('Binding onBackPress failed, maximum number of attempts exceeded.')
 }

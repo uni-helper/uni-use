@@ -1,5 +1,6 @@
-import { tryOnScopeDispose } from '@vueuse/core';
-import { readonly, ref } from 'vue';
+import type { Ref } from 'vue'
+import { readonly, ref } from 'vue'
+import { tryOnScopeDispose } from '../tryOnScopeDispose'
 
 /**
  * 响应式的语言偏好
@@ -8,21 +9,21 @@ import { readonly, ref } from 'vue';
  *
  * https://uniapp.dcloud.net.cn/tutorial/i18n
  */
-export function usePreferredLanguage() {
-  const locale = ref(uni.getLocale());
+export function usePreferredLanguage(): Readonly<Ref<string>> {
+  const locale = ref(uni.getLocale())
 
-  const callback = (result: UniApp.OnLocaleChangeCallbackResult) => {
-    locale.value = result.locale ?? locale.value;
-  };
-  uni.onLocaleChange(callback);
-  const stop = () => {
+  const callback = (result: UniApp.OnLocaleChangeCallbackResult): void => {
+    locale.value = result.locale ?? locale.value
+  }
+  uni.onLocaleChange(callback)
+  const stop = (): void => {
     // @ts-expect-error no types
     if (uni.offLocaleChange) {
       // @ts-expect-error no types
-      uni.offLocaleChange(callback);
+      uni.offLocaleChange(callback)
     }
-  };
-  tryOnScopeDispose(stop);
+  }
+  tryOnScopeDispose(stop)
 
-  return readonly(locale);
+  return readonly(locale)
 }
